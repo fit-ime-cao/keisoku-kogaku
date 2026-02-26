@@ -7,13 +7,13 @@
 ## 統計処理
 
 ### 平均値
-$$\bar{x} = \frac{1}{n}\sum_{i=1}^{n}x_i$$
+$$\bar{x} = \frac{1}{N}\sum_{i=1}^{N}x_i$$
 
 ### 分散
-$$\sigma^2 = \frac{1}{n-1}\sum_{i=1}^{n}(x_i - \bar{x})^2$$
+$$\sigma^2 = \frac{1}{N}\sum_{i=1}^{N}(x_i - \bar{x})^2$$
 
 ### 標準偏差
-$$\sigma = \sqrt{\frac{1}{n-1}\sum_{i=1}^{n}(x_i - \bar{x})^2}$$
+$$\sigma = \sqrt{\frac{1}{N}\sum_{i=1}^{N}(x_i - \bar{x})^2}$$
 
 ### 相関係数
 $$r = \frac{\sum(x_i-\bar{x})(y_i-\bar{y})}{\sqrt{\sum(x_i-\bar{x})^2}\sqrt{\sum(y_i-\bar{y})^2}}$$
