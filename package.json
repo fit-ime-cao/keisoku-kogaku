@@ -1,0 +1,17 @@
+{
+  "name": "keisoku-kogaku",
+  "version": "1.0.0",
+  "description": "計測工学 - Measurement Engineering Course Website",
+  "type": "module",
+  "scripts": {
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
+  },
+  "keywords": ["measurement", "engineering", "sensors", "robotics"],
+  "author": "FIT-IME-CAO",
+  "license": "MIT",
+  "devDependencies": {
+    "vitepress": "^1.6.4"
+  }
+}
