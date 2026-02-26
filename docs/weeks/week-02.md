@@ -58,6 +58,22 @@
 - 全国の大学生の特性を調べたいのに、福岡県在住の学生だけを調査
 - 味噌汁の味を確認したいのに、上澄みだけを味見（→ よくかき混ぜてから！）
 
+
+<div style="display: flex; justify-content: center; margin: 20px 0;">
+<svg viewBox="0 0 420 220" width="100%" style="max-width: 420px; background: #fdfdfd; border-radius: 8px;">
+  <ellipse cx="210" cy="110" rx="200" ry="100" fill="#e8f4fd" stroke="#3498db" stroke-width="2"/>
+  <text x="210" y="30" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#2980b9" font-weight="bold">全国の大学生</text>
+  <ellipse cx="210" cy="120" rx="140" ry="70" fill="#fef9e7" stroke="#f39c12" stroke-width="2"/>
+  <text x="210" y="65" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#e67e22" font-weight="bold">福岡県在住の学生</text>
+  <ellipse cx="210" cy="130" rx="80" ry="40" fill="#fdedec" stroke="#e74c3c" stroke-width="2"/>
+  <text x="210" y="125" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#c0392b" font-weight="bold">福岡工業大学</text>
+  <line x1="170" y1="100" x2="170" y2="175" stroke="#95a5a6" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="155" y="155" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#7f8c8d">男</text>
+  <text x="185" y="155" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#7f8c8d">女</text>
+  <text x="210" y="200" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#e74c3c">← ここだけ調べても「全国」はわからない！</text>
+</svg>
+</div>
+
 ---
 
 ## 3. 誤差（Error）とは
@@ -268,6 +284,38 @@ $$
 
 **オフセット（offset）**：ずれ量
 
+<div style="display: flex; justify-content: center; margin: 20px 0;">
+<svg viewBox="0 0 400 160" width="100%" style="max-width: 400px; background: #fdfdfd; border-radius: 8px;">
+  <text x="100" y="15" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#7f8c8d">補正前</text>
+  <text x="300" y="15" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#7f8c8d">補正後</text>
+  <circle cx="100" cy="85" r="55" fill="#f5f5f5" stroke="#ccc" stroke-width="1.5"/>
+  <circle cx="100" cy="85" r="35" fill="#eee" stroke="#ccc" stroke-width="1"/>
+  <circle cx="100" cy="85" r="15" fill="#ff6b6b" stroke="#ccc" stroke-width="1"/>
+  <circle cx="100" cy="85" r="3" fill="#cc0000"/>
+  <circle cx="65" cy="55" r="4" fill="#2c3e50"/>
+  <circle cx="60" cy="62" r="4" fill="#2c3e50"/>
+  <circle cx="68" cy="50" r="4" fill="#2c3e50"/>
+  <circle cx="58" cy="56" r="4" fill="#2c3e50"/>
+  <path d="M 155 85 L 240 85" fill="none" stroke="#27ae60" stroke-width="2.5" marker-end="url(#arrowG2)"/>
+  <text x="198" y="78" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#27ae60" font-weight="bold">offset 補正</text>
+  <defs>
+    <marker id="arrowG2" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#27ae60"/>
+    </marker>
+  </defs>
+  <circle cx="300" cy="85" r="55" fill="#f5f5f5" stroke="#ccc" stroke-width="1.5"/>
+  <circle cx="300" cy="85" r="35" fill="#eee" stroke="#ccc" stroke-width="1"/>
+  <circle cx="300" cy="85" r="15" fill="#ff6b6b" stroke="#ccc" stroke-width="1"/>
+  <circle cx="300" cy="85" r="3" fill="#cc0000"/>
+  <circle cx="296" cy="82" r="4" fill="#27ae60"/>
+  <circle cx="302" cy="88" r="4" fill="#27ae60"/>
+  <circle cx="298" cy="78" r="4" fill="#27ae60"/>
+  <circle cx="304" cy="84" r="4" fill="#27ae60"/>
+  <text x="100" y="155" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#e74c3c">系統誤差で偏っている</text>
+  <text x="300" y="155" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#27ae60">補正で中心に戻す</text>
+</svg>
+</div>
+
 ### 7.2 較正（Calibration）/ キャリブレーション
 
 ::: info 定義
@@ -279,6 +327,9 @@ $$
 カメラの歪みの影響を確認するため、寸法と形状のわかっているチェッカーボードを撮影し、画像中での映りを確認・補正します。
 
 **例：力センサ（Flexiforce）のキャリブレーション**
+
+![FlexiForce 力センサ](/images/flexiforce-sensor.jpg)
+
 
 既知の荷重を加えて、出力電圧との関係を調べます。
 
