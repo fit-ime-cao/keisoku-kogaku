@@ -27,11 +27,13 @@
 
 <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin: 20px 0;">
   <figure style="text-align: center; margin: 0; max-width: 420px;">
-    <img src="/keisoku-kogaku/images/population-sample-misoshiru.png" alt="味噌汁でわかる統計学：母集団・標本・無作為抽出・推定の関係" style="border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); width: 100%;" />
+
+![味噌汁でわかる統計学：母集団・標本・無作為抽出・推定の関係](/images/population-sample-misoshiru.png)
     <figcaption style="font-size: 0.85em; color: #666; margin-top: 8px;">味噌汁の例で理解する母集団と標本</figcaption>
   </figure>
   <figure style="text-align: center; margin: 0; max-width: 420px;">
-    <img src="/keisoku-kogaku/images/population-sample-concept.png" alt="母集団と標本の概念図：無作為抽出と推定" style="border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); width: 100%;" />
+
+![母集団と標本の概念図：無作為抽出と推定](/images/population-sample-concept.png)
     <figcaption style="font-size: 0.85em; color: #666; margin-top: 8px;">母集団から標本を抽出し、推定する流れ</figcaption>
   </figure>
 </div>
