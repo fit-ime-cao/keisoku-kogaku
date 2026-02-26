@@ -74,17 +74,15 @@
 
 ```mermaid
 graph TD
-    A[センサ] --> B[内界センサ<br/>Internal Sensors]
-    A --> C[外界センサ<br/>External Sensors]
-    
-    B --> D[関節角センサ]
-    B --> E[角速度センサ]
-    B --> F[トルクセンサ]
-    
-    C --> G[視覚センサ]
-    C --> H[距離センサ]
-    C --> I[力センサ]
-    C --> J[触覚センサ]
+    A[Sensor] --> B[Internal]
+    A --> C[External]
+    B --> D[Joint Angle]
+    B --> E[Angular Velocity]
+    B --> F[Torque]
+    C --> G[Vision]
+    C --> H[Range]
+    C --> I[Force]
+    C --> J[Tactile]
 ```
 
 ### 内界センサ（Internal Sensors）
@@ -139,12 +137,11 @@ $$
 
 ```mermaid
 graph LR
-    A[目標値] --> B[コントローラ]
-    B --> C[アクチュエータ]
-    C --> D[ロボット]
-    D --> E[センサ]
-    E -->|フィードバック| B
-    
+    A[Target] --> B[Controller]
+    B --> C[Actuator]
+    C --> D[Robot]
+    D --> E[Sensor]
+    E --> B
     style E fill:#f9f,stroke:#333,stroke-width:2px
 ```
 

@@ -25,15 +25,12 @@ $$
 
 ```mermaid
 graph TD
-    A[誤差] --> B[人為的誤差]
-    A --> C[系統誤差]
-    A --> D[不定誤差]
-    
-    C --> E[理論的誤差]
-    C --> F[固有誤差]
-    C --> G[個体差誤差]
-    
-    D --> H[ランダム誤差]
+    A[Error] --> B[Human Error]
+    A --> C[Systematic Error]
+    A --> D[Random Error]
+    C --> E[Theoretical]
+    C --> F[Instrumental]
+    C --> G[Individual]
 ```
 
 ### 2.1 人為的誤差
