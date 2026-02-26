@@ -5,9 +5,6 @@ hero:
   name: "計測工学"
   text: "Measurement Engineering"
   tagline: 福岡工業大学 工学部 知能機械工学科 3年前期
-  image:
-    src: /images/hero-sensor.svg
-    alt: Sensor
   actions:
     - theme: brand
       text: 講義を始める
