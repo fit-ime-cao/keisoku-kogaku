@@ -70,8 +70,7 @@ export default withMermaid({
           text: '学習リソース',
           items: [
             { text: '用語集', link: '/resources/glossary' },
-            { text: '公式集', link: '/resources/formulas' },
-            { text: '参考文献', link: '/resources/references' }
+            { text: '公式集', link: '/resources/formulas' }
           ]
         }
       ]
