@@ -25,11 +25,40 @@
 
 ### 2.1 母集団と標本
 
-```mermaid
-graph TD
-    A[母集団<br>Population] -->|無作為抽出| B[標本<br>Sample]
-    B -->|推定| C[母集団の特性を予想]
-```
+<div style="display: flex; justify-content: center; margin: 20px 0;">
+  <svg viewBox="0 0 500 250" width="100%" max-width="500" style="background: #fdfdfd; border-radius: 8px; padding: 10px;">
+    <!-- Population (味噌汁の鍋) -->
+    <ellipse cx="150" cy="180" rx="90" ry="30" fill="#e67e22" opacity="0.8"/>
+    <path d="M 60 180 L 70 80 Q 150 60 230 80 L 240 180 Z" fill="#d35400" opacity="0.7"/>
+    <ellipse cx="150" cy="80" rx="80" ry="20" fill="#f39c12"/>
+    <text x="150" y="150" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#fff">母集団 (Population)</text>
+    <text x="150" y="170" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#fff">全体 (例: 味噌汁全体)</text>
+
+    <!-- Arrow 1 -->
+    <path d="M 220 80 Q 280 40 330 80" fill="none" stroke="#34495e" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="275" y="55" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#2c3e50">無作為抽出</text>
+
+    <!-- Sample (おたま・スプーン) -->
+    <ellipse cx="380" cy="100" rx="40" ry="15" fill="#e67e22" opacity="0.9"/>
+    <path d="M 420 100 Q 450 120 480 80" fill="none" stroke="#bdc3c7" stroke-width="8" stroke-linecap="round"/>
+    <text x="380" y="140" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#2c3e50">標本 (Sample)</text>
+    <text x="380" y="160" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#7f8c8d">一部 (例: 味見の一口)</text>
+
+    <!-- Arrow 2 (推定) -->
+    <path d="M 330 140 Q 280 180 220 140" fill="none" stroke="#27ae60" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#arrow-green)"/>
+    <text x="275" y="180" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#27ae60" font-weight="bold">推定 (Estimation)</text>
+
+    <!-- Definitions -->
+    <defs>
+      <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+        <path d="M0,0 L0,6 L9,3 z" fill="#34495e" />
+      </marker>
+      <marker id="arrow-green" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+        <path d="M0,0 L0,6 L9,3 z" fill="#27ae60" />
+      </marker>
+    </defs>
+  </svg>
+</div>
 
 | 用語 | 定義 | 例 |
 |------|------|-----|
@@ -132,12 +161,119 @@ graph TD
 
 ---
 
+## 5. 確度と精度 (Accuracy vs Precision)
+
+::: danger 重要
+**確度（Accuracy）**と**精度（Precision）**は異なる概念です！混同しないよう注意しましょう。
+:::
+
+| 用語 | 英語 | 意味 |
+|-----|------|------|
+| **確度** | Accuracy | 計測値が**真の値にどれだけ近いか**（偏りがないか） |
+| **精度** | Precision | 計測値の**ばらつきがどれだけ小さいか**（再現性があるか） |
+
+### 図解：的（ターゲット）の例
+
+<div class="svg-container" style="display: flex; justify-content: space-around; flex-wrap: wrap; margin: 20px 0; gap: 10px;">
+  <!-- 高確度・高精度 -->
+  <div style="text-align: center; width: 140px;">
+    <svg viewBox="0 0 100 100" width="120" height="120">
+      <circle cx="50" cy="50" r="45" fill="#f0f0f0" stroke="#333" stroke-width="2"/>
+      <circle cx="50" cy="50" r="30" fill="#ddd" stroke="#333" stroke-width="1"/>
+      <circle cx="50" cy="50" r="15" fill="#ff6b6b" stroke="#333" stroke-width="1"/>
+      <circle cx="50" cy="50" r="4" fill="#cc0000"/>
+      <!-- Dots -->
+      <circle cx="52" cy="48" r="3" fill="#2c3e50"/>
+      <circle cx="49" cy="53" r="3" fill="#2c3e50"/>
+      <circle cx="48" cy="47" r="3" fill="#2c3e50"/>
+      <circle cx="53" cy="51" r="3" fill="#2c3e50"/>
+    </svg>
+    <div style="font-weight: bold; font-size: 0.9em; margin-top: 8px; color: #27ae60;">確度：高<br>精度：高</div>
+    <div style="font-size: 0.8em; color: #666;">理想的な状態</div>
+  </div>
+
+  <!-- 低確度・高精度 -->
+  <div style="text-align: center; width: 140px;">
+    <svg viewBox="0 0 100 100" width="120" height="120">
+      <circle cx="50" cy="50" r="45" fill="#f0f0f0" stroke="#333" stroke-width="2"/>
+      <circle cx="50" cy="50" r="30" fill="#ddd" stroke="#333" stroke-width="1"/>
+      <circle cx="50" cy="50" r="15" fill="#ff6b6b" stroke="#333" stroke-width="1"/>
+      <circle cx="50" cy="50" r="4" fill="#cc0000"/>
+      <!-- Dots -->
+      <circle cx="25" cy="30" r="3" fill="#2c3e50"/>
+      <circle cx="28" cy="27" r="3" fill="#2c3e50"/>
+      <circle cx="26" cy="24" r="3" fill="#2c3e50"/>
+      <circle cx="29" cy="31" r="3" fill="#2c3e50"/>
+    </svg>
+    <div style="font-weight: bold; font-size: 0.9em; margin-top: 8px; color: #d35400;">確度：低<br>精度：高</div>
+    <div style="font-size: 0.8em; color: #666;">系統誤差が大きい</div>
+  </div>
+
+  <!-- 高確度・低精度 -->
+  <div style="text-align: center; width: 140px;">
+    <svg viewBox="0 0 100 100" width="120" height="120">
+      <circle cx="50" cy="50" r="45" fill="#f0f0f0" stroke="#333" stroke-width="2"/>
+      <circle cx="50" cy="50" r="30" fill="#ddd" stroke="#333" stroke-width="1"/>
+      <circle cx="50" cy="50" r="15" fill="#ff6b6b" stroke="#333" stroke-width="1"/>
+      <circle cx="50" cy="50" r="4" fill="#cc0000"/>
+      <!-- Dots -->
+      <circle cx="50" cy="20" r="3" fill="#2c3e50"/>
+      <circle cx="25" cy="65" r="3" fill="#2c3e50"/>
+      <circle cx="75" cy="45" r="3" fill="#2c3e50"/>
+      <circle cx="45" cy="80" r="3" fill="#2c3e50"/>
+    </svg>
+    <div style="font-weight: bold; font-size: 0.9em; margin-top: 8px; color: #d35400;">確度：高<br>精度：低</div>
+    <div style="font-size: 0.8em; color: #666;">不定誤差が大きい</div>
+  </div>
+
+  <!-- 低確度・低精度 -->
+  <div style="text-align: center; width: 140px;">
+    <svg viewBox="0 0 100 100" width="120" height="120">
+      <circle cx="50" cy="50" r="45" fill="#f0f0f0" stroke="#333" stroke-width="2"/>
+      <circle cx="50" cy="50" r="30" fill="#ddd" stroke="#333" stroke-width="1"/>
+      <circle cx="50" cy="50" r="15" fill="#ff6b6b" stroke="#333" stroke-width="1"/>
+      <circle cx="50" cy="50" r="4" fill="#cc0000"/>
+      <!-- Dots -->
+      <circle cx="75" cy="25" r="3" fill="#2c3e50"/>
+      <circle cx="85" cy="40" r="3" fill="#2c3e50"/>
+      <circle cx="65" cy="15" r="3" fill="#2c3e50"/>
+      <circle cx="90" cy="20" r="3" fill="#2c3e50"/>
+    </svg>
+    <div style="font-weight: bold; font-size: 0.9em; margin-top: 8px; color: #c0392b;">確度：低<br>精度：低</div>
+    <div style="font-size: 0.8em; color: #666;">最も悪い状態</div>
+  </div>
+</div>
+
+---
 ## 5. 正規分布（ガウス分布）
 
 ### 5.1 正規分布の特徴
 
 標本に偏りが少ない場合、計測値は**正規分布**する傾向があります。
-
+<div style="display: flex; justify-content: center; margin: 20px 0;">
+  <svg viewBox="0 0 400 200" width="100%" max-width="500" style="background: #fdfdfd; border-radius: 8px; padding: 10px;">
+    <!-- Grid lines -->
+    <line x1="50" y1="160" x2="350" y2="160" stroke="#aaa" stroke-width="1.5" />
+    
+    <!-- Bell curve path generated using cubic beziers -->
+    <path d="M 50 160 C 100 160, 150 155, 170 120 C 185 60, 195 20, 200 20 C 205 20, 215 60, 230 120 C 250 155, 300 160, 350 160" fill="none" stroke="#3498db" stroke-width="3" />
+    
+    <!-- Mean line -->
+    <line x1="200" y1="20" x2="200" y2="160" stroke="#e74c3c" stroke-width="2" stroke-dasharray="5,5" />
+    <text x="200" y="175" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#e74c3c">μ (平均)</text>
+    
+    <!-- Standard deviation lines -->
+    <line x1="160" y1="90" x2="160" y2="160" stroke="#95a5a6" stroke-width="1" stroke-dasharray="3,3" />
+    <text x="160" y="175" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#7f8c8d">-1σ</text>
+    
+    <line x1="240" y1="90" x2="240" y2="160" stroke="#95a5a6" stroke-width="1" stroke-dasharray="3,3" />
+    <text x="240" y="175" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#7f8c8d">+1σ</text>
+    
+    <!-- Annotations -->
+    <path d="M 160 100 Q 200 120 240 100" fill="none" stroke="#2ecc71" stroke-width="1.5" />
+    <text x="200" y="115" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="#27ae60">約 68.3%</text>
+  </svg>
+</div>
 **正規分布の特徴**：
 - 平均値付近の出現頻度が高い
 - ばらつきが平均値に対して左右対称
