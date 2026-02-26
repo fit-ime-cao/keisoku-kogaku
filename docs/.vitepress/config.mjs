@@ -1,7 +1,8 @@
 import { defineConfig } from 'vitepress'
-
+import { withMermaid } from 'vitepress-plugin-mermaid'
 // https://vitepress.dev/reference/site-config
-export default defineConfig({
+export default withMermaid(
+  defineConfig({
   // 基础路径 - GitHub Pages项目站点必须设置
   base: '/keisoku-kogaku/',
   
@@ -19,7 +20,6 @@ export default defineConfig({
     // 导航栏
     nav: [
       { text: 'ホーム', link: '/' },
-      { text: 'シラバス', link: '/syllabus' },
       { text: '講義', link: '/weeks/week-01' },
       { text: '資料', link: '/resources/glossary' }
     ],
@@ -131,4 +131,12 @@ export default defineConfig({
   
   // 最后更新时间
   lastUpdated: true
-})
+  }),
+  // Mermaid 配置
+  {
+    mermaid: {},
+    mermaidPlugin: {
+      class: 'mermaid'
+    }
+  }
+)

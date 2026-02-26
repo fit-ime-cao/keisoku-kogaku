@@ -12,9 +12,6 @@ hero:
     - theme: brand
       text: 講義を始める
       link: /weeks/week-01
-    - theme: alt
-      text: シラバス
-      link: /syllabus
 
 features:
   - icon: 📡
