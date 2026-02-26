@@ -25,30 +25,15 @@
 
 ### 2.1 母集団と標本
 
-<div style="display: flex; justify-content: center; margin: 20px 0;">
-  <svg viewBox="0 0 500 250" width="100%" max-width="500" style="background: #fdfdfd; border-radius: 8px; padding: 10px;">
-    <defs>
-      <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
-        <path d="M0,0 L0,6 L9,3 z" fill="#34495e" />
-      </marker>
-      <marker id="arrow-green" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
-        <path d="M0,0 L0,6 L9,3 z" fill="#27ae60" />
-      </marker>
-    </defs>
-    <ellipse cx="150" cy="180" rx="90" ry="30" fill="#e67e22" opacity="0.8"/>
-    <path d="M 60 180 L 70 80 Q 150 60 230 80 L 240 180 Z" fill="#d35400" opacity="0.7"/>
-    <ellipse cx="150" cy="80" rx="80" ry="20" fill="#f39c12"/>
-    <text x="150" y="150" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#fff">母集団 (Population)</text>
-    <text x="150" y="170" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#fff">全体 (例: 味噌汁全体)</text>
-    <path d="M 220 80 Q 280 40 330 80" fill="none" stroke="#34495e" stroke-width="2" marker-end="url(#arrow)"/>
-    <text x="275" y="55" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#2c3e50">無作為抽出</text>
-    <ellipse cx="380" cy="100" rx="40" ry="15" fill="#e67e22" opacity="0.9"/>
-    <path d="M 420 100 Q 450 120 480 80" fill="none" stroke="#bdc3c7" stroke-width="8" stroke-linecap="round"/>
-    <text x="380" y="140" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#2c3e50">標本 (Sample)</text>
-    <text x="380" y="160" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#7f8c8d">一部 (例: 味見の一口)</text>
-    <path d="M 330 140 Q 280 180 220 140" fill="none" stroke="#27ae60" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#arrow-green)"/>
-    <text x="275" y="180" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#27ae60" font-weight="bold">推定 (Estimation)</text>
-  </svg>
+<div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin: 20px 0;">
+  <figure style="text-align: center; margin: 0; max-width: 420px;">
+    <img src="/keisoku-kogaku/images/population-sample-misoshiru.png" alt="味噌汁でわかる統計学：母集団・標本・無作為抽出・推定の関係" style="border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); width: 100%;" />
+    <figcaption style="font-size: 0.85em; color: #666; margin-top: 8px;">味噌汁の例で理解する母集団と標本</figcaption>
+  </figure>
+  <figure style="text-align: center; margin: 0; max-width: 420px;">
+    <img src="/keisoku-kogaku/images/population-sample-concept.png" alt="母集団と標本の概念図：無作為抽出と推定" style="border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); width: 100%;" />
+    <figcaption style="font-size: 0.85em; color: #666; margin-top: 8px;">母集団から標本を抽出し、推定する流れ</figcaption>
+  </figure>
 </div>
 
 | 用語 | 定義 | 例 |
