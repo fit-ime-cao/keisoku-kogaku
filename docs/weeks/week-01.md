@@ -137,7 +137,7 @@ RGB画像のみから物体の6D姿勢を推定し、組立作業を行います
 家庭用自律移動ロボット。
 
 <div class="video-link">
-🎬 <a href="https://youtu.be/jD9xI7HAewQ" target="_blank">Kachakaの動画</a>
+🎬 <a href="https://www.youtube.com/watch?v=pl9vgBEsX80" target="_blank">Kachakaの動画（内閣府公式）</a>
 </div>
 
 ---
