@@ -1,8 +1,7 @@
-import { defineConfig } from 'vitepress'
-import { withMermaid } from 'vitepress-plugin-mermaid'
+import { withMermaid } from "vitepress-plugin-mermaid"
+
 // https://vitepress.dev/reference/site-config
-export default withMermaid(
-  defineConfig({
+export default withMermaid({
   // 基础路径 - GitHub Pages项目站点必须设置
   base: '/keisoku-kogaku/',
   
@@ -125,18 +124,18 @@ export default withMermaid(
   
   // Markdown 配置
   markdown: {
-    math: true, // 启用数学公式
-    lineNumbers: true // 代码行号
+    math: true,
+    lineNumbers: true
   },
   
   // 最后更新时间
-  lastUpdated: true
-  }),
+  lastUpdated: true,
+
   // Mermaid 配置
-  {
-    mermaid: {},
-    mermaidPlugin: {
-      class: 'mermaid'
-    }
+  mermaid: {
+    // https://mermaid.js.org/config/setup/modules/mermaidAPI.html
+  },
+  mermaidPlugin: {
+    class: "mermaid"
   }
-)
+})
