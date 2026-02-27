@@ -456,6 +456,8 @@ A/D変換のプロセスを詳しく見ていきましょう：
 | ![Lena原画像](/images/lena-original.png) | ![ノイズ付加](/images/lena-noisy.png) | ![ノイズ除去](/images/lena-denoised.png) |
 | 元のクリアな画像 | GIMPでノイズを追加 | ノイズ除去処理後 |
 
+*出典: 「Lena」標準テスト画像 - 画像処理の教育・研究目的で広く使用されている画像*
+
 :::
 
 ### 9.3 時系列データ

@@ -220,6 +220,8 @@ graph TD
 
 ![Homunculus（脳地図）：感覚野と運動野の体部位マッピング](/images/homunculus.png)
 
+*出典: Penfield & Rasmussen (1950) "The Cerebral Cortex of Man" - 教育目的で引用*
+
 左が**感覚野**（触覚などの入力）、右が**運動野**（筋肉への出力）。手や唇の領域が特に大きいことがわかります。
 :::
 
@@ -246,6 +248,8 @@ graph TD
 人間の目には見えない赤外線（熱）を検出し、温度分布を可視化します。
 
 ![FLIR赤外線カメラによる熱像画像](/images/flir-thermal.jpg)
+
+*出典: FLIR Systems, Inc. - 教育目的で引用*
 
 肌の露出部分（顔・腕）が暖色、衣服や背景が寒色で表示されています。
 :::

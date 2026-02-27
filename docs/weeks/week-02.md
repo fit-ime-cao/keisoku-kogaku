@@ -339,6 +339,7 @@ $$
 
 ![FlexiForce 力センサ](/images/flexiforce-sensor.jpg)
 
+*出典: Tekscan, Inc. - 教育目的で引用*
 
 既知の荷重を加えて、出力電圧との関係を調べます。
 
