@@ -124,26 +124,70 @@ $$= \frac{2 \times 10^6}{2.0} \times 0.001 = 1000 \text{ [N]} = 1 \text{ [kN]}$$
 4つの抵抗をブリッジ状に接続し、**微小な抵抗変化**を高精度に検出する回路です。
 :::
 
-<svg viewBox="0 0 450 250" xmlns="http://www.w3.org/2000/svg" style="max-width: 450px; margin: 20px auto; display: block;">
-  <text x="225" y="18" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">ホイートストンブリッジ回路</text>
-  <line x1="225" y1="40" x2="100" y2="120" stroke="#333" stroke-width="2"/>
-  <line x1="225" y1="40" x2="350" y2="120" stroke="#333" stroke-width="2"/>
-  <line x1="100" y1="120" x2="225" y2="200" stroke="#333" stroke-width="2"/>
-  <line x1="350" y1="120" x2="225" y2="200" stroke="#333" stroke-width="2"/>
-  <rect x="145" y="60" width="40" height="25" fill="#E3F2FD" stroke="#1565C0" stroke-width="1.5" rx="3"/>
-  <text x="165" y="78" text-anchor="middle" font-size="10" fill="#1565C0" font-weight="bold">R₁</text>
-  <rect x="265" y="60" width="40" height="25" fill="#E3F2FD" stroke="#1565C0" stroke-width="1.5" rx="3"/>
-  <text x="285" y="78" text-anchor="middle" font-size="10" fill="#1565C0" font-weight="bold">R₂</text>
-  <rect x="145" y="145" width="40" height="25" fill="#FFCDD2" stroke="#F44336" stroke-width="1.5" rx="3"/>
-  <text x="165" y="163" text-anchor="middle" font-size="10" fill="#F44336" font-weight="bold">R₃</text>
-  <rect x="265" y="145" width="40" height="25" fill="#E3F2FD" stroke="#1565C0" stroke-width="1.5" rx="3"/>
-  <text x="285" y="163" text-anchor="middle" font-size="10" fill="#1565C0" font-weight="bold">R₄</text>
-  <text x="225" y="35" text-anchor="middle" font-size="10" fill="#333" font-weight="bold">V_in</text>
-  <text x="225" y="220" text-anchor="middle" font-size="10" fill="#333">GND</text>
-  <line x1="100" y1="120" x2="350" y2="120" stroke="#FF9800" stroke-width="2" stroke-dasharray="5,3"/>
-  <text x="225" y="115" text-anchor="middle" font-size="10" fill="#FF9800" font-weight="bold">V_out</text>
-  <circle cx="100" cy="120" r="4" fill="#FF9800"/>
-  <circle cx="350" cy="120" r="4" fill="#FF9800"/>
+<svg viewBox="0 0 450 280" xmlns="http://www.w3.org/2000/svg" style="max-width: 450px; margin: 20px auto; display: block;">
+  <style>
+    @keyframes resistChange { 
+      0%, 40% { fill: #FFCDD2; }
+      50%, 90% { fill: #EF9A9A; }
+      100% { fill: #FFCDD2; }
+    }
+    @keyframes voltPulse { 
+      0%, 40% { opacity: 0.3; }
+      50%, 90% { opacity: 1; }
+      100% { opacity: 0.3; }
+    }
+    @keyframes arrowPulse {
+      0%, 40% { transform: translateY(0); }
+      50%, 90% { transform: translateY(5px); }
+      100% { transform: translateY(0); }
+    }
+    .strain-gauge { animation: resistChange 3s ease-in-out infinite; }
+    .volt-indicator { animation: voltPulse 3s ease-in-out infinite; }
+    .arrow-move { animation: arrowPulse 3s ease-in-out infinite; transform-origin: center; }
+  </style>
+  <text x="225" y="18" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">ホイートストンブリッジの動作（アニメーション）</text>
+  
+  <!-- ブリッジ回路 -->
+  <line x1="225" y1="45" x2="100" y2="125" stroke="#333" stroke-width="2"/>
+  <line x1="225" y1="45" x2="350" y2="125" stroke="#333" stroke-width="2"/>
+  <line x1="100" y1="125" x2="225" y2="205" stroke="#333" stroke-width="2"/>
+  <line x1="350" y1="125" x2="225" y2="205" stroke="#333" stroke-width="2"/>
+  
+  <!-- 抵抗 R1, R2, R4 (固定) -->
+  <rect x="145" y="65" width="40" height="25" fill="#E3F2FD" stroke="#1565C0" stroke-width="1.5" rx="3"/>
+  <text x="165" y="83" text-anchor="middle" font-size="10" fill="#1565C0" font-weight="bold">R₁</text>
+  <rect x="265" y="65" width="40" height="25" fill="#E3F2FD" stroke="#1565C0" stroke-width="1.5" rx="3"/>
+  <text x="285" y="83" text-anchor="middle" font-size="10" fill="#1565C0" font-weight="bold">R₂</text>
+  <rect x="265" y="150" width="40" height="25" fill="#E3F2FD" stroke="#1565C0" stroke-width="1.5" rx="3"/>
+  <text x="285" y="168" text-anchor="middle" font-size="10" fill="#1565C0" font-weight="bold">R₄</text>
+  
+  <!-- R3 (ひずみゲージ - 変化する) -->
+  <rect x="145" y="150" width="40" height="25" class="strain-gauge" stroke="#F44336" stroke-width="2" rx="3"/>
+  <text x="165" y="168" text-anchor="middle" font-size="10" fill="#C62828" font-weight="bold">R₃+ΔR</text>
+  <text x="165" y="182" text-anchor="middle" font-size="8" fill="#F44336">ゲージ</text>
+  
+  <!-- 入力電圧 -->
+  <text x="225" y="38" text-anchor="middle" font-size="10" fill="#333" font-weight="bold">V_in</text>
+  <text x="225" y="222" text-anchor="middle" font-size="10" fill="#333">GND</text>
+  
+  <!-- 出力電圧線（点滅） -->
+  <line x1="100" y1="125" x2="350" y2="125" stroke="#FF9800" stroke-width="2.5" class="volt-indicator"/>
+  <circle cx="100" cy="125" r="5" fill="#FF9800" class="volt-indicator"/>
+  <circle cx="350" cy="125" r="5" fill="#FF9800" class="volt-indicator"/>
+  <text x="225" y="118" text-anchor="middle" font-size="11" fill="#FF9800" font-weight="bold" class="volt-indicator">V_out</text>
+  
+  <!-- 電圧計インジケータ -->
+  <rect x="380" y="100" width="55" height="50" fill="#FFF8E1" stroke="#FFA000" stroke-width="1.5" rx="5"/>
+  <text x="407" y="118" text-anchor="middle" font-size="8" fill="#F57C00">電圧計</text>
+  <g class="arrow-move">
+    <line x1="407" y1="128" x2="407" y2="140" stroke="#4CAF50" stroke-width="2"/>
+    <polygon points="403,138 407,145 411,138" fill="#4CAF50"/>
+  </g>
+  <text x="407" y="145" text-anchor="middle" font-size="7" fill="#4CAF50" class="volt-indicator">↑ΔV</text>
+  
+  <!-- 説明 -->
+  <text x="225" y="250" text-anchor="middle" font-size="10" fill="#757575">R₃が変化（ΔR）すると、ブリッジの平衡が崩れる</text>
+  <text x="225" y="265" text-anchor="middle" font-size="10" fill="#FF9800">→ V_outが変化し、ひずみを検出できる</text>
 </svg>
 
 #### 平衡条件

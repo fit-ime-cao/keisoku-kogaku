@@ -168,26 +168,74 @@ $$= 2.5 + 4.5 + 3.5 + 5.5 = 16.0$$
 加速度センサの基本構造は、**バネ-マス-ダンパ系**です。筐体に加速度が加わると、内部の質量体が慣性により相対変位を起こし、その変位量から加速度を計測します。
 :::
 
-<svg viewBox="0 0 450 220" xmlns="http://www.w3.org/2000/svg" style="max-width: 450px; margin: 20px auto; display: block;">
-  <text x="225" y="18" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">サイズモ系（バネ-マス-ダンパ）</text>
-  <rect x="100" y="30" width="250" height="170" fill="none" stroke="#757575" stroke-width="2" rx="5"/>
-  <text x="225" y="215" text-anchor="middle" font-size="10" fill="#757575">筐体（加速度を受ける）</text>
-  <rect x="180" y="100" width="90" height="50" fill="#E3F2FD" stroke="#1565C0" stroke-width="2" rx="3"/>
-  <text x="225" y="130" text-anchor="middle" font-size="11" fill="#1565C0" font-weight="bold">質量 M</text>
-  <line x1="140" y1="70" x2="140" y2="100" stroke="#F44336" stroke-width="2"/>
-  <path d="M140,70 L130,78 L150,86 L130,94 L140,100" fill="none" stroke="#F44336" stroke-width="2"/>
-  <text x="120" y="85" text-anchor="end" font-size="10" fill="#F44336">k</text>
-  <line x1="180" y1="125" x2="140" y2="125" stroke="none"/>
+<svg viewBox="0 0 450 240" xmlns="http://www.w3.org/2000/svg" style="max-width: 450px; margin: 20px auto; display: block;">
+  <style>
+    @keyframes shake { 
+      0%, 100% { transform: translateX(0); } 
+      10% { transform: translateX(15px); } 
+      30% { transform: translateX(-10px); } 
+      50% { transform: translateX(6px); } 
+      70% { transform: translateX(-3px); } 
+      90% { transform: translateX(1px); } 
+    }
+    @keyframes massMove { 
+      0%, 100% { transform: translateX(0); } 
+      15% { transform: translateX(-20px); } 
+      35% { transform: translateX(12px); } 
+      55% { transform: translateX(-7px); } 
+      75% { transform: translateX(3px); } 
+      90% { transform: translateX(-1px); } 
+    }
+    @keyframes springStretch {
+      0%, 100% { d: path('M140,70 L130,78 L150,86 L130,94 L140,100'); }
+      15% { d: path('M120,70 L110,78 L130,86 L110,94 L120,100'); }
+      35% { d: path('M155,70 L145,78 L165,86 L145,94 L155,100'); }
+      55% { d: path('M135,70 L125,78 L145,86 L125,94 L135,100'); }
+      75% { d: path('M145,70 L135,78 L155,86 L135,94 L145,100'); }
+    }
+    .housing { animation: shake 3s ease-out infinite; transform-origin: center; }
+    .mass { animation: massMove 3s ease-out infinite; transform-origin: center; }
+    .spring { animation: springStretch 3s ease-out infinite; }
+  </style>
+  <text x="225" y="18" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">サイズモ系の動作原理（アニメーション）</text>
+  
+  <!-- 筐体（加速度を受ける） -->
+  <g class="housing">
+    <rect x="100" y="30" width="250" height="170" fill="#FAFAFA" stroke="#757575" stroke-width="2" rx="5"/>
+    <!-- 上部固定部 -->
+    <line x1="100" y1="70" x2="160" y2="70" stroke="#333" stroke-width="1.5"/>
+    <line x1="100" y1="70" x2="100" y2="30" stroke="#333" stroke-width="1.5"/>
+    <line x1="350" y1="70" x2="290" y2="70" stroke="#333" stroke-width="1.5"/>
+    <line x1="350" y1="70" x2="350" y2="30" stroke="#333" stroke-width="1.5"/>
+  </g>
+  
+  <!-- 質量体（慣性で遅れて動く） -->
+  <g class="mass">
+    <rect x="180" y="100" width="90" height="50" fill="#E3F2FD" stroke="#1565C0" stroke-width="2" rx="3"/>
+    <text x="225" y="130" text-anchor="middle" font-size="11" fill="#1565C0" font-weight="bold">質量 M</text>
+  </g>
+  
+  <!-- バネ（伸縮） -->
+  <line x1="140" y1="70" x2="140" y2="45" stroke="#333" stroke-width="1"/>
+  <path d="M140,70 L130,78 L150,86 L130,94 L140,100" fill="none" stroke="#F44336" stroke-width="2" class="spring"/>
+  <line x1="180" y1="125" x2="140" y2="125" stroke="#F44336" stroke-width="1.5"/>
+  <text x="115" y="85" text-anchor="end" font-size="10" fill="#F44336" font-weight="bold">k</text>
+  
+  <!-- ダンパ -->
+  <line x1="297" y1="70" x2="297" y2="45" stroke="#333" stroke-width="1"/>
   <rect x="290" y="75" width="15" height="50" fill="#FF9800" fill-opacity="0.3" stroke="#FF9800" stroke-width="1.5" rx="2"/>
   <line x1="297" y1="125" x2="297" y2="100" stroke="#FF9800" stroke-width="2"/>
-  <text x="325" y="100" font-size="10" fill="#FF9800">c</text>
   <line x1="270" y1="125" x2="310" y2="125" stroke="#FF9800" stroke-width="1.5"/>
-  <line x1="100" y1="70" x2="160" y2="70" stroke="#333" stroke-width="1.5"/>
-  <line x1="100" y1="70" x2="100" y2="30" stroke="#333" stroke-width="1.5"/>
-  <line x1="350" y1="70" x2="290" y2="70" stroke="#333" stroke-width="1.5"/>
-  <line x1="350" y1="70" x2="350" y2="30" stroke="#333" stroke-width="1.5"/>
-  <line x1="140" y1="70" x2="140" y2="45" stroke="#333" stroke-width="1"/>
-  <line x1="297" y1="70" x2="297" y2="45" stroke="#333" stroke-width="1"/>
+  <text x="320" y="100" font-size="10" fill="#FF9800" font-weight="bold">c</text>
+  
+  <!-- 加速度矢印 -->
+  <line x1="30" y1="115" x2="80" y2="115" stroke="#9C27B0" stroke-width="3"/>
+  <polygon points="78,110 90,115 78,120" fill="#9C27B0"/>
+  <text x="55" y="105" text-anchor="middle" font-size="10" fill="#9C27B0" font-weight="bold">α</text>
+  
+  <!-- 説明 -->
+  <text x="225" y="220" text-anchor="middle" font-size="10" fill="#757575">筐体に加速度αが加わると、質量体は慣性で遅れて動く</text>
+  <text x="225" y="235" text-anchor="middle" font-size="10" fill="#1565C0">→ 相対変位xを検出して加速度を算出</text>
 </svg>
 
 ### 4.2 運動方程式

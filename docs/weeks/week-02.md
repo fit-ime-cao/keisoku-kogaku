@@ -176,61 +176,95 @@ graph TD
 ### 図解：的（ターゲット）の例
 
 <div class="svg-container" style="display: flex; justify-content: space-around; flex-wrap: wrap; margin: 20px 0; gap: 10px;">
-  <div style="text-align: center; width: 140px;">
-    <svg viewBox="0 0 100 100" width="120" height="120">
+  <div style="text-align: center; width: 150px;">
+    <svg viewBox="0 0 100 100" width="130" height="130">
+      <style>
+        @keyframes appear1 { 0%, 10% { opacity: 0; transform: scale(0); } 20% { opacity: 1; transform: scale(1.2); } 30%, 100% { opacity: 1; transform: scale(1); } }
+        @keyframes appear2 { 0%, 25% { opacity: 0; transform: scale(0); } 35% { opacity: 1; transform: scale(1.2); } 45%, 100% { opacity: 1; transform: scale(1); } }
+        @keyframes appear3 { 0%, 40% { opacity: 0; transform: scale(0); } 50% { opacity: 1; transform: scale(1.2); } 60%, 100% { opacity: 1; transform: scale(1); } }
+        @keyframes appear4 { 0%, 55% { opacity: 0; transform: scale(0); } 65% { opacity: 1; transform: scale(1.2); } 75%, 100% { opacity: 1; transform: scale(1); } }
+        .shot1a { animation: appear1 4s ease-out infinite; transform-origin: center; }
+        .shot2a { animation: appear2 4s ease-out infinite; transform-origin: center; }
+        .shot3a { animation: appear3 4s ease-out infinite; transform-origin: center; }
+        .shot4a { animation: appear4 4s ease-out infinite; transform-origin: center; }
+      </style>
       <circle cx="50" cy="50" r="45" fill="#f0f0f0" stroke="#333" stroke-width="2"/>
       <circle cx="50" cy="50" r="30" fill="#ddd" stroke="#333" stroke-width="1"/>
       <circle cx="50" cy="50" r="15" fill="#ff6b6b" stroke="#333" stroke-width="1"/>
       <circle cx="50" cy="50" r="4" fill="#cc0000"/>
-      <circle cx="52" cy="48" r="3" fill="#2c3e50"/>
-      <circle cx="49" cy="53" r="3" fill="#2c3e50"/>
-      <circle cx="48" cy="47" r="3" fill="#2c3e50"/>
-      <circle cx="53" cy="51" r="3" fill="#2c3e50"/>
+      <circle cx="52" cy="48" r="3" fill="#27ae60" class="shot1a"/>
+      <circle cx="49" cy="53" r="3" fill="#27ae60" class="shot2a"/>
+      <circle cx="48" cy="47" r="3" fill="#27ae60" class="shot3a"/>
+      <circle cx="53" cy="51" r="3" fill="#27ae60" class="shot4a"/>
     </svg>
     <div style="font-weight: bold; font-size: 0.9em; margin-top: 8px; color: #27ae60;">確度：高<br>精度：高</div>
-    <div style="font-size: 0.8em; color: #666;">理想的な状態</div>
+    <div style="font-size: 0.8em; color: #666;">理想的な状態 ✨</div>
   </div>
-  <div style="text-align: center; width: 140px;">
-    <svg viewBox="0 0 100 100" width="120" height="120">
+  <div style="text-align: center; width: 150px;">
+    <svg viewBox="0 0 100 100" width="130" height="130">
+      <style>
+        .shot1b { animation: appear1 4s ease-out infinite; transform-origin: center; }
+        .shot2b { animation: appear2 4s ease-out infinite; transform-origin: center; }
+        .shot3b { animation: appear3 4s ease-out infinite; transform-origin: center; }
+        .shot4b { animation: appear4 4s ease-out infinite; transform-origin: center; }
+      </style>
       <circle cx="50" cy="50" r="45" fill="#f0f0f0" stroke="#333" stroke-width="2"/>
       <circle cx="50" cy="50" r="30" fill="#ddd" stroke="#333" stroke-width="1"/>
       <circle cx="50" cy="50" r="15" fill="#ff6b6b" stroke="#333" stroke-width="1"/>
       <circle cx="50" cy="50" r="4" fill="#cc0000"/>
-      <circle cx="25" cy="30" r="3" fill="#2c3e50"/>
-      <circle cx="28" cy="27" r="3" fill="#2c3e50"/>
-      <circle cx="26" cy="24" r="3" fill="#2c3e50"/>
-      <circle cx="29" cy="31" r="3" fill="#2c3e50"/>
+      <circle cx="25" cy="30" r="3" fill="#e67e22" class="shot1b"/>
+      <circle cx="28" cy="27" r="3" fill="#e67e22" class="shot2b"/>
+      <circle cx="26" cy="24" r="3" fill="#e67e22" class="shot3b"/>
+      <circle cx="29" cy="31" r="3" fill="#e67e22" class="shot4b"/>
+      <!-- 平均点を示す -->
+      <circle cx="27" cy="28" r="5" fill="none" stroke="#e67e22" stroke-width="1" stroke-dasharray="2,2"/>
+      <text x="27" y="40" text-anchor="middle" font-size="6" fill="#e67e22">平均</text>
     </svg>
     <div style="font-weight: bold; font-size: 0.9em; margin-top: 8px; color: #d35400;">確度：低<br>精度：高</div>
     <div style="font-size: 0.8em; color: #666;">系統誤差が大きい</div>
   </div>
-  <div style="text-align: center; width: 140px;">
-    <svg viewBox="0 0 100 100" width="120" height="120">
+  <div style="text-align: center; width: 150px;">
+    <svg viewBox="0 0 100 100" width="130" height="130">
+      <style>
+        .shot1c { animation: appear1 4s ease-out infinite; transform-origin: center; }
+        .shot2c { animation: appear2 4s ease-out infinite; transform-origin: center; }
+        .shot3c { animation: appear3 4s ease-out infinite; transform-origin: center; }
+        .shot4c { animation: appear4 4s ease-out infinite; transform-origin: center; }
+      </style>
       <circle cx="50" cy="50" r="45" fill="#f0f0f0" stroke="#333" stroke-width="2"/>
       <circle cx="50" cy="50" r="30" fill="#ddd" stroke="#333" stroke-width="1"/>
       <circle cx="50" cy="50" r="15" fill="#ff6b6b" stroke="#333" stroke-width="1"/>
       <circle cx="50" cy="50" r="4" fill="#cc0000"/>
-      <circle cx="50" cy="20" r="3" fill="#2c3e50"/>
-      <circle cx="25" cy="65" r="3" fill="#2c3e50"/>
-      <circle cx="75" cy="45" r="3" fill="#2c3e50"/>
-      <circle cx="45" cy="80" r="3" fill="#2c3e50"/>
+      <circle cx="50" cy="20" r="3" fill="#3498db" class="shot1c"/>
+      <circle cx="25" cy="65" r="3" fill="#3498db" class="shot2c"/>
+      <circle cx="75" cy="45" r="3" fill="#3498db" class="shot3c"/>
+      <circle cx="45" cy="80" r="3" fill="#3498db" class="shot4c"/>
+      <!-- 平均点を示す（中心付近） -->
+      <circle cx="49" cy="52" r="5" fill="none" stroke="#3498db" stroke-width="1" stroke-dasharray="2,2"/>
+      <text x="49" y="62" text-anchor="middle" font-size="6" fill="#3498db">平均</text>
     </svg>
-    <div style="font-weight: bold; font-size: 0.9em; margin-top: 8px; color: #d35400;">確度：高<br>精度：低</div>
+    <div style="font-weight: bold; font-size: 0.9em; margin-top: 8px; color: #3498db;">確度：高<br>精度：低</div>
     <div style="font-size: 0.8em; color: #666;">不定誤差が大きい</div>
   </div>
-  <div style="text-align: center; width: 140px;">
-    <svg viewBox="0 0 100 100" width="120" height="120">
+  <div style="text-align: center; width: 150px;">
+    <svg viewBox="0 0 100 100" width="130" height="130">
+      <style>
+        .shot1d { animation: appear1 4s ease-out infinite; transform-origin: center; }
+        .shot2d { animation: appear2 4s ease-out infinite; transform-origin: center; }
+        .shot3d { animation: appear3 4s ease-out infinite; transform-origin: center; }
+        .shot4d { animation: appear4 4s ease-out infinite; transform-origin: center; }
+      </style>
       <circle cx="50" cy="50" r="45" fill="#f0f0f0" stroke="#333" stroke-width="2"/>
       <circle cx="50" cy="50" r="30" fill="#ddd" stroke="#333" stroke-width="1"/>
       <circle cx="50" cy="50" r="15" fill="#ff6b6b" stroke="#333" stroke-width="1"/>
       <circle cx="50" cy="50" r="4" fill="#cc0000"/>
-      <circle cx="75" cy="25" r="3" fill="#2c3e50"/>
-      <circle cx="85" cy="40" r="3" fill="#2c3e50"/>
-      <circle cx="65" cy="15" r="3" fill="#2c3e50"/>
-      <circle cx="90" cy="20" r="3" fill="#2c3e50"/>
+      <circle cx="75" cy="25" r="3" fill="#c0392b" class="shot1d"/>
+      <circle cx="85" cy="40" r="3" fill="#c0392b" class="shot2d"/>
+      <circle cx="65" cy="15" r="3" fill="#c0392b" class="shot3d"/>
+      <circle cx="90" cy="20" r="3" fill="#c0392b" class="shot4d"/>
     </svg>
     <div style="font-weight: bold; font-size: 0.9em; margin-top: 8px; color: #c0392b;">確度：低<br>精度：低</div>
-    <div style="font-size: 0.8em; color: #666;">最も悪い状態</div>
+    <div style="font-size: 0.8em; color: #666;">最も悪い状態 ⚠️</div>
   </div>
 </div>
 

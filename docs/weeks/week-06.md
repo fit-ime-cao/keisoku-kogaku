@@ -277,22 +277,49 @@ $$f_N = \frac{f_s}{2}$$
 
 ナイキスト周波数を越える周波数の信号成分を含む場合に、再現信号に**偽の低周波成分（ノイズ）** が現れる現象です。
 
-<svg viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg" style="max-width: 500px; margin: 20px auto; display: block;">
-  <text x="250" y="18" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">エリアシングの発生</text>
+<svg viewBox="0 0 500 220" xmlns="http://www.w3.org/2000/svg" style="max-width: 500px; margin: 20px auto; display: block;">
+  <style>
+    @keyframes wave { 0% { transform: translateX(0); } 100% { transform: translateX(-40px); } }
+    @keyframes blink { 0%, 45% { opacity: 0; } 50%, 95% { opacity: 1; } 100% { opacity: 0; } }
+    @keyframes pulse { 0%, 100% { r: 4; } 50% { r: 6; } }
+    .highfreq { animation: wave 1s linear infinite; }
+    .sample-pt { animation: pulse 0.5s ease-in-out infinite; }
+    .alias-line { animation: blink 3s ease-in-out infinite; stroke-dasharray: 200; stroke-dashoffset: 200; animation: draw 2s ease-out forwards; }
+    @keyframes draw { to { stroke-dashoffset: 0; } }
+  </style>
+  <text x="250" y="18" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">エリアシングの発生（アニメーション）</text>
   <line x1="50" y1="170" x2="460" y2="170" stroke="#333" stroke-width="1.5"/>
   <line x1="50" y1="170" x2="50" y2="30" stroke="#333" stroke-width="1.5"/>
   <text x="255" y="192" text-anchor="middle" font-size="11" fill="#333">時間 t</text>
-  <path d="M60,100 Q70,50 80,100 Q90,150 100,100 Q110,50 120,100 Q130,150 140,100 Q150,50 160,100 Q170,150 180,100 Q190,50 200,100 Q210,150 220,100 Q230,50 240,100 Q250,150 260,100 Q270,50 280,100 Q290,150 300,100 Q310,50 320,100 Q330,150 340,100 Q350,50 360,100 Q370,150 380,100 Q390,50 400,100 Q410,150 420,100 Q430,50 440,100" fill="none" stroke="#ccc" stroke-width="1.2"/>
-  <circle cx="80" cy="100" r="4" fill="#F44336"/>
-  <circle cx="140" cy="100" r="4" fill="#F44336"/>
-  <circle cx="200" cy="100" r="4" fill="#F44336"/>
-  <circle cx="260" cy="100" r="4" fill="#F44336"/>
-  <circle cx="320" cy="100" r="4" fill="#F44336"/>
-  <circle cx="380" cy="100" r="4" fill="#F44336"/>
-  <circle cx="440" cy="100" r="4" fill="#F44336"/>
-  <path d="M80,100 Q160,70 260,100 Q360,130 440,100" fill="none" stroke="#F44336" stroke-width="2" stroke-dasharray="6,3"/>
-  <text x="430" y="60" font-size="10" fill="#ccc">原信号（高周波）</text>
-  <text x="430" y="140" font-size="10" fill="#F44336" font-weight="bold">偽信号（エリアシング）</text>
+  
+  <!-- 高周波原信号（アニメーション） -->
+  <g class="highfreq">
+    <path d="M20,100 Q30,50 40,100 Q50,150 60,100 Q70,50 80,100 Q90,150 100,100 Q110,50 120,100 Q130,150 140,100 Q150,50 160,100 Q170,150 180,100 Q190,50 200,100 Q210,150 220,100 Q230,50 240,100 Q250,150 260,100 Q270,50 280,100 Q290,150 300,100 Q310,50 320,100 Q330,150 340,100 Q350,50 360,100 Q370,150 380,100 Q390,50 400,100 Q410,150 420,100 Q430,50 440,100 Q450,150 460,100 Q470,50 480,100 Q490,150 500,100" fill="none" stroke="#BDBDBD" stroke-width="1.5"/>
+  </g>
+  
+  <!-- サンプリング点（点滅） -->
+  <circle cx="80" cy="100" r="5" fill="#F44336" class="sample-pt"/>
+  <circle cx="140" cy="100" r="5" fill="#F44336" class="sample-pt" style="animation-delay: 0.1s"/>
+  <circle cx="200" cy="100" r="5" fill="#F44336" class="sample-pt" style="animation-delay: 0.2s"/>
+  <circle cx="260" cy="100" r="5" fill="#F44336" class="sample-pt" style="animation-delay: 0.3s"/>
+  <circle cx="320" cy="100" r="5" fill="#F44336" class="sample-pt" style="animation-delay: 0.4s"/>
+  <circle cx="380" cy="100" r="5" fill="#F44336" class="sample-pt" style="animation-delay: 0.5s"/>
+  <circle cx="440" cy="100" r="5" fill="#F44336" class="sample-pt" style="animation-delay: 0.6s"/>
+  
+  <!-- 偏信号（エリアシング） -->
+  <path d="M80,100 Q130,85 180,100 Q230,115 280,100 Q330,85 380,100 Q410,108 440,100" fill="none" stroke="#F44336" stroke-width="2.5" class="alias-line"/>
+  
+  <!-- 凡例 -->
+  <rect x="320" y="30" width="130" height="55" fill="#FAFAFA" stroke="#E0E0E0" rx="3"/>
+  <line x1="330" y1="45" x2="350" y2="45" stroke="#BDBDBD" stroke-width="2"/>
+  <text x="355" y="48" font-size="9" fill="#757575">原信号（高周波）</text>
+  <circle cx="340" cy="62" r="4" fill="#F44336"/>
+  <text x="355" y="65" font-size="9" fill="#757575">サンプリング点</text>
+  <line x1="330" y1="78" x2="350" y2="78" stroke="#F44336" stroke-width="2"/>
+  <text x="355" y="81" font-size="9" fill="#F44336" font-weight="bold">偏信号</text>
+  
+  <!-- 説明 -->
+  <text x="250" y="210" text-anchor="middle" font-size="10" fill="#757575">サンプリング点がすべて同じ値 → 低周波の偏信号が現れる</text>
 </svg>
 
 ::: warning ⚠️ 実用上の注意
