@@ -20,7 +20,7 @@ export default withMermaid({
     nav: [
       { text: 'ホーム', link: '/' },
       { text: '講義', link: '/weeks/week-01' },
-      { text: '資料', link: '/resources/glossary' }
+      { text: '参考文献', link: '/references' }
     ],
 
     // 侧边栏
@@ -65,15 +65,6 @@ export default withMermaid({
           ]
         }
       ],
-      '/resources/': [
-        {
-          text: '学習リソース',
-          items: [
-            { text: '用語集', link: '/resources/glossary' },
-            { text: '公式集', link: '/resources/formulas' },
-            { text: '参考文献', link: '/resources/references' }
-        }
-      ]
     },
 
     // 社交链接
