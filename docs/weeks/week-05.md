@@ -218,6 +218,63 @@ $$P(x) = y_0 \frac{(x-x_1)(x-x_2)}{(x_0-x_1)(x_0-x_2)} + y_1 \frac{(x-x_0)(x-x_2
 | **欠点** | ラグランジュ補間より計算量が多い |
 | **用途** | CG、CAD、数値計算など広く使用 |
 
+<svg viewBox="0 0 480 280" xmlns="http://www.w3.org/2000/svg" style="max-width: 480px; margin: 20px auto; display: block;">
+  <style>
+    @keyframes w5zohShow { 0% { opacity: 1; } 30% { opacity: 1; } 33% { opacity: 0; } 97% { opacity: 0; } 100% { opacity: 1; } }
+    @keyframes w5linShow { 0% { opacity: 0; } 30% { opacity: 0; } 33% { opacity: 1; } 63% { opacity: 1; } 66% { opacity: 0; } 100% { opacity: 0; } }
+    @keyframes w5splShow { 0% { opacity: 0; } 63% { opacity: 0; } 66% { opacity: 1; } 97% { opacity: 1; } 100% { opacity: 0; } }
+    @keyframes w5zohLbl { 0% { opacity: 1; fill: #FF5722; } 30% { opacity: 1; fill: #FF5722; } 33% { opacity: 0; } 97% { opacity: 0; } 100% { opacity: 1; fill: #FF5722; } }
+    @keyframes w5linLbl { 0% { opacity: 0; } 30% { opacity: 0; } 33% { opacity: 1; fill: #4CAF50; } 63% { opacity: 1; fill: #4CAF50; } 66% { opacity: 0; } 100% { opacity: 0; } }
+    @keyframes w5splLbl { 0% { opacity: 0; } 63% { opacity: 0; } 66% { opacity: 1; fill: #9C27B0; } 97% { opacity: 1; fill: #9C27B0; } 100% { opacity: 0; } }
+    @keyframes w5dotPulse { 0%,100% { r: 4; } 50% { r: 5.5; } }
+    .w5zoh { animation: w5zohShow 12s ease-in-out infinite; }
+    .w5lin { animation: w5linShow 12s ease-in-out infinite; }
+    .w5spl { animation: w5splShow 12s ease-in-out infinite; }
+    .w5zohLbl { animation: w5zohLbl 12s ease-in-out infinite; }
+    .w5linLbl { animation: w5linLbl 12s ease-in-out infinite; }
+    .w5splLbl { animation: w5splLbl 12s ease-in-out infinite; }
+    .w5dot { animation: w5dotPulse 3s ease-in-out infinite; }
+  </style>
+  <rect x="50" y="20" width="390" height="200" fill="#fafafa" stroke="#ddd" rx="3"/>
+  <line x1="50" y1="220" x2="440" y2="220" stroke="#333" stroke-width="1.5"/>
+  <line x1="50" y1="220" x2="50" y2="20" stroke="#333" stroke-width="1.5"/>
+  <text x="245" y="245" text-anchor="middle" font-size="12" fill="#333">時間 t</text>
+  <text x="25" y="120" text-anchor="middle" font-size="12" fill="#333" transform="rotate(-90,25,120)">値</text>
+  <path d="M60,180 Q100,175 140,150 Q180,100 220,80 Q260,70 300,90 Q340,130 380,160" fill="none" stroke="#ccc" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="420" y="45" font-size="10" fill="#ccc">元の信号</text>
+  <g class="w5zoh">
+    <line x1="80" y1="160" x2="140" y2="160" stroke="#FF5722" stroke-width="2.5"/>
+    <line x1="140" y1="160" x2="140" y2="140" stroke="#FF5722" stroke-width="2.5"/>
+    <line x1="140" y1="140" x2="200" y2="140" stroke="#FF5722" stroke-width="2.5"/>
+    <line x1="200" y1="140" x2="200" y2="85" stroke="#FF5722" stroke-width="2.5"/>
+    <line x1="200" y1="85" x2="260" y2="85" stroke="#FF5722" stroke-width="2.5"/>
+    <line x1="260" y1="85" x2="260" y2="70" stroke="#FF5722" stroke-width="2.5"/>
+    <line x1="260" y1="70" x2="320" y2="70" stroke="#FF5722" stroke-width="2.5"/>
+    <line x1="320" y1="70" x2="320" y2="100" stroke="#FF5722" stroke-width="2.5"/>
+    <line x1="320" y1="100" x2="380" y2="100" stroke="#FF5722" stroke-width="2.5"/>
+  </g>
+  <g class="w5lin">
+    <line x1="80" y1="160" x2="140" y2="140" stroke="#4CAF50" stroke-width="2.5"/>
+    <line x1="140" y1="140" x2="200" y2="85" stroke="#4CAF50" stroke-width="2.5"/>
+    <line x1="200" y1="85" x2="260" y2="70" stroke="#4CAF50" stroke-width="2.5"/>
+    <line x1="260" y1="70" x2="320" y2="100" stroke="#4CAF50" stroke-width="2.5"/>
+    <line x1="320" y1="100" x2="380" y2="155" stroke="#4CAF50" stroke-width="2.5"/>
+  </g>
+  <g class="w5spl">
+    <path d="M80,160 Q110,148 140,140 Q170,118 200,85 Q230,72 260,70 Q290,78 320,100 Q350,130 380,155" fill="none" stroke="#9C27B0" stroke-width="2.5"/>
+  </g>
+  <circle cx="80" cy="160" r="4" fill="#1565C0" class="w5dot"/>
+  <circle cx="140" cy="140" r="4" fill="#1565C0" class="w5dot"/>
+  <circle cx="200" cy="85" r="4" fill="#1565C0" class="w5dot"/>
+  <circle cx="260" cy="70" r="4" fill="#1565C0" class="w5dot"/>
+  <circle cx="320" cy="100" r="4" fill="#1565C0" class="w5dot"/>
+  <circle cx="380" cy="155" r="4" fill="#1565C0" class="w5dot"/>
+  <text x="245" y="265" text-anchor="middle" font-size="11" font-weight="bold" class="w5zohLbl">ゼロ次ホールド</text>
+  <text x="245" y="265" text-anchor="middle" font-size="11" font-weight="bold" class="w5linLbl">線形補間</text>
+  <text x="245" y="265" text-anchor="middle" font-size="11" font-weight="bold" class="w5splLbl">スプライン補間</text>
+  <text x="245" y="278" text-anchor="middle" font-size="10" fill="#666">補間手法の比較（アニメーション）</text>
+</svg>
+
 ---
 
 ## 4. 補間手法の比較

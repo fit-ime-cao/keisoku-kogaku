@@ -241,27 +241,60 @@ $$y = ax + b$$
 
 の係数 $a$（傾き）と $b$（切片）を、データから求めます。
 
-<svg viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg" style="max-width: 400px; margin: 20px auto; display: block;">
-  <rect x="50" y="20" width="330" height="220" fill="#fafafa" stroke="#ddd" rx="3"/>
-  <line x1="50" y1="240" x2="380" y2="240" stroke="#333" stroke-width="1.5"/>
-  <line x1="50" y1="240" x2="50" y2="20" stroke="#333" stroke-width="1.5"/>
+<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" style="max-width: 400px; margin: 20px auto; display: block;">
+  <style>
+    @keyframes w3dotAppear { 0% { opacity: 0; transform: scale(0); } 100% { opacity: 1; transform: scale(1); } }
+    @keyframes w3lineDraw { 0% { stroke-dashoffset: 400; } 100% { stroke-dashoffset: 0; } }
+    @keyframes w3residShow { 0%,75% { opacity: 0; } 80% { opacity: 1; } 95% { opacity: 1; } 100% { opacity: 0; } }
+    @keyframes w3labelFade { 0%,60% { opacity: 0; } 70% { opacity: 1; } 100% { opacity: 1; } }
+    @keyframes w3residLabel { 0%,75% { opacity: 0; } 80% { opacity: 1; } 95% { opacity: 1; } 100% { opacity: 0; } }
+    .w3d1 { opacity: 0; transform-origin: 80px 205px; animation: w3dotAppear 0.4s ease-out 0.3s forwards; }
+    .w3d2 { opacity: 0; transform-origin: 110px 185px; animation: w3dotAppear 0.4s ease-out 0.6s forwards; }
+    .w3d3 { opacity: 0; transform-origin: 140px 195px; animation: w3dotAppear 0.4s ease-out 0.9s forwards; }
+    .w3d4 { opacity: 0; transform-origin: 160px 165px; animation: w3dotAppear 0.4s ease-out 1.2s forwards; }
+    .w3d5 { opacity: 0; transform-origin: 190px 155px; animation: w3dotAppear 0.4s ease-out 1.5s forwards; }
+    .w3d6 { opacity: 0; transform-origin: 220px 140px; animation: w3dotAppear 0.4s ease-out 1.8s forwards; }
+    .w3d7 { opacity: 0; transform-origin: 250px 130px; animation: w3dotAppear 0.4s ease-out 2.1s forwards; }
+    .w3d8 { opacity: 0; transform-origin: 270px 105px; animation: w3dotAppear 0.4s ease-out 2.4s forwards; }
+    .w3d9 { opacity: 0; transform-origin: 300px 95px; animation: w3dotAppear 0.4s ease-out 2.7s forwards; }
+    .w3d10 { opacity: 0; transform-origin: 330px 75px; animation: w3dotAppear 0.4s ease-out 3.0s forwards; }
+    .w3d11 { opacity: 0; transform-origin: 360px 60px; animation: w3dotAppear 0.4s ease-out 3.3s forwards; }
+    .w3regline { stroke-dasharray: 400; stroke-dashoffset: 400; animation: w3lineDraw 1.2s ease-in-out 4.0s forwards; }
+    .w3eqlabel { opacity: 0; animation: w3labelFade 1s ease-out 4.8s forwards; }
+    .w3resid { opacity: 0; animation: w3residShow 8s ease-in-out 5.5s infinite; }
+    .w3residtxt { opacity: 0; animation: w3residLabel 8s ease-in-out 5.5s infinite; }
+  </style>
+  <rect x="50" y="20" width="330" height="230" fill="#fafafa" stroke="#ddd" rx="3"/>
+  <line x1="50" y1="250" x2="380" y2="250" stroke="#333" stroke-width="1.5"/>
+  <line x1="50" y1="250" x2="50" y2="20" stroke="#333" stroke-width="1.5"/>
   <text x="215" y="270" text-anchor="middle" font-size="13" fill="#333">x</text>
-  <text x="25" y="130" text-anchor="middle" font-size="13" fill="#333" transform="rotate(-90,25,130)">y</text>
-  <circle cx="80" cy="205" r="4" fill="#1565C0"/>
-  <circle cx="110" cy="185" r="4" fill="#1565C0"/>
-  <circle cx="140" cy="195" r="4" fill="#1565C0"/>
-  <circle cx="160" cy="165" r="4" fill="#1565C0"/>
-  <circle cx="190" cy="155" r="4" fill="#1565C0"/>
-  <circle cx="220" cy="140" r="4" fill="#1565C0"/>
-  <circle cx="250" cy="130" r="4" fill="#1565C0"/>
-  <circle cx="270" cy="105" r="4" fill="#1565C0"/>
-  <circle cx="300" cy="95" r="4" fill="#1565C0"/>
-  <circle cx="330" cy="75" r="4" fill="#1565C0"/>
-  <circle cx="360" cy="60" r="4" fill="#1565C0"/>
-  <line x1="65" y1="220" x2="375" y2="45" stroke="#FF5722" stroke-width="2.5"/>
-  <text x="340" y="38" font-size="12" fill="#FF5722" font-weight="bold">y = ax + b</text>
-  <line x1="220" y1="140" x2="220" y2="150" stroke="#4CAF50" stroke-width="2" stroke-dasharray="3,2"/>
-  <text x="232" y="150" font-size="11" fill="#4CAF50">eᵢ</text>
+  <text x="25" y="135" text-anchor="middle" font-size="13" fill="#333" transform="rotate(-90,25,135)">y</text>
+  <text x="215" y="295" text-anchor="middle" font-size="11" fill="#1565C0" font-weight="bold">最小二乗法フィッティング（アニメーション）</text>
+  <circle cx="80" cy="205" r="4.5" fill="#1565C0" class="w3d1"/>
+  <circle cx="110" cy="185" r="4.5" fill="#1565C0" class="w3d2"/>
+  <circle cx="140" cy="195" r="4.5" fill="#1565C0" class="w3d3"/>
+  <circle cx="160" cy="165" r="4.5" fill="#1565C0" class="w3d4"/>
+  <circle cx="190" cy="155" r="4.5" fill="#1565C0" class="w3d5"/>
+  <circle cx="220" cy="140" r="4.5" fill="#1565C0" class="w3d6"/>
+  <circle cx="250" cy="130" r="4.5" fill="#1565C0" class="w3d7"/>
+  <circle cx="270" cy="105" r="4.5" fill="#1565C0" class="w3d8"/>
+  <circle cx="300" cy="95" r="4.5" fill="#1565C0" class="w3d9"/>
+  <circle cx="330" cy="75" r="4.5" fill="#1565C0" class="w3d10"/>
+  <circle cx="360" cy="60" r="4.5" fill="#1565C0" class="w3d11"/>
+  <line x1="65" y1="220" x2="375" y2="45" stroke="#FF5722" stroke-width="2.5" class="w3regline"/>
+  <text x="340" y="38" font-size="12" fill="#FF5722" font-weight="bold" class="w3eqlabel">y = ax + b</text>
+  <line x1="80" y1="205" x2="80" y2="212" stroke="#4CAF50" stroke-width="2" stroke-dasharray="3,2" class="w3resid"/>
+  <line x1="110" y1="185" x2="110" y2="195" stroke="#4CAF50" stroke-width="2" stroke-dasharray="3,2" class="w3resid"/>
+  <line x1="140" y1="195" x2="140" y2="178" stroke="#4CAF50" stroke-width="2" stroke-dasharray="3,2" class="w3resid"/>
+  <line x1="160" y1="165" x2="160" y2="166" stroke="#4CAF50" stroke-width="2" stroke-dasharray="3,2" class="w3resid"/>
+  <line x1="190" y1="155" x2="190" y2="149" stroke="#4CAF50" stroke-width="2" stroke-dasharray="3,2" class="w3resid"/>
+  <line x1="220" y1="140" x2="220" y2="133" stroke="#4CAF50" stroke-width="2" stroke-dasharray="3,2" class="w3resid"/>
+  <line x1="250" y1="130" x2="250" y2="116" stroke="#4CAF50" stroke-width="2" stroke-dasharray="3,2" class="w3resid"/>
+  <line x1="270" y1="105" x2="270" y2="104" stroke="#4CAF50" stroke-width="2" stroke-dasharray="3,2" class="w3resid"/>
+  <line x1="300" y1="95" x2="300" y2="87" stroke="#4CAF50" stroke-width="2" stroke-dasharray="3,2" class="w3resid"/>
+  <line x1="330" y1="75" x2="330" y2="70" stroke="#4CAF50" stroke-width="2" stroke-dasharray="3,2" class="w3resid"/>
+  <line x1="360" y1="60" x2="360" y2="54" stroke="#4CAF50" stroke-width="2" stroke-dasharray="3,2" class="w3resid"/>
+  <text x="232" y="153" font-size="11" fill="#4CAF50" class="w3residtxt">eᵢ（残差）</text>
 </svg>
 
 ### 5.2 残差（Residual）

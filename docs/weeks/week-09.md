@@ -127,20 +127,34 @@ LED の光が対象物で反射し、フォトトランジスタで受光する�
 発光素子と受光素子（PSD：Position Sensitive Detector）の既知の距離と、反射光の入射角度から、対象物までの距離を**幾何学的に**算出する。
 :::
 
-<svg viewBox="0 0 450 220" xmlns="http://www.w3.org/2000/svg" style="max-width: 450px; margin: 20px auto; display: block;">
-  <text x="225" y="18" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">三角測量の原理</text>
-  <circle cx="100" cy="180" r="15" fill="#FFF9C4" stroke="#F9A825" stroke-width="1.5"/>
-  <text x="100" y="185" text-anchor="middle" font-size="8" fill="#F9A825">LED</text>
-  <circle cx="300" cy="180" r="15" fill="#E3F2FD" stroke="#1565C0" stroke-width="1.5"/>
-  <text x="300" y="185" text-anchor="middle" font-size="8" fill="#1565C0">PSD</text>
-  <circle cx="200" cy="50" r="8" fill="#E0E0E0" stroke="#757575" stroke-width="1.5"/>
-  <text x="200" y="40" text-anchor="middle" font-size="10" fill="#757575">対象物</text>
-  <line x1="100" y1="165" x2="200" y2="55" stroke="#F9A825" stroke-width="2"/>
-  <line x1="200" y1="55" x2="300" y2="165" stroke="#1565C0" stroke-width="2" stroke-dasharray="5,3"/>
-  <line x1="100" y1="195" x2="300" y2="195" stroke="#333" stroke-width="1.5"/>
-  <text x="200" y="210" text-anchor="middle" font-size="10" fill="#333">d（既知の距離）</text>
-  <text x="140" y="110" font-size="10" fill="#F9A825" transform="rotate(-55,140,110)">発光</text>
-  <text x="260" y="110" font-size="10" fill="#1565C0" transform="rotate(55,260,110)">反射光</text>
+<svg viewBox="0 0 450 240" xmlns="http://www.w3.org/2000/svg" style="max-width: 450px; margin: 20px auto; display: block;">
+  <style>
+    @keyframes ledBeam { 0% { stroke-dashoffset: 200; opacity: 0; } 10% { opacity: 1; } 50% { stroke-dashoffset: 0; opacity: 1; } 100% { stroke-dashoffset: 0; opacity: 1; } }
+    @keyframes reflectBeam { 0%, 50% { stroke-dashoffset: 200; opacity: 0; } 60% { opacity: 1; } 100% { stroke-dashoffset: 0; opacity: 1; } }
+    @keyframes triBase { 0%, 70% { stroke-dashoffset: 200; opacity: 0; } 80% { opacity: 1; } 100% { stroke-dashoffset: 0; opacity: 1; } }
+    @keyframes targetPulse { 0%, 40% { r: 8; fill-opacity: 0.2; } 50% { r: 12; fill-opacity: 0.5; } 60%, 100% { r: 8; fill-opacity: 0.3; } }
+    @keyframes fadeLabel { 0%, 75% { opacity: 0; } 85%, 100% { opacity: 1; } }
+    @keyframes ledGlow { 0%, 100% { fill-opacity: 0.6; } 15%, 85% { fill-opacity: 1; } }
+    .tri-led-beam { animation: ledBeam 6s ease-out infinite; stroke-dasharray: 200; }
+    .tri-reflect-beam { animation: reflectBeam 6s ease-out infinite; stroke-dasharray: 200; }
+    .tri-base-line { animation: triBase 6s ease-out infinite; stroke-dasharray: 200; }
+    .tri-target { animation: targetPulse 6s ease-in-out infinite; }
+    .tri-label { animation: fadeLabel 6s ease-in-out infinite; }
+    .tri-led-glow { animation: ledGlow 6s ease-in-out infinite; }
+  </style>
+  <text x="225" y="18" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">三角測量の原理（アニメーション）</text>
+  <circle cx="100" cy="200" r="18" fill="#FFF9C4" stroke="#F9A825" stroke-width="1.5" class="tri-led-glow"/>
+  <text x="100" y="204" text-anchor="middle" font-size="9" fill="#F9A825" font-weight="bold">LED</text>
+  <circle cx="300" cy="200" r="18" fill="#E3F2FD" stroke="#1565C0" stroke-width="1.5"/>
+  <text x="300" y="204" text-anchor="middle" font-size="9" fill="#1565C0" font-weight="bold">PSD</text>
+  <circle cx="200" cy="55" r="8" fill="#FF9800" class="tri-target"/>
+  <text x="200" y="38" text-anchor="middle" font-size="10" fill="#757575">対象物</text>
+  <line x1="100" y1="182" x2="200" y2="60" stroke="#F9A825" stroke-width="2.5" class="tri-led-beam"/>
+  <line x1="200" y1="60" x2="300" y2="182" stroke="#1565C0" stroke-width="2" stroke-dasharray="6,3" class="tri-reflect-beam"/>
+  <line x1="100" y1="218" x2="300" y2="218" stroke="#333" stroke-width="1.5" class="tri-base-line"/>
+  <text x="200" y="234" text-anchor="middle" font-size="10" fill="#333" class="tri-label">d（既知の距離）</text>
+  <text x="138" y="125" font-size="10" fill="#F9A825" transform="rotate(-57,138,125)" class="tri-label">発光</text>
+  <text x="262" y="125" font-size="10" fill="#1565C0" transform="rotate(57,262,125)" class="tri-label">反射光</text>
 </svg>
 
 スマートフォンにも小型化されて搭載されている技術です。
@@ -156,6 +170,40 @@ $$L = \frac{c \cdot t}{2}$$
 - $L$：対象物までの距離 [m]
 - $c$：光速 = $299{,}792{,}458$ m/s $\approx 3 \times 10^8$ m/s
 - $t$：往復時間 [s]
+
+
+<svg viewBox="0 0 520 160" xmlns="http://www.w3.org/2000/svg" style="max-width: 520px; margin: 20px auto; display: block;">
+  <style>
+    @keyframes tofDotGo { 0% { cx: 95; opacity: 1; } 48% { cx: 400; opacity: 1; } 50% { cx: 400; opacity: 0; } 100% { cx: 400; opacity: 0; } }
+    @keyframes tofDotBack { 0%, 50% { cx: 400; opacity: 0; } 52% { cx: 400; opacity: 1; } 98% { cx: 95; opacity: 1; } 100% { cx: 95; opacity: 0; } }
+    @keyframes tofHit { 0%, 45% { fill-opacity: 0.2; } 50% { fill-opacity: 0.8; } 55%, 100% { fill-opacity: 0.2; } }
+    @keyframes tofLabelShow { 0%, 70% { opacity: 0; } 80%, 95% { opacity: 1; } 100% { opacity: 0; } }
+    @keyframes tofTimerGrow { 0% { width: 0; } 50% { width: 150; } 100% { width: 305; } }
+    .tof-dot-go { animation: tofDotGo 3s linear infinite; }
+    .tof-dot-back { animation: tofDotBack 3s linear infinite; }
+    .tof-hit { animation: tofHit 3s ease-in-out infinite; }
+    .tof-formula { animation: tofLabelShow 3s ease-in-out infinite; }
+    .tof-timer { animation: tofTimerGrow 3s linear infinite; }
+  </style>
+  <text x="260" y="18" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">ToF方式（アニメーション）</text>
+  <rect x="20" y="50" width="75" height="45" fill="#E3F2FD" stroke="#1565C0" stroke-width="2" rx="5"/>
+  <text x="57" y="70" text-anchor="middle" font-size="9" fill="#1565C0" font-weight="bold">レーザ</text>
+  <text x="57" y="83" text-anchor="middle" font-size="8" fill="#1565C0">発光器</text>
+  <rect x="400" y="35" width="30" height="75" fill="#E0E0E0" stroke="#757575" stroke-width="1.5" rx="3"/>
+  <text x="415" y="77" text-anchor="middle" font-size="9" fill="#757575" font-weight="bold">対象</text>
+  <circle cx="400" cy="72" r="15" fill="#FF5722" class="tof-hit"/>
+  <line x1="95" y1="66" x2="400" y2="66" stroke="#FF5722" stroke-width="1" stroke-dasharray="4,4" opacity="0.3"/>
+  <circle cx="95" cy="66" r="5" fill="#FF5722" class="tof-dot-go"/>
+  <line x1="95" y1="78" x2="400" y2="78" stroke="#4CAF50" stroke-width="1" stroke-dasharray="4,4" opacity="0.3"/>
+  <circle cx="400" cy="78" r="5" fill="#4CAF50" class="tof-dot-back"/>
+  <text x="250" y="58" text-anchor="middle" font-size="9" fill="#FF5722">レーザ光 →</text>
+  <text x="250" y="96" text-anchor="middle" font-size="9" fill="#4CAF50">← 反射光</text>
+  <rect x="95" y="110" width="0" height="6" fill="#9C27B0" rx="3" opacity="0.5" class="tof-timer"/>
+  <line x1="95" y1="118" x2="95" y2="125" stroke="#333" stroke-width="1"/>
+  <line x1="400" y1="118" x2="400" y2="125" stroke="#333" stroke-width="1"/>
+  <text x="248" y="132" text-anchor="middle" font-size="9" fill="#9C27B0">往復時間 t</text>
+  <text x="260" y="152" text-anchor="middle" font-size="13" fill="#1565C0" font-weight="bold" class="tof-formula">L = ct / 2</text>
+</svg>
 
 ::: details 演習：ToF計算
 **問題**：レーザ光の反射時間が 84 ns のとき、対象物までの距離 $L$ [m] を求めよ。

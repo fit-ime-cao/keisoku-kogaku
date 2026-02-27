@@ -145,12 +145,62 @@
 :::
 
 <svg viewBox="0 0 450 250" xmlns="http://www.w3.org/2000/svg" style="max-width: 450px; margin: 20px auto; display: block;">
+  <style>
+    @keyframes traceHyst {
+      0%    { transform: translate(0px, 0px); }
+      3.5%  { transform: translate(40px, -22px); }
+      7%    { transform: translate(80px, -50px); }
+      10.5% { transform: translate(120px, -85px); }
+      14%   { transform: translate(160px, -118px); }
+      17.5% { transform: translate(200px, -142px); }
+      21%   { transform: translate(240px, -154px); }
+      24.5% { transform: translate(280px, -160px); }
+      28%   { transform: translate(300px, -162px); }
+      32%   { transform: translate(300px, -162px); }
+      36%   { transform: translate(280px, -152px); }
+      40%   { transform: translate(240px, -138px); }
+      44%   { transform: translate(200px, -118px); }
+      48%   { transform: translate(160px, -92px); }
+      52%   { transform: translate(120px, -62px); }
+      56%   { transform: translate(80px, -38px); }
+      60%   { transform: translate(40px, -17px); }
+      64%   { transform: translate(0px, 0px); }
+      100%  { transform: translate(0px, 0px); }
+    }
+    @keyframes dotColor {
+      0%, 28%   { fill: #9C27B0; }
+      32%, 64%  { fill: #1565C0; }
+      68%, 100% { fill: #9C27B0; }
+    }
+    @keyframes drawUp {
+      0%   { stroke-dashoffset: 380; }
+      28%  { stroke-dashoffset: 0; }
+      100% { stroke-dashoffset: 0; }
+    }
+    @keyframes drawDown {
+      0%, 28%  { stroke-dashoffset: 380; }
+      32%      { stroke-dashoffset: 380; }
+      60%      { stroke-dashoffset: 0; }
+      100%     { stroke-dashoffset: 0; }
+    }
+    .hyst-dot {
+      animation: traceHyst 6s ease-in-out infinite, dotColor 6s ease-in-out infinite;
+    }
+    .path-up {
+      stroke-dasharray: 380;
+      animation: drawUp 6s ease-in-out infinite;
+    }
+    .path-down {
+      stroke-dasharray: 380;
+      animation: drawDown 6s ease-in-out infinite;
+    }
+  </style>
   <line x1="60" y1="220" x2="400" y2="220" stroke="#333" stroke-width="1.5"/>
   <line x1="60" y1="220" x2="60" y2="30" stroke="#333" stroke-width="1.5"/>
   <text x="230" y="245" text-anchor="middle" font-size="11" fill="#333">入力（input）</text>
   <text x="40" y="125" text-anchor="middle" font-size="11" fill="#333" transform="rotate(-90,40,125)">出力（output）</text>
-  <path d="M80,200 Q120,180 160,150 Q200,110 240,80 Q280,55 320,45 Q360,40 380,38" fill="none" stroke="#9C27B0" stroke-width="2.5"/>
-  <path d="M380,38 Q360,50 320,65 Q280,85 240,110 Q200,140 160,165 Q120,185 80,200" fill="none" stroke="#1565C0" stroke-width="2.5"/>
+  <path d="M80,200 Q120,180 160,150 Q200,110 240,80 Q280,55 320,45 Q360,40 380,38" fill="none" stroke="#9C27B0" stroke-width="2.5" class="path-up"/>
+  <path d="M380,38 Q360,50 320,65 Q280,85 240,110 Q200,140 160,165 Q120,185 80,200" fill="none" stroke="#1565C0" stroke-width="2.5" class="path-down"/>
   <circle cx="80" cy="200" r="4" fill="#9C27B0"/>
   <circle cx="120" cy="178" r="4" fill="#9C27B0"/>
   <circle cx="160" cy="150" r="4" fill="#9C27B0"/>
@@ -166,6 +216,7 @@
   <circle cx="200" cy="138" r="4" fill="#1565C0"/>
   <circle cx="160" cy="162" r="4" fill="#1565C0"/>
   <circle cx="120" cy="183" r="4" fill="#1565C0"/>
+  <circle cx="80" cy="200" r="6" fill="#9C27B0" opacity="0.9" class="hyst-dot"/>
   <text x="300" y="35" font-size="11" fill="#9C27B0" font-weight="bold">増加 &#x2197;</text>
   <text x="130" y="210" font-size="11" fill="#1565C0" font-weight="bold">減少 &#x2198;</text>
   <text x="68" y="225" font-size="10" fill="#333">O</text>
@@ -267,21 +318,73 @@
 定常状態に落ち着くまでの応答を表す用語：
 
 <svg viewBox="0 0 500 220" xmlns="http://www.w3.org/2000/svg" style="max-width: 500px; margin: 20px auto; display: block;">
+  <style>
+    @keyframes drawOutput {
+      0%, 15%  { stroke-dashoffset: 600; }
+      16%      { stroke-dashoffset: 600; }
+      75%      { stroke-dashoffset: 0; }
+      100%     { stroke-dashoffset: 0; }
+    }
+    @keyframes showSteady {
+      0%, 60%  { opacity: 0; }
+      75%      { opacity: 1; }
+      100%     { opacity: 1; }
+    }
+    @keyframes showBracket {
+      0%, 70%  { opacity: 0; }
+      80%      { opacity: 1; }
+      100%     { opacity: 1; }
+    }
+    @keyframes drawStep {
+      0%       { stroke-dashoffset: 500; }
+      15%      { stroke-dashoffset: 0; }
+      100%     { stroke-dashoffset: 0; }
+    }
+    @keyframes showThreshold {
+      0%, 55%  { opacity: 0; }
+      65%      { opacity: 1; }
+      100%     { opacity: 1; }
+    }
+    .anim-output {
+      stroke-dasharray: 600;
+      animation: drawOutput 8s ease-in-out infinite;
+    }
+    .anim-step {
+      stroke-dasharray: 500;
+      animation: drawStep 8s ease-out infinite;
+    }
+    .anim-steady {
+      animation: showSteady 8s ease-in-out infinite;
+    }
+    .anim-threshold {
+      animation: showThreshold 8s ease-in-out infinite;
+    }
+    .anim-bracket {
+      animation: showBracket 8s ease-in-out infinite;
+    }
+  </style>
   <line x1="60" y1="190" x2="450" y2="190" stroke="#333" stroke-width="1.5"/>
   <line x1="60" y1="190" x2="60" y2="20" stroke="#333" stroke-width="1.5"/>
   <text x="255" y="215" text-anchor="middle" font-size="11" fill="#333">時間 t</text>
   <text x="40" y="105" text-anchor="middle" font-size="11" fill="#333" transform="rotate(-90,40,105)">出力</text>
-  <line x1="60" y1="70" x2="450" y2="70" stroke="#4CAF50" stroke-width="1" stroke-dasharray="4,3"/>
-  <text x="455" y="73" font-size="9" fill="#4CAF50">定常値</text>
-  <line x1="60" y1="80" x2="450" y2="80" stroke="#F44336" stroke-width="1" stroke-dasharray="3,2"/>
-  <line x1="60" y1="60" x2="450" y2="60" stroke="#F44336" stroke-width="1" stroke-dasharray="3,2"/>
-  <text x="455" y="63" font-size="8" fill="#F44336">閾値</text>
-  <text x="455" y="83" font-size="8" fill="#F44336">閾値</text>
-  <path d="M80,190 Q100,190 110,180 Q130,80 140,40 Q150,30 160,45 Q170,60 180,78 Q190,82 200,72 Q210,65 220,68 Q230,72 240,71 Q250,69 260,70 Q280,70 300,70 Q350,70 430,70" fill="none" stroke="#FF9800" stroke-width="2.5"/>
-  <line x1="110" y1="195" x2="110" y2="200" stroke="#333" stroke-width="1.5"/>
-  <line x1="240" y1="195" x2="240" y2="200" stroke="#333" stroke-width="1.5"/>
-  <line x1="110" y1="198" x2="240" y2="198" stroke="#9C27B0" stroke-width="2"/>
-  <text x="175" y="210" text-anchor="middle" font-size="10" fill="#9C27B0" font-weight="bold">整定時間</text>
+  <g class="anim-steady">
+    <line x1="60" y1="70" x2="450" y2="70" stroke="#4CAF50" stroke-width="1" stroke-dasharray="4,3"/>
+    <text x="455" y="73" font-size="9" fill="#4CAF50">定常値</text>
+  </g>
+  <g class="anim-threshold">
+    <line x1="60" y1="80" x2="450" y2="80" stroke="#F44336" stroke-width="1" stroke-dasharray="3,2"/>
+    <line x1="60" y1="60" x2="450" y2="60" stroke="#F44336" stroke-width="1" stroke-dasharray="3,2"/>
+    <text x="455" y="63" font-size="8" fill="#F44336">閾値</text>
+    <text x="455" y="83" font-size="8" fill="#F44336">閾値</text>
+  </g>
+  <path d="M80,190 L110,190 L110,70 L430,70" fill="none" stroke="#1565C0" stroke-width="1.5" class="anim-step"/>
+  <path d="M80,190 Q100,190 110,180 Q130,80 140,40 Q150,30 160,45 Q170,60 180,78 Q190,82 200,72 Q210,65 220,68 Q230,72 240,71 Q250,69 260,70 Q280,70 300,70 Q350,70 430,70" fill="none" stroke="#FF9800" stroke-width="2.5" class="anim-output"/>
+  <g class="anim-bracket">
+    <line x1="110" y1="195" x2="110" y2="200" stroke="#333" stroke-width="1.5"/>
+    <line x1="240" y1="195" x2="240" y2="200" stroke="#333" stroke-width="1.5"/>
+    <line x1="110" y1="198" x2="240" y2="198" stroke="#9C27B0" stroke-width="2"/>
+    <text x="175" y="210" text-anchor="middle" font-size="10" fill="#9C27B0" font-weight="bold">整定時間</text>
+  </g>
 </svg>
 
 | 用語 | 意味 |

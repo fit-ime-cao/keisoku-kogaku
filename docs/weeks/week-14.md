@@ -131,30 +131,40 @@ graph TD
 ゴム中に**炭素粒子**（カーボン）が分散されています。荷重が増加すると炭素粒子同士の**接触面積が増加**し、電気抵抗が**減少**します。
 :::
 
-<svg viewBox="0 0 450 160" xmlns="http://www.w3.org/2000/svg" style="max-width: 450px; margin: 20px auto; display: block;">
-  <text x="225" y="18" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">感圧ゴムの原理</text>
-  <rect x="40" y="40" width="150" height="100" fill="#FFF9C4" fill-opacity="0.5" stroke="#F9A825" stroke-width="1.5" rx="5"/>
-  <text x="115" y="145" text-anchor="middle" font-size="10" fill="#333">無荷重（抵抗：大）</text>
-  <circle cx="70" cy="70" r="6" fill="#333"/>
-  <circle cx="100" cy="60" r="6" fill="#333"/>
-  <circle cx="130" cy="80" r="6" fill="#333"/>
-  <circle cx="85" cy="100" r="6" fill="#333"/>
-  <circle cx="140" cy="110" r="6" fill="#333"/>
-  <circle cx="60" cy="115" r="6" fill="#333"/>
-  <rect x="260" y="50" width="150" height="80" fill="#FFF9C4" fill-opacity="0.5" stroke="#F9A825" stroke-width="1.5" rx="5"/>
-  <text x="335" y="145" text-anchor="middle" font-size="10" fill="#333">荷重あり（抵抗：小）</text>
-  <circle cx="285" cy="75" r="6" fill="#333"/>
-  <circle cx="305" cy="73" r="6" fill="#333"/>
-  <circle cx="325" cy="80" r="6" fill="#333"/>
-  <circle cx="345" cy="78" r="6" fill="#333"/>
-  <circle cx="295" cy="100" r="6" fill="#333"/>
-  <circle cx="315" cy="98" r="6" fill="#333"/>
-  <circle cx="340" cy="102" r="6" fill="#333"/>
-  <circle cx="370" cy="95" r="6" fill="#333"/>
-  <line x1="260" y1="48" x2="410" y2="48" stroke="#F44336" stroke-width="1.5"/>
-  <polygon points="335,40 330,48 340,48" fill="#F44336"/>
-  <text x="335" y="38" text-anchor="middle" font-size="9" fill="#F44336">F</text>
-  <text x="215" y="90" text-anchor="middle" font-size="16" fill="#333">→</text>
+<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" style="max-width: 400px; margin: 20px auto; display: block;">
+  <style>
+    @keyframes rubberCompress { 0%, 15% { y: 40; height: 110; } 40%, 65% { y: 55; height: 80; } 85%, 100% { y: 40; height: 110; } }
+    @keyframes p1Move { 0%, 15% { cx: 90; cy: 70; } 40%, 65% { cx: 160; cy: 82; } 85%, 100% { cx: 90; cy: 70; } }
+    @keyframes p2Move { 0%, 15% { cx: 180; cy: 60; } 40%, 65% { cx: 200; cy: 78; } 85%, 100% { cx: 180; cy: 60; } }
+    @keyframes p3Move { 0%, 15% { cx: 280; cy: 85; } 40%, 65% { cx: 240; cy: 90; } 85%, 100% { cx: 280; cy: 85; } }
+    @keyframes p4Move { 0%, 15% { cx: 120; cy: 110; } 40%, 65% { cx: 160; cy: 105; } 85%, 100% { cx: 120; cy: 110; } }
+    @keyframes p5Move { 0%, 15% { cx: 250; cy: 120; } 40%, 65% { cx: 230; cy: 110; } 85%, 100% { cx: 250; cy: 120; } }
+    @keyframes p6Move { 0%, 15% { cx: 310; cy: 130; } 40%, 65% { cx: 280; cy: 105; } 85%, 100% { cx: 310; cy: 130; } }
+    @keyframes p7Move { 0%, 15% { cx: 70; cy: 130; } 40%, 65% { cx: 130; cy: 112; } 85%, 100% { cx: 70; cy: 130; } }
+    @keyframes p8Move { 0%, 15% { cx: 200; cy: 100; } 40%, 65% { cx: 200; cy: 95; } 85%, 100% { cx: 200; cy: 100; } }
+    @keyframes arrowPress { 0%, 15% { opacity: 0; } 25%, 65% { opacity: 1; } 75%, 100% { opacity: 0; } }
+    @keyframes labelSwitch { 0%, 15% { opacity: 1; } 30%, 70% { opacity: 0; } 85%, 100% { opacity: 1; } }
+    @keyframes labelSwitch2 { 0%, 25% { opacity: 0; } 40%, 65% { opacity: 1; } 80%, 100% { opacity: 0; } }
+    .pr-body { animation: rubberCompress 6s ease-in-out infinite; }
+    .pr-arrow { animation: arrowPress 6s ease-in-out infinite; }
+    .pr-label-spread { animation: labelSwitch 6s ease-in-out infinite; }
+    .pr-label-compressed { animation: labelSwitch2 6s ease-in-out infinite; }
+  </style>
+  <text x="200" y="18" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">感圧ゴムの原理（アニメーション）</text>
+  <rect x="55" y="40" width="290" height="110" fill="#FFF9C4" fill-opacity="0.5" stroke="#F9A825" stroke-width="1.5" rx="5" class="pr-body"/>
+  <polygon points="200,25 195,35 205,35" fill="#F44336" class="pr-arrow"/>
+  <text x="200" y="23" text-anchor="middle" font-size="9" fill="#F44336" class="pr-arrow">F</text>
+  <circle cx="90" cy="70" r="7" fill="#333" style="animation: p1Move 6s ease-in-out infinite;"/>
+  <circle cx="180" cy="60" r="7" fill="#333" style="animation: p2Move 6s ease-in-out infinite;"/>
+  <circle cx="280" cy="85" r="7" fill="#333" style="animation: p3Move 6s ease-in-out infinite;"/>
+  <circle cx="120" cy="110" r="7" fill="#333" style="animation: p4Move 6s ease-in-out infinite;"/>
+  <circle cx="250" cy="120" r="7" fill="#333" style="animation: p5Move 6s ease-in-out infinite;"/>
+  <circle cx="310" cy="130" r="7" fill="#333" style="animation: p6Move 6s ease-in-out infinite;"/>
+  <circle cx="70" cy="130" r="7" fill="#333" style="animation: p7Move 6s ease-in-out infinite;"/>
+  <circle cx="200" cy="100" r="7" fill="#333" style="animation: p8Move 6s ease-in-out infinite;"/>
+  <text x="200" y="175" text-anchor="middle" font-size="11" fill="#FF5722" font-weight="bold" class="pr-label-spread">R：大（粒子分散）</text>
+  <text x="200" y="175" text-anchor="middle" font-size="11" fill="#4CAF50" font-weight="bold" class="pr-label-compressed">R：小（粒子接触）</text>
+  <text x="200" y="193" text-anchor="middle" font-size="9" fill="#757575">炭素粒子が圧縮されると接触が増え抵抗が減少</text>
 </svg>
 
 | 特性 | 内容 |
