@@ -67,6 +67,13 @@ export default withMermaid({
             { text: '第15週：総合演習', link: '/weeks/week-15' },
             { text: '第16週：期末試験', link: '/weeks/week-16' }
           ]
+}
+,
+        {
+          text: '補足資料',
+          items: [
+            { text: '座標変換と同次変換行列', link: '/weeks/coordinate-transform' }
+          ]
         }
       ],
     },

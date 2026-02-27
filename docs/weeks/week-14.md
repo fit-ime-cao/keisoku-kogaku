@@ -11,6 +11,8 @@
 - [ ] 静電容量式圧力センサの原理と計算ができる
 - [ ] 感圧ゴムの動作原理を理解できる
 - [ ] LC共振回路を用いた容量計測の原理を説明できる
+- [ ] 触覚センサと滑り覚センサの役割を理解できる
+- [ ] 圧力分布計測の応用事例を説明できる
 
 ---
 
@@ -304,6 +306,233 @@ $$f = \frac{1}{2\pi\sqrt{LC}}$$
 | **静電容量式** | 容量変化 | ✓ | ✓ | 小型、低消費電力 |
 | **感圧ゴム** | 抵抗変化 | ✓ | △ | 安価、面状化容易 |
 | **ダイヤフラム+ゲージ** | ひずみ | ✓ | ✓ | 高精度、産業用途 |
+
+---
+
+## 8. 触覚センサ（Tactile Sensor）
+
+### 8.1 概要
+
+::: info 触覚センサとは
+**接触（力）**および**接触位置**を検知するセンサです。ロボットハンドの指先などに搭載し、物体との接触状態を把握するために使用されます。
+:::
+
+### 8.2 Finger Vision 方式
+
+::: tip 💡 Finger Vision
+カメラで**指先の変形**を検出する方式です。透明な弾性体の内部にカメラを設置し、接触による変形パターンを画像処理で解析することで、接触力と接触位置を同時に推定できます。
+:::
+
+<svg viewBox="0 0 450 200" xmlns="http://www.w3.org/2000/svg" style="max-width: 450px; margin: 20px auto; display: block;">
+  <style>
+    @keyframes fingerTouch { 0%, 15% { d: path('M100,80 Q225,80 350,80'); } 40%, 65% { d: path('M100,80 Q225,110 350,80'); } 85%, 100% { d: path('M100,80 Q225,80 350,80'); } }
+    @keyframes fingerObj { 0%, 15% { cy: 55; } 40%, 65% { cy: 75; } 85%, 100% { cy: 55; } }
+    @keyframes fingerArrow { 0%, 15% { opacity: 0; } 25%, 65% { opacity: 1; } 80%, 100% { opacity: 0; } }
+    @keyframes fingerCamFlash { 0%, 48% { fill: #4CAF50; } 50%, 52% { fill: #8BC34A; } 54%, 100% { fill: #4CAF50; } }
+  </style>
+  <text x="225" y="18" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">Finger Vision の原理</text>
+  <rect x="100" y="80" width="250" height="80" fill="#E3F2FD" stroke="#1565C0" stroke-width="2" rx="5"/>
+  <text x="225" y="130" text-anchor="middle" font-size="10" fill="#1565C0">透明弾性体</text>
+  <path d="M100,80 Q225,80 350,80" fill="none" stroke="#1565C0" stroke-width="2.5" style="animation: fingerTouch 5s ease-in-out infinite;"/>
+  <rect x="195" y="140" width="60" height="25" fill="#4CAF50" stroke="#2E7D32" stroke-width="1.5" rx="3" style="animation: fingerCamFlash 5s ease-in-out infinite;"/>
+  <text x="225" y="157" text-anchor="middle" font-size="9" fill="white" font-weight="bold">Camera</text>
+  <circle cx="225" cy="55" r="18" fill="#FF9800" stroke="#E65100" stroke-width="1.5" style="animation: fingerObj 5s ease-in-out infinite;"/>
+  <text x="225" y="59" text-anchor="middle" font-size="9" fill="white">物体</text>
+  <polygon points="222,35 225,25 228,35" fill="#F44336" style="animation: fingerArrow 5s ease-in-out infinite;"/>
+  <text x="225" y="22" text-anchor="middle" font-size="9" fill="#F44336" style="animation: fingerArrow 5s ease-in-out infinite;">F</text>
+  <text x="225" y="190" text-anchor="middle" font-size="10" fill="#757575">接触変形をカメラで検出 → 力・位置を推定</text>
+</svg>
+
+::: details 🎥 参考動画
+<a href="https://youtu.be/ifOwQdy9gDg" target="_blank">🎥 動画を見る：Combining Finger Vision and Optical Tactile Sensing</a>
+:::
+
+---
+
+## 9. 滑り覚センサ（Slip Sensor）
+
+### 9.1 概要
+
+::: info 滑り覚センサとは
+**滑り（接触位置の変化）**を検知するセンサです。把持した物体が指先から滑り始めたことを検出し、把持力を自動調整する制御に応用されます。
+:::
+
+### 9.2 把持力制御への応用
+
+::: tip 💡 滑り検知による把持力制御
+滑り覚センサで物体の滑りを検知すると、ロボットハンドの把持力を自動的に増加させます。これにより、物体を壊さず、かつ落とさない最適な把持力を実現できます。
+:::
+
+<svg viewBox="0 0 450 180" xmlns="http://www.w3.org/2000/svg" style="max-width: 450px; margin: 20px auto; display: block;">
+  <style>
+    @keyframes slipObj { 0%, 20% { y: 60; } 45%, 55% { y: 90; } 70%, 100% { y: 60; } }
+    @keyframes slipGrip { 0%, 20% { x: 140; width: 170; } 55%, 70% { x: 130; width: 190; } 85%, 100% { x: 140; width: 170; } }
+    @keyframes slipAlert { 0%, 40% { opacity: 0; } 45%, 60% { opacity: 1; } 70%, 100% { opacity: 0; } }
+    @keyframes slipForce { 0%, 20% { opacity: 0; } 60%, 75% { opacity: 1; } 85%, 100% { opacity: 0; } }
+  </style>
+  <text x="225" y="18" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">滑り検知と把持力制御</text>
+  <rect x="140" y="35" width="10" height="120" fill="#1565C0" rx="2" style="animation: slipGrip 5s ease-in-out infinite;"/>
+  <rect x="300" y="35" width="10" height="120" fill="#1565C0" rx="2" style="animation: slipGrip 5s ease-in-out infinite;"/>
+  <text x="120" y="100" text-anchor="end" font-size="9" fill="#1565C0">指</text>
+  <text x="330" y="100" font-size="9" fill="#1565C0">指</text>
+  <rect x="155" y="60" width="140" height="50" fill="#FF9800" stroke="#E65100" stroke-width="1.5" rx="5" style="animation: slipObj 5s ease-in-out infinite;"/>
+  <text x="225" y="90" text-anchor="middle" font-size="10" fill="white" font-weight="bold">物体</text>
+  <text x="225" y="168" text-anchor="middle" font-size="10" fill="#F44336" font-weight="bold" style="animation: slipAlert 5s ease-in-out infinite;">⚠ 滑り検知！</text>
+  <text x="225" y="168" text-anchor="middle" font-size="10" fill="#4CAF50" font-weight="bold" style="animation: slipForce 5s ease-in-out infinite;">✓ 把持力増加</text>
+</svg>
+
+::: details 🎥 参考動画
+<a href="https://youtu.be/cu18UJk3eZ8" target="_blank">🎥 動画を見る：Slip Sensing Demo</a>
+:::
+
+### 9.3 分布圧計測
+
+::: info 分布圧計測
+**感圧センサを多数配置**して、面全体の圧力分布を取得する手法です。触覚センサアレイとして、接触面の圧力マップをリアルタイムに可視化できます。
+:::
+
+<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" style="max-width: 400px; margin: 20px auto; display: block;">
+  <style>
+    @keyframes gridPulse1 { 0%, 30% { fill: #E3F2FD; } 40%, 60% { fill: #F44336; } 70%, 100% { fill: #E3F2FD; } }
+    @keyframes gridPulse2 { 0%, 35% { fill: #E3F2FD; } 45%, 65% { fill: #FF9800; } 75%, 100% { fill: #E3F2FD; } }
+    @keyframes gridPulse3 { 0%, 40% { fill: #E3F2FD; } 50%, 70% { fill: #FFEB3B; } 80%, 100% { fill: #E3F2FD; } }
+  </style>
+  <text x="200" y="18" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">分布圧計測（センサアレイ）</text>
+  <rect x="75" y="30" width="250" height="140" fill="none" stroke="#757575" stroke-width="1.5" rx="3"/>
+  <rect x="80" y="35" width="55" height="40" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1" style="animation: gridPulse3 6s ease-in-out infinite;"/>
+  <rect x="140" y="35" width="55" height="40" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1" style="animation: gridPulse2 6s ease-in-out infinite;"/>
+  <rect x="200" y="35" width="55" height="40" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1" style="animation: gridPulse1 6s ease-in-out infinite;"/>
+  <rect x="260" y="35" width="55" height="40" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1" style="animation: gridPulse3 6s ease-in-out infinite;"/>
+  <rect x="80" y="80" width="55" height="40" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1" style="animation: gridPulse2 6s ease-in-out infinite;"/>
+  <rect x="140" y="80" width="55" height="40" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1" style="animation: gridPulse1 6s ease-in-out infinite;"/>
+  <rect x="200" y="80" width="55" height="40" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1" style="animation: gridPulse2 6s ease-in-out infinite;"/>
+  <rect x="260" y="80" width="55" height="40" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1" style="animation: gridPulse1 6s ease-in-out infinite;"/>
+  <rect x="80" y="125" width="55" height="40" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1" style="animation: gridPulse1 6s ease-in-out infinite;"/>
+  <rect x="140" y="125" width="55" height="40" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1" style="animation: gridPulse3 6s ease-in-out infinite;"/>
+  <rect x="200" y="125" width="55" height="40" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1" style="animation: gridPulse2 6s ease-in-out infinite;"/>
+  <rect x="260" y="125" width="55" height="40" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1" style="animation: gridPulse3 6s ease-in-out infinite;"/>
+  <text x="200" y="188" text-anchor="middle" font-size="10" fill="#757575">各セルの色が圧力の大きさを表す</text>
+</svg>
+
+::: details 🎥 参考動画
+<a href="https://youtu.be/LKwOpRUCs7s" target="_blank">🎥 動画を見る：Haptic Search</a>
+:::
+
+---
+
+## 10. 圧力分布計測の応用
+
+### 10.1 床反力計測（フォースプレート）
+
+::: info 床反力計測
+**フォースプレート**は、床面に埋め込んだ力覚センサにより、歩行やジャンプ時の**床反力（Ground Reaction Force）**を計測する装置です。スポーツ科学やリハビリテーション分野で広く使用されています。
+:::
+
+::: details 🎥 参考動画
+<a href="https://youtu.be/FC-o7brtpxM" target="_blank">🎥 動画を見る：Ground Reaction Force</a>
+:::
+
+### 10.2 荷重計測回路
+
+::: info 感圧センサの荷重計測回路
+感圧センサの抵抗変化を電圧に変換するために、**Op-Amp（MCP6004）**を用いた**反転増幅回路**を使用します。
+
+$$V_{out} = -V_{ref} \left(\frac{R_F}{R_S}\right)$$
+
+| パラメータ | 値 | 説明 |
+|-----------|-----|------|
+| $R_F$ | 100kΩ（ポテンショメータ推奨） | フィードバック抵抗 |
+| $R_S$ | 無荷重時 >1MΩ | 感圧センサの抵抗 |
+| $C_1$ | 47pF | フィルタ用コンデンサ |
+| $V_{REF}$ | DC 0.25V〜1.25V or 矩形波（max 5V, 50% duty） | 基準電圧 |
+:::
+
+<svg viewBox="0 0 500 320" xmlns="http://www.w3.org/2000/svg" style="max-width: 500px; margin: 20px auto; display: block;">
+  <style>
+    @keyframes rsChange { 0%, 20% { stroke: #FF9800; stroke-width: 2; } 40%, 60% { stroke: #F44336; stroke-width: 3; } 80%, 100% { stroke: #FF9800; stroke-width: 2; } }
+    @keyframes voutResp { 0%, 20% { y: 240; height: 20; } 40%, 60% { y: 210; height: 50; } 80%, 100% { y: 240; height: 20; } }
+    @keyframes voutLabel { 0%, 20% { opacity: 0.5; } 40%, 60% { opacity: 1; } 80%, 100% { opacity: 0.5; } }
+    @keyframes currentFlow { 0% { stroke-dashoffset: 20; } 100% { stroke-dashoffset: 0; } }
+  </style>
+  <text x="250" y="18" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">反転増幅回路（感圧センサ）</text>
+  <polygon points="200,100 200,200 300,150" fill="#E8EAF6" stroke="#333" stroke-width="2"/>
+  <text x="230" y="155" text-anchor="middle" font-size="14" fill="#333" font-weight="bold">−</text>
+  <text x="230" y="140" text-anchor="middle" font-size="14" fill="#333" font-weight="bold">+</text>
+  <text x="240" y="170" font-size="9" fill="#757575">MCP6004</text>
+  <line x1="60" y1="120" x2="200" y2="120" stroke="#333" stroke-width="1.5"/>
+  <text x="60" y="115" font-size="9" fill="#9C27B0">V_REF</text>
+  <rect x="90" y="112" width="50" height="16" fill="none" stroke="#FF9800" stroke-width="2" rx="2" style="animation: rsChange 4s ease-in-out infinite;"/>
+  <text x="115" y="110" text-anchor="middle" font-size="9" fill="#FF9800">R_S</text>
+  <text x="115" y="140" text-anchor="middle" font-size="8" fill="#757575">感圧センサ</text>
+  <line x1="200" y1="120" x2="200" y2="60" stroke="#333" stroke-width="1.5"/>
+  <line x1="200" y1="60" x2="350" y2="60" stroke="#333" stroke-width="1.5"/>
+  <line x1="350" y1="60" x2="350" y2="150" stroke="#333" stroke-width="1.5"/>
+  <line x1="300" y1="150" x2="420" y2="150" stroke="#333" stroke-width="1.5"/>
+  <rect x="240" y="52" width="60" height="16" fill="none" stroke="#1565C0" stroke-width="2" rx="2"/>
+  <text x="270" y="50" text-anchor="middle" font-size="9" fill="#1565C0">R_F (100kΩ)</text>
+  <line x1="310" y1="55" x2="330" y2="55" stroke="#4CAF50" stroke-width="1"/>
+  <line x1="310" y1="65" x2="330" y2="65" stroke="#4CAF50" stroke-width="1"/>
+  <text x="340" y="50" font-size="8" fill="#4CAF50">C₁ 47pF</text>
+  <line x1="200" y1="160" x2="200" y2="260" stroke="#333" stroke-width="1.5"/>
+  <line x1="180" y1="260" x2="220" y2="260" stroke="#333" stroke-width="2"/>
+  <line x1="190" y1="265" x2="210" y2="265" stroke="#333" stroke-width="1.5"/>
+  <line x1="195" y1="270" x2="205" y2="270" stroke="#333" stroke-width="1"/>
+  <text x="200" y="285" text-anchor="middle" font-size="9" fill="#757575">GND</text>
+  <text x="420" y="145" font-size="10" fill="#333">V_out</text>
+  <rect x="390" y="210" width="60" height="50" fill="#E8F5E9" stroke="#4CAF50" stroke-width="1.5" rx="3" style="animation: voutResp 4s ease-in-out infinite;"/>
+  <text x="420" y="240" text-anchor="middle" font-size="9" fill="#4CAF50" font-weight="bold" style="animation: voutLabel 4s ease-in-out infinite;">V_out↑</text>
+  <line x1="390" y1="150" x2="390" y2="210" stroke="#4CAF50" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="100" y="300" text-anchor="middle" font-size="9" fill="#F44336">R_S ↓（荷重増加）</text>
+  <text x="100" y="312" text-anchor="middle" font-size="9" fill="#333">→ V_out ↑</text>
+  <text x="320" y="300" text-anchor="middle" font-size="9" fill="#757575">V_out = −V_ref × (R_F / R_S)</text>
+</svg>
+
+::: tip 💡 ポイント
+荷重が増加すると感圧センサの抵抗 $R_S$ が減少し、$R_F / R_S$ の比が大きくなるため、出力電圧 $V_{out}$ が増加します。$R_F$ にポテンショメータを使用することで感度調整が可能です。
+:::
+
+### 10.3 バレーボール解析事例
+
+::: info 応用事例：バレーボールのオーバーハンドパス解析
+指先に**FlexiForceセンサ**を装着し、オーバーハンドパス時の指先力を計測した事例です。
+
+| 計測項目 | 値 |
+|---------|-----|
+| ピーク電圧 | 約 1.6V |
+| 接触時間 | 0.04〜0.06秒 |
+| センサ | FlexiForce（感圧センサ） |
+:::
+
+<svg viewBox="0 0 450 220" xmlns="http://www.w3.org/2000/svg" style="max-width: 450px; margin: 20px auto; display: block;">
+  <style>
+    @keyframes pulseDraw { 0%, 25% { stroke-dashoffset: 300; } 40%, 75% { stroke-dashoffset: 0; } 90%, 100% { stroke-dashoffset: 300; } }
+    @keyframes peakDot { 0%, 30% { opacity: 0; r: 0; } 40%, 70% { opacity: 1; r: 5; } 85%, 100% { opacity: 0; r: 0; } }
+    @keyframes peakLabel { 0%, 35% { opacity: 0; } 42%, 70% { opacity: 1; } 82%, 100% { opacity: 0; } }
+  </style>
+  <text x="225" y="18" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">オーバーハンドパス時の指先力波形</text>
+  <line x1="60" y1="30" x2="60" y2="180" stroke="#333" stroke-width="1.5"/>
+  <line x1="60" y1="180" x2="420" y2="180" stroke="#333" stroke-width="1.5"/>
+  <text x="40" y="105" text-anchor="middle" font-size="9" fill="#333" transform="rotate(-90,40,105)">電圧 [V]</text>
+  <text x="240" y="198" text-anchor="middle" font-size="9" fill="#333">時間 [s]</text>
+  <text x="55" y="45" text-anchor="end" font-size="8" fill="#757575">2.0</text>
+  <line x1="57" y1="42" x2="63" y2="42" stroke="#757575" stroke-width="1"/>
+  <text x="55" y="78" text-anchor="end" font-size="8" fill="#757575">1.5</text>
+  <line x1="57" y1="75" x2="63" y2="75" stroke="#757575" stroke-width="1"/>
+  <text x="55" y="112" text-anchor="end" font-size="8" fill="#757575">1.0</text>
+  <line x1="57" y1="109" x2="63" y2="109" stroke="#757575" stroke-width="1"/>
+  <text x="55" y="145" text-anchor="end" font-size="8" fill="#757575">0.5</text>
+  <line x1="57" y1="142" x2="63" y2="142" stroke="#757575" stroke-width="1"/>
+  <text x="55" y="183" text-anchor="end" font-size="8" fill="#757575">0</text>
+  <line x1="60" y1="42" x2="420" y2="42" stroke="#E0E0E0" stroke-width="0.5" stroke-dasharray="3,3"/>
+  <line x1="60" y1="75" x2="420" y2="75" stroke="#E0E0E0" stroke-width="0.5" stroke-dasharray="3,3"/>
+  <line x1="60" y1="109" x2="420" y2="109" stroke="#E0E0E0" stroke-width="0.5" stroke-dasharray="3,3"/>
+  <line x1="60" y1="142" x2="420" y2="142" stroke="#E0E0E0" stroke-width="0.5" stroke-dasharray="3,3"/>
+  <path d="M60,180 L140,180 L160,178 L180,170 L195,120 L205,62 L215,120 L230,168 L250,178 L280,180 L420,180" fill="none" stroke="#F44336" stroke-width="2.5" stroke-dasharray="300" style="animation: pulseDraw 5s ease-in-out infinite;"/>
+  <circle cx="205" cy="62" r="0" fill="#F44336" style="animation: peakDot 5s ease-in-out infinite;"/>
+  <text x="220" y="55" font-size="9" fill="#F44336" font-weight="bold" style="animation: peakLabel 5s ease-in-out infinite;">~1.6V</text>
+  <line x1="180" y1="185" x2="230" y2="185" stroke="#1565C0" stroke-width="2" style="animation: peakLabel 5s ease-in-out infinite;"/>
+  <text x="205" y="210" text-anchor="middle" font-size="8" fill="#1565C0" style="animation: peakLabel 5s ease-in-out infinite;">0.04~0.06s</text>
+</svg>
 
 ---
 
