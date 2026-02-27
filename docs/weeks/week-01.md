@@ -23,8 +23,8 @@
 | 科目区分 | 選択 |
 | 単位数 | 2単位 |
 | 授業形態 | 講義 |
-| 担当教員 | 槇田 諭 |
-| E-mail | makita@bene.fit.ac.jp |
+| 担当教員 | 曹 晟 |
+| E-mail | cao@bene.fit.ac.jp |
 
 ### 1.2 授業概要
 
