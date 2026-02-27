@@ -353,15 +353,21 @@ $$= \begin{bmatrix} 1 & 0 & 0 & d \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0
 
 <svg viewBox="0 0 500 360" xmlns="http://www.w3.org/2000/svg" style="max-width: 500px; margin: 20px auto; display: block;">
   <style>
-    @keyframes case1dot { 0%, 15% { cx: 80; cy: 210; } 35%, 50% { cx: 160; cy: 210; } 70%, 100% { cx: 80; cy: 130; } }
-    @keyframes case1xEnd { 0%, 15% { x2: 115; y2: 210; } 35%, 50% { x2: 195; y2: 210; } 70%, 100% { x2: 80; y2: 165; } }
-    @keyframes case1yEnd { 0%, 15% { x2: 80; y2: 175; } 35%, 50% { x2: 160; y2: 175; } 70%, 100% { x2: 115; y2: 130; } }
-    @keyframes case2dot { 0%, 15% { cx: 330; cy: 210; } 35%, 50% { cx: 330; cy: 210; } 70%, 100% { cx: 410; cy: 210; } }
-    @keyframes case2xEnd { 0%, 15% { x2: 365; y2: 210; } 35%, 50% { x2: 330; y2: 175; } 70%, 100% { x2: 410; y2: 175; } }
-    @keyframes case2yEnd { 0%, 15% { x2: 330; y2: 175; } 35%, 50% { x2: 295; y2: 210; } 70%, 100% { x2: 375; y2: 210; } }
+    @keyframes case1frame {
+      0%, 15% { transform: translate(80px, 210px) rotate(0deg); }
+      35%, 50% { transform: translate(160px, 210px) rotate(0deg); }
+      70%, 100% { transform: translate(80px, 130px) rotate(-90deg); }
+    }
+    @keyframes case2frame {
+      0%, 15% { transform: translate(330px, 210px) rotate(0deg); }
+      35%, 50% { transform: translate(330px, 210px) rotate(-90deg); }
+      70%, 100% { transform: translate(410px, 210px) rotate(-90deg); }
+    }
     @keyframes step1show { 0%, 15% { opacity: 0; } 30%, 55% { opacity: 1; } 65%, 100% { opacity: 0; } }
     @keyframes step2show { 0%, 55% { opacity: 0; } 70%, 100% { opacity: 1; } }
     @keyframes finalGlow { 70%, 80% { r: 6; } 85% { r: 10; } 90%, 100% { r: 6; } }
+    .c1f { animation: case1frame 6s ease-in-out infinite; }
+    .c2f { animation: case2frame 6s ease-in-out infinite; }
   </style>
   <text x="250" y="18" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">変換の順序による結果の違い（Z軸 90°回転 + X方向に d 並進）</text>
   <text x="120" y="42" text-anchor="middle" font-size="11" fill="#1565C0" font-weight="bold">ケース1：先に並進 → 後に回転</text>
@@ -372,13 +378,19 @@ $$= \begin{bmatrix} 1 & 0 & 0 & d \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0
   <text x="72" y="68" font-size="9" fill="#757575">y</text>
   <circle cx="80" cy="210" r="3" fill="#333"/>
   <text x="68" y="225" font-size="8" fill="#333">O</text>
-  <circle cx="160" cy="210" r="4" fill="#FF9800" opacity="0.4"/>
-  <text x="150" y="230" font-size="7" fill="#FF9800" style="animation: step1show 6s ease-in-out infinite;">Step1:(d,0)</text>
+  <circle cx="160" cy="210" r="4" fill="#FF9800" opacity="0.3"/>
+  <text x="148" y="230" font-size="7" fill="#FF9800" style="animation: step1show 6s ease-in-out infinite;">Step1: (d,0)</text>
   <circle cx="80" cy="130" r="6" fill="#F44336" opacity="0.3" style="animation: finalGlow 6s ease-in-out infinite;"/>
   <text x="90" y="125" font-size="9" fill="#F44336" font-weight="bold" style="animation: step2show 6s ease-in-out infinite;">→ (0, d)</text>
-  <line x1="80" y1="210" x2="115" y2="210" stroke="#F44336" stroke-width="2" style="animation: case1xEnd 6s ease-in-out infinite;"/>
-  <line x1="80" y1="210" x2="80" y2="175" stroke="#4CAF50" stroke-width="2" style="animation: case1yEnd 6s ease-in-out infinite;"/>
-  <circle cx="80" cy="210" r="5" fill="#FF9800" style="animation: case1dot 6s ease-in-out infinite;"/>
+  <g class="c1f">
+    <line x1="0" y1="0" x2="35" y2="0" stroke="#F44336" stroke-width="2.5"/>
+    <polygon points="35,-3 42,0 35,3" fill="#F44336"/>
+    <text x="44" y="4" font-size="8" fill="#F44336">X</text>
+    <line x1="0" y1="0" x2="0" y2="-35" stroke="#4CAF50" stroke-width="2.5"/>
+    <polygon points="-3,-35 0,-42 3,-35" fill="#4CAF50"/>
+    <text x="5" y="-44" font-size="8" fill="#4CAF50">Y</text>
+    <circle cx="0" cy="0" r="5" fill="#FF9800"/>
+  </g>
   <text x="375" y="42" text-anchor="middle" font-size="11" fill="#9C27B0" font-weight="bold">ケース2：先に回転 → 後に並進</text>
   <rect x="265" y="50" width="220" height="230" fill="#F3E5F5" fill-opacity="0.2" stroke="#9C27B0" stroke-width="1" rx="5"/>
   <line x1="290" y1="210" x2="470" y2="210" stroke="#BDBDBD" stroke-width="1"/>
@@ -387,13 +399,19 @@ $$= \begin{bmatrix} 1 & 0 & 0 & d \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0
   <text x="322" y="68" font-size="9" fill="#757575">y</text>
   <circle cx="330" cy="210" r="3" fill="#333"/>
   <text x="318" y="225" font-size="8" fill="#333">O</text>
-  <circle cx="330" cy="210" r="4" fill="#FF9800" opacity="0.4"/>
-  <text x="300" y="240" font-size="7" fill="#FF9800" style="animation: step1show 6s ease-in-out infinite;">Step1:回転のみ</text>
+  <circle cx="330" cy="210" r="4" fill="#FF9800" opacity="0.3"/>
+  <text x="298" y="242" font-size="7" fill="#FF9800" style="animation: step1show 6s ease-in-out infinite;">Step1: 回転のみ</text>
   <circle cx="410" cy="210" r="6" fill="#9C27B0" opacity="0.3" style="animation: finalGlow 6s ease-in-out infinite;"/>
   <text x="420" y="200" font-size="9" fill="#9C27B0" font-weight="bold" style="animation: step2show 6s ease-in-out infinite;">→ (d, 0)</text>
-  <line x1="330" y1="210" x2="365" y2="210" stroke="#F44336" stroke-width="2" style="animation: case2xEnd 6s ease-in-out infinite;"/>
-  <line x1="330" y1="210" x2="330" y2="175" stroke="#4CAF50" stroke-width="2" style="animation: case2yEnd 6s ease-in-out infinite;"/>
-  <circle cx="330" cy="210" r="5" fill="#FF9800" style="animation: case2dot 6s ease-in-out infinite;"/>
+  <g class="c2f">
+    <line x1="0" y1="0" x2="35" y2="0" stroke="#F44336" stroke-width="2.5"/>
+    <polygon points="35,-3 42,0 35,3" fill="#F44336"/>
+    <text x="44" y="4" font-size="8" fill="#F44336">X</text>
+    <line x1="0" y1="0" x2="0" y2="-35" stroke="#4CAF50" stroke-width="2.5"/>
+    <polygon points="-3,-35 0,-42 3,-35" fill="#4CAF50"/>
+    <text x="5" y="-44" font-size="8" fill="#4CAF50">Y</text>
+    <circle cx="0" cy="0" r="5" fill="#FF9800"/>
+  </g>
   <line x1="120" y1="300" x2="200" y2="300" stroke="#F44336" stroke-width="2"/>
   <text x="210" y="305" font-size="10" fill="#F44336" font-weight="bold">原点 → (0, d)</text>
   <line x1="300" y1="300" x2="380" y2="300" stroke="#9C27B0" stroke-width="2"/>
