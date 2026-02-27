@@ -358,7 +358,7 @@ $$= \begin{bmatrix} 1 & 0 & 0 & d \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0
     @keyframes case1yEnd { 0%, 15% { x2: 80; y2: 175; } 35%, 50% { x2: 160; y2: 175; } 70%, 100% { x2: 115; y2: 130; } }
     @keyframes case2dot { 0%, 15% { cx: 330; cy: 210; } 35%, 50% { cx: 330; cy: 210; } 70%, 100% { cx: 410; cy: 210; } }
     @keyframes case2xEnd { 0%, 15% { x2: 365; y2: 210; } 35%, 50% { x2: 330; y2: 175; } 70%, 100% { x2: 410; y2: 175; } }
-    @keyframes case2yEnd { 0%, 15% { x2: 330; y2: 175; } 35%, 50% { x2: 365; y2: 210; } 70%, 100% { x2: 445; y2: 210; } }
+    @keyframes case2yEnd { 0%, 15% { x2: 330; y2: 175; } 35%, 50% { x2: 295; y2: 210; } 70%, 100% { x2: 375; y2: 210; } }
     @keyframes step1show { 0%, 15% { opacity: 0; } 30%, 55% { opacity: 1; } 65%, 100% { opacity: 0; } }
     @keyframes step2show { 0%, 55% { opacity: 0; } 70%, 100% { opacity: 1; } }
     @keyframes finalGlow { 70%, 80% { r: 6; } 85% { r: 10; } 90%, 100% { r: 6; } }
