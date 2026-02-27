@@ -24,16 +24,6 @@
 
 - 2025年度 計測工学講義資料（槇田 諭 先生作成）
 
----
-
-## 🔗 外部リンク
-
-本講義で参考にしたウェブリソース：
-
-- [Google AI Blog - High Fidelity Image Generation Using Diffusion Models](https://ai.googleblog.com/)
-- [OpenCV - Deep Learning for Image Processing](https://opencv.org/)
-
----
 
 ::: info 著作権について
 本サイトの内容は教育目的で作成されています。引用元の著作権は各著者・出版社に帰属します。
