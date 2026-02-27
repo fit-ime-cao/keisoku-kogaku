@@ -107,25 +107,62 @@ graph TD
 光学式エンコーダは、**LED**（発光素子）と**フォトトランジスタ**（受光素子）の間にスリット（溝）のある円盤を配置した構造です。円盤が回転すると、スリットを通過する光がパルス信号を生成します。
 :::
 
-<svg viewBox="0 0 450 200" xmlns="http://www.w3.org/2000/svg" style="max-width: 450px; margin: 20px auto; display: block;">
-  <text x="225" y="18" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">光学式エンコーダの構造</text>
-  <circle cx="225" cy="110" r="60" fill="none" stroke="#757575" stroke-width="2"/>
-  <circle cx="225" cy="110" r="55" fill="none" stroke="#757575" stroke-width="1" stroke-dasharray="8,4"/>
-  <circle cx="225" cy="110" r="5" fill="#333"/>
-  <text x="225" y="185" text-anchor="middle" font-size="10" fill="#757575">スリット円盤</text>
-  <line x1="225" y1="55" x2="225" y2="45" stroke="#333" stroke-width="2"/>
-  <line x1="265" y1="62" x2="272" y2="55" stroke="#333" stroke-width="2"/>
-  <line x1="280" y1="90" x2="290" y2="85" stroke="#333" stroke-width="2"/>
-  <line x1="185" y1="62" x2="178" y2="55" stroke="#333" stroke-width="2"/>
-  <line x1="170" y1="90" x2="160" y2="85" stroke="#333" stroke-width="2"/>
-  <rect x="60" y="95" width="50" height="30" fill="#FFF9C4" stroke="#F9A825" stroke-width="1.5" rx="3"/>
-  <text x="85" y="115" text-anchor="middle" font-size="9" fill="#F9A825" font-weight="bold">LED</text>
-  <rect x="340" y="95" width="50" height="30" fill="#E3F2FD" stroke="#1565C0" stroke-width="1.5" rx="3"/>
-  <text x="365" y="115" text-anchor="middle" font-size="8" fill="#1565C0" font-weight="bold">フォトTr</text>
-  <line x1="110" y1="110" x2="165" y2="110" stroke="#F9A825" stroke-width="1.5"/>
-  <polygon points="161,107 169,110 161,113" fill="#F9A825"/>
-  <line x1="285" y1="110" x2="340" y2="110" stroke="#1565C0" stroke-width="1.5" stroke-dasharray="4,3"/>
-  <polygon points="336,107 344,110 336,113" fill="#1565C0"/>
+<svg viewBox="0 0 500 220" xmlns="http://www.w3.org/2000/svg" style="max-width: 500px; margin: 20px auto; display: block;">
+  <style>
+    @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    @keyframes blink { 0%, 40% { opacity: 1; } 50%, 90% { opacity: 0.2; } 100% { opacity: 1; } }
+    @keyframes pulse { 0%, 40% { fill: #4CAF50; } 50%, 90% { fill: #E0E0E0; } 100% { fill: #4CAF50; } }
+    .disk { animation: rotate 2s linear infinite; transform-origin: 150px 110px; }
+    .light-beam { animation: blink 0.5s ease-in-out infinite; }
+    .signal-on { animation: pulse 0.5s ease-in-out infinite; }
+  </style>
+  <text x="250" y="18" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">光学式エンコーダの動作原理（アニメーション）</text>
+  
+  <!-- LED -->
+  <rect x="30" y="95" width="45" height="30" fill="#FFF9C4" stroke="#F9A825" stroke-width="2" rx="3"/>
+  <text x="52" y="115" text-anchor="middle" font-size="9" fill="#F9A825" font-weight="bold">LED</text>
+  
+  <!-- Light beam (animated) -->
+  <line x1="75" y1="110" x2="100" y2="110" stroke="#FFD54F" stroke-width="3" class="light-beam"/>
+  
+  <!-- Rotating disk with slits -->
+  <g class="disk">
+    <circle cx="150" cy="110" r="50" fill="#ECEFF1" stroke="#607D8B" stroke-width="2"/>
+    <rect x="145" y="60" width="10" height="20" fill="white"/>
+    <rect x="145" y="140" width="10" height="20" fill="white"/>
+    <rect x="100" y="105" width="20" height="10" fill="white"/>
+    <rect x="180" y="105" width="20" height="10" fill="white"/>
+    <rect x="115" y="72" width="15" height="10" fill="white" transform="rotate(45 122 77)"/>
+    <rect x="170" y="133" width="15" height="10" fill="white" transform="rotate(45 177 138)"/>
+    <rect x="170" y="72" width="15" height="10" fill="white" transform="rotate(-45 177 77)"/>
+    <rect x="115" y="133" width="15" height="10" fill="white" transform="rotate(-45 122 138)"/>
+    <circle cx="150" cy="110" r="5" fill="#333"/>
+  </g>
+  <text x="150" y="175" text-anchor="middle" font-size="10" fill="#757575">スリット円盤（回転中）</text>
+  
+  <!-- Light beam after disk (animated) -->
+  <line x1="200" y1="110" x2="240" y2="110" stroke="#FFD54F" stroke-width="3" class="light-beam"/>
+  
+  <!-- Phototransistor -->
+  <rect x="240" y="95" width="50" height="30" fill="#E3F2FD" stroke="#1565C0" stroke-width="2" rx="3"/>
+  <text x="265" y="115" text-anchor="middle" font-size="8" fill="#1565C0" font-weight="bold">フォトTr</text>
+  
+  <!-- Output signal display -->
+  <rect x="320" y="50" width="160" height="120" fill="#FAFAFA" stroke="#E0E0E0" stroke-width="1" rx="5"/>
+  <text x="400" y="70" text-anchor="middle" font-size="10" fill="#333" font-weight="bold">出力パルス</text>
+  
+  <!-- Pulse signal visualization -->
+  <line x1="340" y1="140" x2="460" y2="140" stroke="#BDBDBD" stroke-width="1"/>
+  <text x="335" y="100" text-anchor="end" font-size="8" fill="#757575">H</text>
+  <text x="335" y="143" text-anchor="end" font-size="8" fill="#757575">L</text>
+  <polyline points="340,140 340,95 360,95 360,140 380,140 380,95 400,95 400,140 420,140 420,95 440,95 440,140 460,140" fill="none" stroke="#4CAF50" stroke-width="2"/>
+  
+  <!-- Signal indicator -->
+  <circle cx="305" cy="110" r="8" class="signal-on"/>
+  <line x1="290" y1="110" x2="297" y2="110" stroke="#333" stroke-width="1"/>
+  
+  <!-- Explanation -->
+  <text x="250" y="200" text-anchor="middle" font-size="9" fill="#757575">光がスリットを通過 → パルス発生 / 遮断 → パルス停止</text>
 </svg>
 
 ### 3.3 インクリメンタル型エンコーダ
