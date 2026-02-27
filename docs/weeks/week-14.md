@@ -192,20 +192,41 @@ $$C = \varepsilon \frac{A}{d}$$
 - $d$：電極間距離 [m]
 :::
 
-<svg viewBox="0 0 450 200" xmlns="http://www.w3.org/2000/svg" style="max-width: 450px; margin: 20px auto; display: block;">
-  <text x="225" y="18" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">静電容量式圧力センサ</text>
-  <rect x="100" y="50" width="200" height="8" fill="#1565C0" stroke="#1565C0" stroke-width="1" rx="2"/>
-  <rect x="100" y="130" width="200" height="8" fill="#1565C0" stroke="#1565C0" stroke-width="1" rx="2"/>
+<svg viewBox="0 0 450 210" xmlns="http://www.w3.org/2000/svg" style="max-width: 450px; margin: 20px auto; display: block;">
+  <style>
+    @keyframes capPress { 0%, 10% { y: 50; } 45%, 55% { y: 95; } 90%, 100% { y: 50; } }
+    @keyframes capArrow { 0%, 10% { opacity: 0; } 20%, 55% { opacity: 1; } 65%, 100% { opacity: 0; } }
+    @keyframes capGapShrink { 0%, 10% { y1: 58; } 45%, 55% { y1: 103; } 90%, 100% { y1: 58; } }
+    @keyframes capLabelD { 0%, 10% { opacity: 1; } 35%, 65% { opacity: 0; } 85%, 100% { opacity: 1; } }
+    @keyframes capLabelDprime { 0%, 30% { opacity: 0; } 45%, 55% { opacity: 1; } 75%, 100% { opacity: 0; } }
+    @keyframes capCgrow { 0%, 30% { opacity: 0; } 45%, 55% { opacity: 1; } 75%, 100% { opacity: 0; } }
+    @keyframes capFieldDense { 0%, 10% { stroke-dasharray: 8,12; } 45%, 55% { stroke-dasharray: 4,4; } 90%, 100% { stroke-dasharray: 8,12; } }
+    .cap-top { animation: capPress 4s ease-in-out infinite; }
+    .cap-arrow { animation: capArrow 4s ease-in-out infinite; }
+    .cap-gap { animation: capGapShrink 4s ease-in-out infinite; }
+    .cap-label-d { animation: capLabelD 4s ease-in-out infinite; }
+    .cap-label-dprime { animation: capLabelDprime 4s ease-in-out infinite; }
+    .cap-c-increase { animation: capCgrow 4s ease-in-out infinite; }
+    .cap-field { animation: capFieldDense 4s ease-in-out infinite; }
+  </style>
+  <text x="225" y="18" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">静電容量式圧力センサ（アニメーション）</text>
+  <rect x="100" y="50" width="200" height="8" fill="#1565C0" rx="2" class="cap-top"/>
+  <rect x="100" y="130" width="200" height="8" fill="#1565C0" rx="2"/>
   <text x="330" y="58" font-size="10" fill="#1565C0">上部電極（可動）</text>
   <text x="330" y="138" font-size="10" fill="#1565C0">下部電極（固定）</text>
-  <line x1="200" y1="58" x2="200" y2="130" stroke="#9C27B0" stroke-width="1.5" stroke-dasharray="4,3"/>
-  <text x="210" y="100" font-size="10" fill="#9C27B0">d</text>
-  <line x1="200" y1="38" x2="200" y2="50" stroke="#F44336" stroke-width="2"/>
-  <polygon points="197,47 200,55 203,47" fill="#F44336"/>
-  <text x="200" y="35" text-anchor="middle" font-size="10" fill="#F44336">F（荷重）</text>
+  <line x1="130" y1="70" x2="130" y2="120" stroke="#9C27B0" stroke-width="1" stroke-dasharray="8,12" class="cap-field"/>
+  <line x1="170" y1="70" x2="170" y2="120" stroke="#9C27B0" stroke-width="1" stroke-dasharray="8,12" class="cap-field"/>
+  <line x1="230" y1="70" x2="230" y2="120" stroke="#9C27B0" stroke-width="1" stroke-dasharray="8,12" class="cap-field"/>
+  <line x1="270" y1="70" x2="270" y2="120" stroke="#9C27B0" stroke-width="1" stroke-dasharray="8,12" class="cap-field"/>
+  <line x1="200" y1="58" x2="200" y2="130" stroke="#9C27B0" stroke-width="1.5" stroke-dasharray="4,3" class="cap-gap"/>
+  <text x="215" y="95" font-size="10" fill="#9C27B0" class="cap-label-d">d</text>
+  <text x="215" y="118" font-size="10" fill="#FF5722" class="cap-label-dprime">d’</text>
+  <polygon points="197,38 200,30 203,38" fill="#F44336" class="cap-arrow"/>
+  <text x="200" y="28" text-anchor="middle" font-size="10" fill="#F44336" class="cap-arrow">F</text>
   <rect x="80" y="160" width="240" height="20" fill="#E0E0E0" stroke="#757575" stroke-width="1.5" rx="3"/>
   <text x="200" y="175" text-anchor="middle" font-size="10" fill="#757575">基板</text>
-  <text x="200" y="195" text-anchor="middle" font-size="10" fill="#333">荷重 F → d 減少 → C 増加</text>
+  <text x="200" y="198" text-anchor="middle" font-size="11" fill="#4CAF50" font-weight="bold" class="cap-c-increase">d ↓ → C ↑</text>
+  <text x="200" y="198" text-anchor="middle" font-size="10" fill="#333" class="cap-label-d">荷重 F → d 減少 → C 増加</text>
 </svg>
 
 荷重による電極間距離の変化：
