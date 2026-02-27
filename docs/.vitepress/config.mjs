@@ -13,6 +13,10 @@ export default withMermaid({
   
   // 语言
   lang: 'ja-JP',
+
+  // favicon
+  head: [['link', { rel: 'icon', type: 'image/svg+xml', href: '/keisoku-kogaku/favicon.svg' }]],
+
   
   // 主题配置
   themeConfig: {
