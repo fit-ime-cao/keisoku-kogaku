@@ -60,17 +60,26 @@
 
 
 <div style="display: flex; justify-content: center; margin: 20px 0;">
-<svg viewBox="0 0 420 220" width="100%" style="max-width: 420px; background: #fdfdfd; border-radius: 8px;">
-  <ellipse cx="210" cy="110" rx="200" ry="100" fill="#e8f4fd" stroke="#3498db" stroke-width="2"/>
-  <text x="210" y="30" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#2980b9" font-weight="bold">全国の大学生</text>
-  <ellipse cx="210" cy="120" rx="140" ry="70" fill="#fef9e7" stroke="#f39c12" stroke-width="2"/>
-  <text x="210" y="65" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#e67e22" font-weight="bold">福岡県在住の学生</text>
-  <ellipse cx="210" cy="130" rx="80" ry="40" fill="#fdedec" stroke="#e74c3c" stroke-width="2"/>
-  <text x="210" y="125" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#c0392b" font-weight="bold">福岡工業大学</text>
-  <line x1="170" y1="100" x2="170" y2="175" stroke="#95a5a6" stroke-width="1" stroke-dasharray="4,3"/>
-  <text x="155" y="155" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#7f8c8d">男</text>
-  <text x="185" y="155" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#7f8c8d">女</text>
-  <text x="210" y="200" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#e74c3c">← ここだけ調べても「全国」はわからない！</text>
+<svg viewBox="0 0 420 240" width="100%" style="max-width: 420px; background: #fdfdfd; border-radius: 8px;">
+  <ellipse cx="210" cy="120" rx="200" ry="100" fill="#e8f4fd" stroke="#3498db" stroke-width="2"/>
+  <text x="210" y="35" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#2980b9" font-weight="bold">全国の大学生</text>
+  <ellipse cx="210" cy="130" rx="140" ry="70" fill="#fef9e7" stroke="#f39c12" stroke-width="2"/>
+  <text x="210" y="75" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#e67e22" font-weight="bold">福岡県在住の学生</text>
+  <ellipse cx="210" cy="140" rx="80" ry="40" fill="#fdedec" stroke="#e74c3c" stroke-width="2"/>
+  <text x="210" y="135" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#c0392b" font-weight="bold">福岡工業大学</text>
+  <!-- 工業大学なので男子が多いことを示す -->
+  <text x="185" y="155" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#7f8c8d">男男男男男女</text>
+  <!-- 矢印を福岡工業大学の円に向ける -->
+  <line x1="320" y1="140" x2="295" y2="140" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#e74c3c"/>
+    </marker>
+  </defs>
+  <text x="340" y="125" text-anchor="start" font-family="sans-serif" font-size="10" fill="#e74c3c">ここだけ</text>
+  <text x="340" y="140" text-anchor="start" font-family="sans-serif" font-size="10" fill="#e74c3c">調べても</text>
+  <text x="340" y="155" text-anchor="start" font-family="sans-serif" font-size="10" fill="#e74c3c">「全国」は</text>
+  <text x="340" y="170" text-anchor="start" font-family="sans-serif" font-size="10" fill="#e74c3c">わからない！</text>
 </svg>
 </div>
 

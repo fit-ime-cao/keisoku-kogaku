@@ -317,6 +317,48 @@ $$f_N = \frac{f_s}{2}$$
 
 ---
 
+## 7. 余談：デジタルリマスターとAI技術
+
+### 7.1 デジタルリマスター
+
+アナログの録画フィルムなどから、配信用のマスターデータを**最新デジタル技術**で作り直すこと。
+
+```mermaid
+graph LR
+    A["アナログフィルム"] -->|従来| B["デジタルマスター<br>（低解像度）"]
+    A -->|デジタルリマスター| C["デジタルマスター<br>（高解像度）"]
+    B -.->|低解像度化は簡単| C
+    C -.->|高解像度化は困難| B
+    style A fill:#E8EAF6,color:#333
+    style B fill:#FFF9C4,color:#333
+    style C fill:#C8E6C9,color:#333
+```
+
+::: info AI超解像技術
+他の画像データに基づく予測で高解像度風にする技術（Super-Resolution）が近年発展しています。
+:::
+
+### 7.2 AI超解像（SR3: Super-Resolution via Diffusion）
+
+低解像度の画像から高解像度画像を生成する拡散モデルの例：
+
+![AI超解像 SR3](/images/ai-super-resolution.png)
+
+*出典: Google AI Blog - High Fidelity Image Generation Using Diffusion Models*
+
+### 7.3 AIによる白黒画像の自動着色
+
+深層学習を用いた白黒写真のカラー化技術：
+
+![AIによる自動着色](/images/ai-colorization.png)
+
+*出典: Colorizing black & white images with U-Net and conditional GAN*
+
+![OpenCVによる着色](/images/opencv-colorization.jpg)
+
+*出典: Black and white image colorization with OpenCV and Deep Learning*
+
+---
 
 ## 8. A/D変換の3ステップ
 
