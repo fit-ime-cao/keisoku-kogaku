@@ -54,12 +54,14 @@ export default withMermaid({
             // ========================================
           ]
         },
-        {
-          text: '補足資料',
-          items: [
-            { text: '座標変換と同次変換行列', link: '/weeks/coordinate-transform' }
-          ]
-        }
+        // ========== 補足資料（今後公開予定）==========
+        // {
+        //   text: '補足資料',
+        //   items: [
+        //     { text: '座標変換と同次変換行列', link: '/weeks/coordinate-transform' }
+        //   ]
+        // }
+        // ============================================
       ],
     },
 
