@@ -465,63 +465,51 @@ graph LR
 狙いは、今日学んだ「計測では単位が重要」という話を、そのまま次回以降の数値処理につなげることです。
 
 ### 問題1
-\( 3.2\ \mathrm{kV} \) を \( \mathrm{V} \) に直しなさい。
+3.2 kV を V に直しなさい。
 
 <details>
 <summary>解答</summary>
-\[
-3.2\ \mathrm{kV} = 3.2 \times 10^3\ \mathrm{V} = 3200\ \mathrm{V}
-\]
+3.2 kV = 3.2 × 10^3 V = 3200 V
 </details>
 
 ### 問題2
-\( 450\ \mathrm{mA} \) を \( \mathrm{A} \) に直しなさい。
+450 mA を A に直しなさい。
 
 <details>
 <summary>解答</summary>
-\[
-450\ \mathrm{mA} = 450 \times 10^{-3}\ \mathrm{A} = 0.45\ \mathrm{A}
-\]
+450 mA = 450 × 10^-3 A = 0.45 A
 </details>
 
 ### 問題3
-\( 0.75\ \mathrm{ms} \) を \( \mathrm{s} \) に直しなさい。
+0.75 ms を s に直しなさい。
 
 <details>
 <summary>解答</summary>
-\[
-0.75\ \mathrm{ms} = 0.75 \times 10^{-3}\ \mathrm{s} = 7.5 \times 10^{-4}\ \mathrm{s}
-\]
+0.75 ms = 0.75 × 10^-3 s = 7.5 × 10^-4 s
 </details>
 
 ### 問題4
-あるセンサの出力電圧が \( 2500\ \mathrm{mV} \) のとき、これを \( \mathrm{V} \) で表しなさい。
+あるセンサの出力電圧が 2500 mV のとき、これを V で表しなさい。
 
 <details>
 <summary>解答</summary>
-\[
-2500\ \mathrm{mV} = 2500 \times 10^{-3}\ \mathrm{V} = 2.5\ \mathrm{V}
-\]
+2500 mV = 2500 × 10^-3 V = 2.5 V
 </details>
 
 ### 問題5
-距離センサが \( 0.018\ \mathrm{km} \) を測定した。これを \( \mathrm{m} \) で表しなさい。
+距離センサが 0.018 km を測定した。これを m で表しなさい。
 
 <details>
 <summary>解答</summary>
-\[
-0.018\ \mathrm{km} = 0.018 \times 10^3\ \mathrm{m} = 18\ \mathrm{m}
-\]
+0.018 km = 0.018 × 10^3 m = 18 m
 </details>
 
 ### 問題6
-ある力センサの仕様に「最大荷重 \( 2.5\ \mathrm{kN} \)」とある。これは \( \mathrm{N} \) ではいくらか。
+ある力センサの仕様に「最大荷重 2.5 kN」とある。これは N ではいくらか。
 
 <details>
 <summary>解答</summary>
-\[
-2.5\ \mathrm{kN} = 2.5 \times 10^3\ \mathrm{N} = 2500\ \mathrm{N}
-\]
+2.5 kN = 2.5 × 10^3 N = 2500 N
 </details>
 
 ::: tip 授業での使い方
