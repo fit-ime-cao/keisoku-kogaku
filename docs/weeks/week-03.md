@@ -1,524 +1,847 @@
-# 第3週：計測データの統計的処理（1）
+# 第3週：測定値の統計的処理（1）
 
-> ⏱️ 読了時間：約35分 | 📝 確認問題：5問
+> ⏱️ 読了時間：約38分 | 📝 演習問題：6問
 
 ## 学習目標
 
 この週の講義を終えると、以下のことができるようになります：
 
-- [ ] 平均・分散・標準偏差を計算できる
+- [ ] 残差と残差二乗和の意味を説明できる
+- [ ] 不偏分散と自由度の意味を、ことばで説明できる
+- [ ] 正規分布の式の各部分（$\mu$, $\sigma$, $\exp$）の役割を説明できる
+- [ ] 正規分布がなぜ測定誤差によく現れるのかを説明できる
 - [ ] 確率誤差の意味と計算方法を理解できる
-- [ ] 最小二乗法の原理を説明できる
-- [ ] 実験データに対して近似式を求める手順を理解できる
+- [ ] 繰り返し測定の結果を「もっとも信頼しうる値」として表現できる
 
 ---
 
-## 1. 確度と精度の定量的評価
+## 1. 第2週から第3週へ：何が新しいのか
 
-第2週では確度（Accuracy）と精度（Precision）の概念を学びました。ここでは、それらを**数値的に評価する方法**を学びます。
+第2週では、すでに次の内容を学びました。
 
-### 1.1 基本変数
+- 平均・分散・標準偏差の基本的な意味
+- 確度と精度の違い
+- 正規分布の形のイメージ
 
-$N$ 個の計測データ $\{x_1, x_2, \dots, x_N\}$ が得られたとき：
+したがって、第3週ではそれらを**最初からやり直す**のではなく、
 
-### 1.2 標本の平均（算術平均）
+1. ばらつきをより厳密に扱うための **残差・不偏分散**
+2. 正規分布を「形」ではなく「意味」まで理解すること
+3. その上で **確率誤差** を使って、平均値がどこまで信用できるかを評価すること
 
-::: info 定義
-**標本の平均** $\bar{x}$ は、全データの総和をデータ数で割った値です。
+を目標にします。
 
-$$\bar{x} = \frac{1}{N} \sum_{i=1}^{N} x_i$$
+::: info この週の中心テーマ
+第3週は、**繰り返し測定したデータから、どの値をどの程度信頼してよいかを定量的に判断する週**です。
 :::
 
-- 確度の指標：平均が**真値に近い**ほど、確度が高い
+---
 
-### 1.3 標本の分散
+## 2. 残差と残差二乗和
 
-::: info 定義
-**標本の分散** $\sigma^2$ は、各データの平均からのずれの二乗の平均です。
+### 2.1 残差とは何か
 
-$$\sigma^2 = \frac{1}{N} \sum_{i=1}^{N} (x_i - \bar{x})^2$$
+各測定値 $x_i$ が平均値 $\bar{x}$ からどれだけずれているかを、**残差** と呼びます。
+
+$$
+d_i = x_i - \bar{x}
+$$
+
+::: tip 💡 残差の意味
+- $d_i > 0$ なら、その測定値は平均より大きい
+- $d_i < 0$ なら、その測定値は平均より小さい
+- $|d_i|$ が大きいほど、平均から大きく外れている
 :::
 
-- 精度の指標：分散が**小さい**ほど、精度が高い（ばらつきが少ない）
+### 2.2 なぜ残差を見る必要があるのか
 
-### 1.4 標本の標準偏差
+平均値だけを見ると、「中心」がわかります。
+しかし、平均値だけでは、
 
-::: info 定義
-**標本の標準偏差** $\sigma$ は、分散の正の平方根です。
+- 測定値が平均の近くにまとまっているのか
+- 大きく散らばっているのか
+- 一部だけ大きく外れているのか
 
-$$\sigma = \sqrt{\frac{1}{N} \sum_{i=1}^{N} (x_i - \bar{x})^2} = \sqrt{\sigma^2}$$
+がわかりません。
+
+そのため、**各データが平均からどのくらい離れているか**を個別に見る必要があります。その役割を果たすのが残差です。
+
+### 2.3 なぜ残差の和は 0 になるのか
+
+$$
+\sum_{i=1}^{n} d_i
+= \sum_{i=1}^{n}(x_i-\bar{x})
+= \sum_{i=1}^{n}x_i - n\bar{x}
+$$
+
+ここで
+
+$$
+\bar{x} = \frac{1}{n}\sum_{i=1}^{n}x_i
+$$
+
+なので、
+
+$$
+\sum_{i=1}^{n} d_i
+= \sum_{i=1}^{n}x_i - n\cdot\frac{1}{n}\sum_{i=1}^{n}x_i
+= 0
+$$
+
+つまり、残差をそのまま足すと、正と負が打ち消し合ってしまいます。
+
+### 2.4 だから二乗和を考える
+
+そこで、ばらつきの大きさを見るために、残差を二乗して足し合わせます。
+
+$$
+S = \sum_{i=1}^{n} d_i^2 = \sum_{i=1}^{n}(x_i-\bar{x})^2
+$$
+
+この $S$ を **残差二乗和** と呼びます。
+
+::: warning ⚠️ 重要
+残差の和は 0 になってしまうので、**散らばりの大きさを知るには二乗和が必要**です。
 :::
 
-::: tip 💡 ポイント
-標準偏差は元のデータと**次元（単位）が同じ**です。
-- 計測値が [mm] なら、標準偏差も [mm]
-- だから加算・減算ができる → $\bar{x} \pm \sigma$ のように使える
+---
+
+## 3. 不偏分散と自由度
+
+### 3.1 なぜ分散だけでは足りないのか
+
+第2週では、「分散はばらつきの大きさを表す」と学びました。
+
+これは正しいのですが、計測工学ではしばしば、
+
+- 今あるデータのばらつきを知りたい
+
+だけでなく、
+
+- その背後にある**母集団のばらつき**を推定したい
+
+という場面があります。
+
+このときに、そのまま
+
+$$
+\frac{1}{n}\sum_{i=1}^{n}(x_i-\bar{x})^2
+$$
+
+を使うと、平均的に少し小さめに見積もる傾向があります。そこで、その偏りを補うために**不偏分散**を使います。
+
+### 3.2 不偏分散とは
+
+$$
+s^2 = \frac{1}{n-1}\sum_{i=1}^{n}(x_i-\bar{x})^2
+$$
+
+::: info なぜ必要か
+不偏分散は、**標本から母分散を推定するときに、平均的に過小評価しないよう補正した分散**です。
 :::
 
-### 1.5 標準偏差の意味
+### 3.3 なぜ $n-1$ で割るのか
 
-正規分布において：
+ここが第3週で特に大切な点です。
 
-| 範囲 | 含まれるデータの割合 |
-|------|---------------------|
-| $\bar{x} \pm 1\sigma$ | 約 **68.27%** |
-| $\bar{x} \pm 2\sigma$ | 約 **95.45%** |
-| $\bar{x} \pm 3\sigma$ | 約 **99.73%** |
+平均値 $\bar{x}$ を一度求めると、残差は
 
-<svg viewBox="0 0 500 220" xmlns="http://www.w3.org/2000/svg" style="max-width: 500px; margin: 20px auto; display: block;">
+$$
+d_1 + d_2 + \cdots + d_n = 0
+$$
+
+という条件を必ず満たします。
+
+つまり、$n$ 個の残差があっても、最後の 1 個は他の $n-1$ 個で自動的に決まります。自由に動かせるのは $n-1$ 個だけです。
+
+これを **自由度が $n-1$** といいます。
+
+<div style="display:flex;justify-content:center;margin:20px 0;">
+<svg viewBox="0 0 520 170" width="100%" style="max-width:520px;background:#fff;border:1px solid #d8e0ec;border-radius:12px;">
+  <text x="25" y="35" font-size="13" fill="#334155">残差:</text>
+  <rect x="80" y="20" width="55" height="36" rx="8" fill="#dbeafe" stroke="#60a5fa"/>
+  <rect x="150" y="20" width="55" height="36" rx="8" fill="#dbeafe" stroke="#60a5fa"/>
+  <rect x="220" y="20" width="55" height="36" rx="8" fill="#dbeafe" stroke="#60a5fa"/>
+  <rect x="290" y="20" width="55" height="36" rx="8" fill="#dbeafe" stroke="#60a5fa"/>
+  <rect x="360" y="20" width="55" height="36" rx="8" fill="#fee2e2" stroke="#ef4444"/>
+  <text x="107" y="43" text-anchor="middle" font-size="13">d₁</text>
+  <text x="177" y="43" text-anchor="middle" font-size="13">d₂</text>
+  <text x="247" y="43" text-anchor="middle" font-size="13">d₃</text>
+  <text x="317" y="43" text-anchor="middle" font-size="13">…</text>
+  <text x="387" y="43" text-anchor="middle" font-size="13">dₙ</text>
+  <text x="80" y="90" font-size="13" fill="#334155">条件:</text>
+  <text x="130" y="90" font-size="18" fill="#0f172a">d₁ + d₂ + … + dₙ = 0</text>
+  <text x="80" y="130" font-size="13" fill="#334155">意味:</text>
+  <text x="130" y="130" font-size="13" fill="#0f172a">最後の dₙ は他の残差で自動的に決まる → 自由に動けるのは n−1 個</text>
+</svg>
+</div>
+
+::: tip 💡 直感的な説明
+平均値をデータから求めた時点で、ばらつきの評価に使える「自由」が 1 つ減っています。
+:::
+
+### 3.4 なぜ「不偏」と呼ぶのか
+
+母分散を $\sigma^2$ とすると、不偏分散 $s^2$ は
+
+$$
+E[s^2]=\sigma^2
+$$
+
+を満たします。つまり、平均的に見て、母分散を過大にも過小にも見積もらない量です。
+
+### 3.5 標本標準偏差
+
+不偏分散の平方根を **標本標準偏差** とします。
+
+$$
+s = \sqrt{s^2}
+$$
+
+第2週で学んだように、標準偏差は元の測定値と同じ単位を持つので、解釈しやすい量です。
+
+---
+
+## 4. 正規分布を直感的に理解する
+
+### 4.1 なぜ測定誤差に正規分布が現れやすいのか
+
+測定誤差は、多くの場合、1つの大きな原因ではなく、たくさんの小さな要因の重なりとして現れます。
+
+- 読み取り誤差
+- 温度変動
+- 微小な振動
+- 電気ノイズ
+- 人間の反応時間の揺れ
+
+こうした小さな要因が独立に加わると、
+
+- **小さい誤差は起こりやすい**
+- **大きい誤差は起こりにくい**
+- **平均値の左右でほぼ対称**
+
+という山形の分布が自然に現れます。
+
+### 4.2 なぜ式の理解が必要なのか
+
+第2週では、正規分布の形を図として学びました。しかし、第3週ではさらに一歩進んで、
+
+- なぜ平均値 $\mu$ が中心なのか
+- なぜ $\sigma$ が広がりを決めるのか
+- なぜ $(x-\mu)^2$ が入るのか
+- なぜ $\exp$ が現れるのか
+
+を理解する必要があります。なぜなら、その理解が後の**確率誤差**の意味理解につながるからです。
+
+<div style="display:flex;justify-content:center;margin:20px 0;">
+<svg viewBox="0 0 460 260" width="100%" style="max-width:460px;background:#fff;border:1px solid #d8e0ec;border-radius:12px;">
   <defs>
-    <linearGradient id="bellGrad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#4CAF50" stop-opacity="0.3"/>
-      <stop offset="100%" stop-color="#4CAF50" stop-opacity="0.05"/>
+    <linearGradient id="w3grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#60a5fa" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="#60a5fa" stop-opacity="0.08"/>
     </linearGradient>
   </defs>
-  <line x1="50" y1="180" x2="450" y2="180" stroke="#333" stroke-width="1.5"/>
-  <line x1="50" y1="180" x2="50" y2="20" stroke="#333" stroke-width="1.5"/>
-  <path d="M50,180 Q100,178 130,170 Q160,155 180,130 Q200,95 220,55 Q240,30 250,25 Q260,30 280,55 Q300,95 320,130 Q340,155 360,170 Q390,178 450,180" fill="url(#bellGrad)" stroke="#4CAF50" stroke-width="2.5"/>
-  <line x1="250" y1="25" x2="250" y2="185" stroke="#E91E63" stroke-width="1.5" stroke-dasharray="5,3"/>
-  <text x="250" y="200" text-anchor="middle" font-size="13" fill="#E91E63" font-weight="bold">x̄</text>
-  <rect x="180" y="60" width="140" height="120" fill="#2196F3" fill-opacity="0.15" rx="3"/>
-  <line x1="180" y1="60" x2="180" y2="185" stroke="#2196F3" stroke-width="1" stroke-dasharray="3,3"/>
-  <line x1="320" y1="60" x2="320" y2="185" stroke="#2196F3" stroke-width="1" stroke-dasharray="3,3"/>
-  <text x="180" y="200" text-anchor="middle" font-size="11" fill="#2196F3">-1σ</text>
-  <text x="320" y="200" text-anchor="middle" font-size="11" fill="#2196F3">+1σ</text>
-  <text x="250" y="145" text-anchor="middle" font-size="12" fill="#2196F3" font-weight="bold">68.27%</text>
-  <line x1="110" y1="170" x2="110" y2="185" stroke="#999" stroke-width="1" stroke-dasharray="3,3"/>
-  <line x1="390" y1="170" x2="390" y2="185" stroke="#999" stroke-width="1" stroke-dasharray="3,3"/>
-  <text x="110" y="200" text-anchor="middle" font-size="11" fill="#999">-2σ</text>
-  <text x="390" y="200" text-anchor="middle" font-size="11" fill="#999">+2σ</text>
-  <text x="250" y="170" text-anchor="middle" font-size="10" fill="#999">95.45%</text>
-  <text x="40" y="185" text-anchor="end" font-size="11" fill="#333">0</text>
-  <text x="25" y="100" text-anchor="middle" font-size="11" fill="#333" transform="rotate(-90,25,100)">出現頻度</text>
+  <line x1="50" y1="220" x2="420" y2="220" stroke="#334155" stroke-width="2"/>
+  <line x1="50" y1="220" x2="50" y2="25" stroke="#334155" stroke-width="2"/>
+  <path d="M50,220 C120,220 130,110 180,70 C205,50 228,40 235,40 C242,40 265,50 290,70 C340,110 350,220 420,220" fill="url(#w3grad)" stroke="#2563eb" stroke-width="3"/>
+  <line x1="235" y1="40" x2="235" y2="223" stroke="#e11d48" stroke-width="2" stroke-dasharray="6 5"/>
+  <line x1="165" y1="85" x2="165" y2="223" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <line x1="305" y1="85" x2="305" y2="223" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <text x="235" y="245" text-anchor="middle" font-size="14" fill="#e11d48">μ</text>
+  <text x="165" y="245" text-anchor="middle" font-size="13" fill="#7c3aed">μ − σ</text>
+  <text x="305" y="245" text-anchor="middle" font-size="13" fill="#7c3aed">μ + σ</text>
+  <text x="235" y="257" text-anchor="middle" font-size="12" fill="#334155">測定値 x</text>
+  <text x="23" y="120" transform="rotate(-90 23 120)" text-anchor="middle" font-size="12" fill="#334155">確率密度</text>
+  <text x="235" y="62" text-anchor="middle" font-size="12" fill="#0f766e">平均の近くが最も起こりやすい</text>
 </svg>
+</div>
 
 ---
 
-## 2. 練習問題：確度と精度の比較
+## 5. 正規分布の式をどう読むか
 
-### 2.1 問題
+### 5.1 まず式全体を見る
 
-次の A, B の計測データについて、どちらのほうが**正確**（確度が高い）または**精密**（精度が高い）であるか？
+正規分布の確率密度関数は
 
-**真値は 2.0** とする。
+$$
+f(x)=\frac{1}{\sqrt{2\pi}\sigma}\exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right)
+$$
 
-| No. | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
-|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| データA | 2.1 | 1.8 | 2.4 | 1.7 | 2.2 | 2.0 | 1.9 | 1.9 | 2.3 |
-| データB | 2.1 | 1.8 | 1.9 | 2.0 | 1.8 | 1.7 | 1.9 | 1.6 | 2.0 |
+です。
 
-::: tip ヒント
-- **平均**を求める → 真値に近いほうが正確（確度が高い）
-- **分散**を求める → 分散の小さいほうが精密（精度が高い）
+ここでは、**証明そのものよりも「各部分が何をしているか」** を押さえます。
+
+| 部分 | 役割 |
+|------|------|
+| $\mu$ | 山の中心（平均値） |
+| $\sigma$ | 山の広がり（標準偏差） |
+| $(x-\mu)^2$ | 中心からの距離を左右対称に表す |
+| $\exp(\cdots)$ | 中心から離れるほど急速に減少させる |
+| $\frac{1}{\sqrt{2\pi}\sigma}$ | 曲線全体の面積を 1 にする |
+
+### 5.2 なぜ $(x-\mu)^2$ が必要なのか
+
+- 分布の中心を平均値 $\mu$ に置きたいので、$x-\mu$ を使う
+- 右に同じだけずれた場合と左に同じだけずれた場合を同じように扱いたい
+- そのため符号を消し、距離の大きさだけを残す必要がある
+
+よって、
+
+$$
+(x-\mu)^2
+$$
+
+が自然に現れます。
+
+たとえば、
+
+$$
+(\mu+0.2-\mu)^2 = (\mu-0.2-\mu)^2 = 0.04
+$$
+
+です。
+
+### 5.3 なぜ $\exp$ が必要なのか
+
+正規分布にしたいなら、関数には少なくとも次の性質が必要です。
+
+1. 平均値の近くで大きい
+2. 平均から離れるほど小さくなる
+3. しかも滑らかに減る
+4. 関数値は常に正である
+
+これらを自然に満たすのが指数関数です。
+
+とくに
+
+$$
+\exp(-z)
+$$
+
+は、$z$ が大きくなるほど急速に小さくなります。そこで $z=(x-\mu)^2$ と考えると、
+
+$$
+\exp\big(-(x-\mu)^2\big)
+$$
+
+のような形が自然に現れます。
+
+::: tip 💡 要するに
+$\exp$ は「中心から離れるほど起こりにくくなる」ことを、滑らかで自然な形で表すために必要です。
 :::
 
-### 2.2 解答
+### 5.4 なぜ $\sigma$ が分母にあるのか
 
-**平均の計算：**
+$\sigma$ は分布の**広がり**を表します。
 
-$$\bar{A} = \frac{2.1 + 1.8 + 2.4 + 1.7 + 2.2 + 2.0 + 1.9 + 1.9 + 2.3}{9} = 2.033\dots$$
+- $\sigma$ が小さい → 平均の近くに強く集中する
+- $\sigma$ が大きい → より広く散らばる
 
-$$\bar{B} = \frac{2.1 + 1.8 + 1.9 + 2.0 + 1.8 + 1.7 + 1.9 + 1.6 + 2.0}{9} = 1.867\dots$$
+式の中では
 
-→ $\bar{A} = 2.033$ のほうが真値 $2.0$ に近い → **計測データAのほうが正確（確度が高い）**
+$$
+\exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right)
+$$
 
-**分散の計算：**
+となっているので、$\sigma$ が大きいと減少がゆるくなり、山が横に広がります。
 
-$$\sigma_A^2 = \frac{1}{9}\{(2.1 - 2.033)^2 + (1.8 - 2.033)^2 + \cdots\} = 0.0489\dots$$
+### 5.5 なぜ前に係数がつくのか
 
-$$\sigma_B^2 = \frac{1}{9}\{(2.1 - 1.867)^2 + (1.8 - 1.867)^2 + \cdots\} = 0.0222\dots$$
+確率密度関数では、曲線全体の面積が 1 でなければなりません。そこで、その面積を 1 にそろえるために
 
-→ $\sigma_B^2 = 0.022$ のほうが小さい → **計測データBのほうが精密（精度が高い）**
+$$
+\frac{1}{\sqrt{2\pi}\sigma}
+$$
 
-::: warning まとめ
-| | 確度（Accuracy） | 精度（Precision） |
-|---|---|---|
-| データA | ✅ 高い（平均が真値に近い） | ❌ 低い（ばらつきが大きい） |
-| データB | ❌ 低い（平均が真値から遠い） | ✅ 高い（ばらつきが小さい） |
+が付きます。
+
+::: warning 附录について
+厳密な導出（最大エントロピー、変分法、ガウス積分）は、このページの最後の**附录**にまとめています。本編では、まず「式の意味」を理解することを優先します。
 :::
 
 ---
 
-## 3. 演習課題：ストップウォッチ実験
+## 6. $\mu\pm1\sigma$, $\mu\pm2\sigma$, $\mu\pm3\sigma$ の意味
 
-実際に自分で計測してみましょう。
+標準化変数
 
-1. 任意のストップウォッチを用いて、手動で**5秒間**を計測・停止し、その値を記録する
-2. **10回**の計測結果を用いて、**平均、分散、標準偏差**を計算する
-3. 同様に**10秒間**の計測・計算を行い、正確さ・精密さを比較する
+$$
+Z=\frac{X-\mu}{\sigma}
+$$
 
-::: tip 💡 考察ポイント
-- 5秒と10秒では、どちらが正確（確度が高い）ですか？
-- 5秒と10秒では、どちらが精密（精度が高い）ですか？
-- なぜその結果になると思いますか？
+を使うと、標準正規分布
+
+$$
+\phi(z)=\frac{1}{\sqrt{2\pi}}e^{-z^2/2}
+$$
+
+に変換できます。その結果、
+
+| 範囲 | 確率 | 意味 |
+|------|------|------|
+| $\mu\pm1\sigma$ | 約 68.27% | 最も典型的なばらつきの範囲 |
+| $\mu\pm2\sigma$ | 約 95.45% | 多くのデータが入る範囲 |
+| $\mu\pm3\sigma$ | 約 99.73% | ここを超えると外れ値の疑いが強い |
+
+となります。
+
+<div style="display:flex;justify-content:center;margin:20px 0;">
+<svg viewBox="0 0 520 220" width="100%" style="max-width:520px;background:#fff;border:1px solid #d8e0ec;border-radius:12px;">
+  <line x1="50" y1="180" x2="470" y2="180" stroke="#333" stroke-width="1.5"/>
+  <path d="M50,180 Q100,178 130,170 Q160,155 180,130 Q200,95 220,55 Q240,30 260,25 Q280,30 300,55 Q320,95 340,130 Q360,155 390,170 Q420,178 470,180" fill="#dbeafe" stroke="#2563eb" stroke-width="2.5"/>
+  <line x1="260" y1="25" x2="260" y2="185" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="5,4"/>
+  <line x1="190" y1="60" x2="190" y2="185" stroke="#7c3aed" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="330" y1="60" x2="330" y2="185" stroke="#7c3aed" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="120" y1="120" x2="120" y2="185" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="400" y1="120" x2="400" y2="185" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="260" y="200" text-anchor="middle" font-size="12" fill="#ef4444">μ</text>
+  <text x="190" y="200" text-anchor="middle" font-size="11" fill="#7c3aed">μ-σ</text>
+  <text x="330" y="200" text-anchor="middle" font-size="11" fill="#7c3aed">μ+σ</text>
+  <text x="120" y="200" text-anchor="middle" font-size="11" fill="#94a3b8">μ-2σ</text>
+  <text x="400" y="200" text-anchor="middle" font-size="11" fill="#94a3b8">μ+2σ</text>
+  <text x="260" y="140" text-anchor="middle" font-size="12" fill="#2563eb" font-weight="bold">68.27%</text>
+  <text x="260" y="165" text-anchor="middle" font-size="11" fill="#64748b">95.45%</text>
+</svg>
+</div>
+
+::: info なぜこの概念が必要か
+確率誤差や外れ値の判断では、「平均の周りにどの程度の範囲でデータが集まるか」を理解していることが不可欠です。
 :::
 
 ---
 
-## 4. 確率誤差
+## 7. 確率誤差
 
-### 4.1 確率誤差とは
+### 7.1 定義
 
-::: info 定義
-**確率誤差**（Probable Error）：算術平均値がどの程度まで信用できるのかを示す指標
+**確率誤差**は、算術平均値がどの程度まで信用できるかを示す量です。
 
-$$\text{もっとも信頼しうる値} = \bar{x} \pm E$$
+$$
+\text{もっとも信頼しうる値} = \bar{x} \pm E
+$$
+
+### 7.2 なぜ確率誤差が必要なのか
+
+平均値だけを出しても、
+
+- その値がどのくらい安定しているのか
+- どのくらい信用してよいのか
+
+はわかりません。
+
+そこで、平均値のまわりにどれくらいの不確かさがあるかを表す量として、確率誤差を導入します。
+
+### 7.3 各測定の確率誤差
+
+$n$ 回の計測を行ったとき、各測定の確率誤差 $\epsilon$ は
+
+$$
+\epsilon = \pm 0.6745\sqrt{\frac{1}{n-1}\sum_{i=1}^{n}(x_i-\bar{x})^2} = \pm 0.6745\,s
+$$
+
+です。
+
+ここで 0.6745 は、標準正規分布で中央 50% を切り出す位置から出てくる定数です。
+
+### 7.4 測定全体の確率誤差
+
+$n$ 回測定した平均値の確率誤差 $E$ は
+
+$$
+E = \frac{\epsilon}{\sqrt{n}}
+$$
+
+となります。
+
+::: warning ⚠️ 重要
+測定回数を増やすと、平均値の信頼性は改善しますが、その改善は $\sqrt{n}$ に比例します。したがって、回数を 4 倍にしても誤差は 1/4 ではなく 1/2 になります。
 :::
 
-### 4.2 各測定の確率誤差
+---
 
-$n$ 回の計測を行ったとき、各測定の確率誤差 $\epsilon$ は：
+## 8. 完全計算例
 
-$$\epsilon = \pm\, 0.6745 \sqrt{\frac{1}{n-1} \sum_{i=1}^{n} (x_i - \bar{x})^2}$$
+次の 5 回の測定値について、平均値と確率誤差を求めます。
 
-::: tip 💡 補足
-- $0.6745$ は正規分布の累積分布関数から導かれる定数
-- $n-1$ で割るのは**不偏分散**（自由度を考慮した分散）を使っているため
-:::
+$$
+4.66,\quad 4.65,\quad 4.67,\quad 4.66,\quad 4.64
+$$
 
-### 4.3 測定全体の確率誤差
+### 8.1 平均値
 
-$n$ 回の測定の確率誤差 $E$ は：
+$$
+\bar{x}=\frac{4.66+4.65+4.67+4.66+4.64}{5}=4.656
+$$
 
-$$E = \frac{\epsilon}{\sqrt{n}}$$
+### 8.2 残差と残差二乗
 
-::: tip 💡 ポイント
-測定回数 $n$ を増やすほど、確率誤差 $E$ は小さくなります（$\sqrt{n}$ で割るため）。つまり、**繰り返し計測することで信頼性が向上**します。
-:::
-
-### 4.4 練習問題
-
-下記5回の測定結果について、計測値の**平均値**と**確率誤差**を求めなさい。
-
-$$4.66, \quad 4.65, \quad 4.67, \quad 4.66, \quad 4.64$$
-
-<details>
-<summary><strong>📖 解答を見る</strong></summary>
-
-**ステップ1：平均値**
-
-$$\bar{x} = \frac{4.66 + 4.65 + 4.67 + 4.66 + 4.64}{5} = 4.656$$
-
-**ステップ2：残差と残差の二乗**
-
-| 測定値 | 残差 $(x_i - \bar{x})$ | 残差の二乗 |
-|:------:|:----------------------:|:----------:|
+| 測定値 | 残差 $d_i=x_i-\bar{x}$ | $d_i^2$ |
+|------:|-------------------------:|--------:|
 | 4.66 | +0.004 | 0.000016 |
-| 4.65 | −0.006 | 0.000036 |
+| 4.65 | -0.006 | 0.000036 |
 | 4.67 | +0.014 | 0.000196 |
 | 4.66 | +0.004 | 0.000016 |
-| 4.64 | −0.016 | 0.000256 |
+| 4.64 | -0.016 | 0.000256 |
 
-残差の二乗和 $= 0.00052$
+したがって
 
-**ステップ3：各測定の確率誤差**
+$$
+\sum d_i^2 = 0.00052
+$$
 
-$$\epsilon = 0.6745 \sqrt{\frac{0.00052}{5-1}} = 0.6745 \sqrt{0.00013} = 0.6745 \times 0.01140 = 0.00769$$
+### 8.3 不偏分散と標本標準偏差
 
-**ステップ4：測定全体の確率誤差**
+$$
+s^2 = \frac{0.00052}{5-1}=0.00013
+$$
 
-$$E = \frac{0.00769}{\sqrt{5}} = \frac{0.00769}{2.236} = 0.00344$$
+$$
+s = \sqrt{0.00013}=0.01140
+$$
 
-**結果：**
+### 8.4 各測定の確率誤差
 
-$$\boxed{4.656 \pm 0.003}$$
+$$
+\epsilon = 0.6745\times 0.01140 = 0.00769
+$$
+
+### 8.5 平均の確率誤差
+
+$$
+E = \frac{0.00769}{\sqrt{5}} = 0.00344
+$$
+
+### 8.6 最終結果
+
+$$
+\boxed{4.656\pm0.003}
+$$
+
+::: tip 💡 読み方
+「この測定では、もっとも信頼できる値は 4.656 であり、その信用幅は約 ±0.003 である」と解釈します。
+:::
+
+---
+
+## 9. 授業後の自己復習：演習問題
+
+### 問題1
+
+次の 4 回の測定値の平均値を求めなさい。
+
+$$
+2.01,\quad 2.05,\quad 1.98,\quad 2.00
+$$
+
+<details>
+<summary>解答</summary>
+
+$$
+\bar{x} = \frac{2.01+2.05+1.98+2.00}{4}=2.01
+$$
+
+</details>
+
+### 問題2
+
+残差 $d_i=x_i-\bar{x}$ の和が 0 になる理由を説明しなさい。
+
+<details>
+<summary>解答</summary>
+
+$$
+\sum_{i=1}^{n}(x_i-\bar{x}) = \sum_{i=1}^{n}x_i - n\bar{x} = 0
+$$
+
+となるためです。平均値そのものが、全データの和を $n$ で割った量だからです。
+
+</details>
+
+### 問題3
+
+不偏分散で $n-1$ で割る理由を、「自由度」という言葉を用いて説明しなさい。
+
+<details>
+<summary>解答</summary>
+
+平均値を決めると、残差は
+
+$$
+d_1+d_2+\cdots+d_n=0
+$$
+
+の制約を満たすため、自由に決められるのは $n-1$ 個です。したがって自由度は $n-1$ になります。
+
+</details>
+
+### 問題4
+
+正規分布の式で $(x-\mu)^2$ が使われている理由を説明しなさい。
+
+<details>
+<summary>解答</summary>
+
+平均値 $\mu$ からの距離だけを見たいからです。右に同じだけずれた場合と左に同じだけずれた場合を同じように扱うため、符号が消える二乗 $(x-\mu)^2$ が使われます。
+
+</details>
+
+### 問題5
+
+次の空欄を埋めなさい。
+
+- $\mu\pm1\sigma$ の範囲に入るデータは約（　　　）%
+- $\mu\pm2\sigma$ の範囲に入るデータは約（　　　）%
+
+<details>
+<summary>解答</summary>
+
+- $\mu\pm1\sigma$ ：約 68.27%
+- $\mu\pm2\sigma$ ：約 95.45%
+
+</details>
+
+### 問題6
+
+平均値 $\bar{x}=5.20$、各測定の確率誤差 $\epsilon=0.012$、測定回数 $n=9$ のとき、平均値の確率誤差 $E$ と最も信頼しうる値を求めなさい。
+
+<details>
+<summary>解答</summary>
+
+$$
+E=\frac{0.012}{\sqrt{9}}=\frac{0.012}{3}=0.004
+$$
+
+したがって、
+
+$$
+\boxed{5.20\pm0.004}
+$$
 
 </details>
 
 ---
 
-## 5. 回帰分析と最小二乗法
+## 10. 今週のまとめ
 
-### 5.1 回帰分析とは
+- 残差は平均からのずれを表す
+- 残差の和は 0 になるので、ばらつきは二乗和で評価する
+- 標本から母集団のばらつきを推定するときは、不偏分散を使う
+- 正規分布の式では、$\mu$ は中心、$\sigma$ は広がり、$\exp$ は減少のしかたを表す
+- 確率誤差を使うと、平均値がどの程度信用できるかを数値で表せる
 
-::: info 定義
-**回帰分析**（Regression Analysis / Fitting）：あるデータの相関関係または関数関係を調べるときに、その関数の式の係数を求める手法
-:::
-
-例えば、計測データが直線的な関係を持つと予想されるとき：
-
-$$y = ax + b$$
-
-の係数 $a$（傾き）と $b$（切片）を、データから求めます。
-
-<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" style="max-width: 400px; margin: 20px auto; display: block;">
-  <style>
-    @keyframes w3dotAppear { 0% { opacity: 0; transform: scale(0); } 100% { opacity: 1; transform: scale(1); } }
-    @keyframes w3lineDraw { 0% { stroke-dashoffset: 400; } 100% { stroke-dashoffset: 0; } }
-    @keyframes w3residShow { 0%,75% { opacity: 0; } 80% { opacity: 1; } 95% { opacity: 1; } 100% { opacity: 0; } }
-    @keyframes w3labelFade { 0%,60% { opacity: 0; } 70% { opacity: 1; } 100% { opacity: 1; } }
-    @keyframes w3residLabel { 0%,75% { opacity: 0; } 80% { opacity: 1; } 95% { opacity: 1; } 100% { opacity: 0; } }
-    .w3d1 { opacity: 0; transform-origin: 80px 205px; animation: w3dotAppear 0.4s ease-out 0.3s forwards; }
-    .w3d2 { opacity: 0; transform-origin: 110px 185px; animation: w3dotAppear 0.4s ease-out 0.6s forwards; }
-    .w3d3 { opacity: 0; transform-origin: 140px 195px; animation: w3dotAppear 0.4s ease-out 0.9s forwards; }
-    .w3d4 { opacity: 0; transform-origin: 160px 165px; animation: w3dotAppear 0.4s ease-out 1.2s forwards; }
-    .w3d5 { opacity: 0; transform-origin: 190px 155px; animation: w3dotAppear 0.4s ease-out 1.5s forwards; }
-    .w3d6 { opacity: 0; transform-origin: 220px 140px; animation: w3dotAppear 0.4s ease-out 1.8s forwards; }
-    .w3d7 { opacity: 0; transform-origin: 250px 130px; animation: w3dotAppear 0.4s ease-out 2.1s forwards; }
-    .w3d8 { opacity: 0; transform-origin: 270px 105px; animation: w3dotAppear 0.4s ease-out 2.4s forwards; }
-    .w3d9 { opacity: 0; transform-origin: 300px 95px; animation: w3dotAppear 0.4s ease-out 2.7s forwards; }
-    .w3d10 { opacity: 0; transform-origin: 330px 75px; animation: w3dotAppear 0.4s ease-out 3.0s forwards; }
-    .w3d11 { opacity: 0; transform-origin: 360px 60px; animation: w3dotAppear 0.4s ease-out 3.3s forwards; }
-    .w3regline { stroke-dasharray: 400; stroke-dashoffset: 400; animation: w3lineDraw 1.2s ease-in-out 4.0s forwards; }
-    .w3eqlabel { opacity: 0; animation: w3labelFade 1s ease-out 4.8s forwards; }
-    .w3resid { opacity: 0; animation: w3residShow 8s ease-in-out 5.5s infinite; }
-    .w3residtxt { opacity: 0; animation: w3residLabel 8s ease-in-out 5.5s infinite; }
-  </style>
-  <rect x="50" y="20" width="330" height="230" fill="#fafafa" stroke="#ddd" rx="3"/>
-  <line x1="50" y1="250" x2="380" y2="250" stroke="#333" stroke-width="1.5"/>
-  <line x1="50" y1="250" x2="50" y2="20" stroke="#333" stroke-width="1.5"/>
-  <text x="215" y="270" text-anchor="middle" font-size="13" fill="#333">x</text>
-  <text x="25" y="135" text-anchor="middle" font-size="13" fill="#333" transform="rotate(-90,25,135)">y</text>
-  <text x="215" y="295" text-anchor="middle" font-size="11" fill="#1565C0" font-weight="bold">最小二乗法フィッティング（アニメーション）</text>
-  <circle cx="80" cy="205" r="4.5" fill="#1565C0" class="w3d1"/>
-  <circle cx="110" cy="185" r="4.5" fill="#1565C0" class="w3d2"/>
-  <circle cx="140" cy="195" r="4.5" fill="#1565C0" class="w3d3"/>
-  <circle cx="160" cy="165" r="4.5" fill="#1565C0" class="w3d4"/>
-  <circle cx="190" cy="155" r="4.5" fill="#1565C0" class="w3d5"/>
-  <circle cx="220" cy="140" r="4.5" fill="#1565C0" class="w3d6"/>
-  <circle cx="250" cy="130" r="4.5" fill="#1565C0" class="w3d7"/>
-  <circle cx="270" cy="105" r="4.5" fill="#1565C0" class="w3d8"/>
-  <circle cx="300" cy="95" r="4.5" fill="#1565C0" class="w3d9"/>
-  <circle cx="330" cy="75" r="4.5" fill="#1565C0" class="w3d10"/>
-  <circle cx="360" cy="60" r="4.5" fill="#1565C0" class="w3d11"/>
-  <line x1="65" y1="220" x2="375" y2="45" stroke="#FF5722" stroke-width="2.5" class="w3regline"/>
-  <text x="340" y="38" font-size="12" fill="#FF5722" font-weight="bold" class="w3eqlabel">y = ax + b</text>
-  <line x1="80" y1="205" x2="80" y2="212" stroke="#4CAF50" stroke-width="2" stroke-dasharray="3,2" class="w3resid"/>
-  <line x1="110" y1="185" x2="110" y2="195" stroke="#4CAF50" stroke-width="2" stroke-dasharray="3,2" class="w3resid"/>
-  <line x1="140" y1="195" x2="140" y2="178" stroke="#4CAF50" stroke-width="2" stroke-dasharray="3,2" class="w3resid"/>
-  <line x1="160" y1="165" x2="160" y2="166" stroke="#4CAF50" stroke-width="2" stroke-dasharray="3,2" class="w3resid"/>
-  <line x1="190" y1="155" x2="190" y2="149" stroke="#4CAF50" stroke-width="2" stroke-dasharray="3,2" class="w3resid"/>
-  <line x1="220" y1="140" x2="220" y2="133" stroke="#4CAF50" stroke-width="2" stroke-dasharray="3,2" class="w3resid"/>
-  <line x1="250" y1="130" x2="250" y2="116" stroke="#4CAF50" stroke-width="2" stroke-dasharray="3,2" class="w3resid"/>
-  <line x1="270" y1="105" x2="270" y2="104" stroke="#4CAF50" stroke-width="2" stroke-dasharray="3,2" class="w3resid"/>
-  <line x1="300" y1="95" x2="300" y2="87" stroke="#4CAF50" stroke-width="2" stroke-dasharray="3,2" class="w3resid"/>
-  <line x1="330" y1="75" x2="330" y2="70" stroke="#4CAF50" stroke-width="2" stroke-dasharray="3,2" class="w3resid"/>
-  <line x1="360" y1="60" x2="360" y2="54" stroke="#4CAF50" stroke-width="2" stroke-dasharray="3,2" class="w3resid"/>
-  <text x="232" y="153" font-size="11" fill="#4CAF50" class="w3residtxt">eᵢ（残差）</text>
-</svg>
-
-### 5.2 残差（Residual）
-
-計測データ $(x_i, y_i)$ と近似式 $y = ax_i + b$ との差を**残差**と呼びます。
-
-$$e_i = (ax_i + b) - y_i$$
-
-::: tip 💡 残差の意味
-近似式の値と実際の計測データとのずれです。残差が小さいほど、近似式がデータをよく表現しています。
-:::
-
-### 5.3 最小二乗法の原理
-
-すべてのデータについて残差を求めます：
-
-$$e_1 = ax_1 + b - y_1$$
-$$e_2 = ax_2 + b - y_2$$
-$$\vdots$$
-$$e_N = ax_N + b - y_N$$
-
-これをまとめると（ベクトル・行列表記）：
-
-$$\boldsymbol{e} = X\boldsymbol{\theta} - \boldsymbol{y}$$
-
-ここで $\boldsymbol{\theta} = \begin{bmatrix} a \\ b \end{bmatrix}$
-
-### 5.4 目的関数
-
-残差の**二乗和**を目的関数 $J$ とします：
-
-$$J(\boldsymbol{\theta}) = \boldsymbol{e}^T \boldsymbol{e} = (X\boldsymbol{\theta} - \boldsymbol{y})^T(X\boldsymbol{\theta} - \boldsymbol{y})$$
-
-::: warning ⚠️ なぜ二乗和？
-残差は正（＋）にも負（−）にもなるため、単純に足すと互いに相殺されてしまいます。二乗することで、すべてのずれを正の値として加算できます。
-:::
-
-$J$ は $a$ と $b$ の**二次式**であり、パラボラ（放物線）の形をしています。
-
-### 5.5 最小化の条件
-
-$J(a, b)$ を最小にするには、各変数で偏微分して 0 とおきます：
-
-$$\frac{\partial J}{\partial a} = 0, \qquad \frac{\partial J}{\partial b} = 0$$
-
-この連立方程式を解くことで、最適な $a$ と $b$ が求まります。
-
-<svg viewBox="0 0 350 200" xmlns="http://www.w3.org/2000/svg" style="max-width: 350px; margin: 20px auto; display: block;">
-  <line x1="40" y1="170" x2="310" y2="170" stroke="#333" stroke-width="1.5"/>
-  <line x1="40" y1="170" x2="40" y2="20" stroke="#333" stroke-width="1.5"/>
-  <text x="175" y="195" text-anchor="middle" font-size="12" fill="#333">パラメータ値</text>
-  <text x="20" y="95" text-anchor="middle" font-size="12" fill="#333" transform="rotate(-90,20,95)">J(a, b)</text>
-  <path d="M60,30 Q100,28 130,50 Q155,80 175,120 Q185,145 190,155 Q195,145 205,120 Q225,80 250,50 Q280,28 300,30" fill="none" stroke="#FF5722" stroke-width="2.5"/>
-  <circle cx="190" cy="155" r="5" fill="#4CAF50"/>
-  <text x="190" y="168" text-anchor="middle" font-size="11" fill="#4CAF50" font-weight="bold">最小値</text>
-  <line x1="190" y1="155" x2="190" y2="175" stroke="#4CAF50" stroke-width="1" stroke-dasharray="3,2"/>
-  <text x="175" y="40" font-size="11" fill="#FF5722">J(a, b)</text>
-</svg>
-
-### 5.6 最小二乗法の利点と注意点
-
-**利点：**
-- **どんな関数であっても**、近似式の係数を計算できる
-
-**注意点：**
-- **どんな関数を当てはめるか**をよく検討する必要がある
-
-| 関数の種類 | 式の形 |
-|-----------|--------|
-| 1次式（線形関数） | $y = ax + b$ |
-| 2次式 | $y = ax^2 + bx + c$ |
-| 三角関数 | $y = a\sin(bx) + c$ |
-| 指数関数 | $y = ae^{bx}$ |
-| 対数関数 | $y = a\ln x + b$ |
-
-::: tip 💡 関数の選び方
-何らかの**因果関係**（物理法則など）が見いだせるなら、そちらの関数を優先します。単にデータの形だけで判断しないこと！
+::: warning 次週へのつながり
+今週は「1つの量を繰り返し測ったときの統計処理」でした。次週は「2つの量の関係をどう式にするか」に進み、回帰分析と最小二乗法を扱います。
 :::
 
 ---
 
-## 6. 実験データの分析例
+## 附录：正規分布の厳密な導出
 
-### 6.1 データの観察
+::: details クリックして附录を開く
+以下は、本編で扱った正規分布の式を、より数学的に導くための補足です。授業では必要に応じて参照してください。
 
-以下のような実験データが得られたとします。
+### A.1 最大エントロピーによる導出
 
-<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" style="max-width: 400px; margin: 20px auto; display: block;">
-  <rect x="50" y="20" width="330" height="240" fill="#fafafa" stroke="#ddd" rx="3"/>
-  <line x1="50" y1="260" x2="380" y2="260" stroke="#333" stroke-width="1.5"/>
-  <line x1="50" y1="260" x2="50" y2="20" stroke="#333" stroke-width="1.5"/>
-  <text x="215" y="285" text-anchor="middle" font-size="13" fill="#333">x</text>
-  <text x="25" y="140" text-anchor="middle" font-size="13" fill="#333" transform="rotate(-90,25,140)">y</text>
-  <text x="50" y="275" font-size="10" fill="#666">0</text>
-  <text x="105" y="275" font-size="10" fill="#666">1</text>
-  <text x="160" y="275" font-size="10" fill="#666">2</text>
-  <text x="215" y="275" font-size="10" fill="#666">3</text>
-  <text x="270" y="275" font-size="10" fill="#666">4</text>
-  <text x="325" y="275" font-size="10" fill="#666">5</text>
-  <text x="380" y="275" font-size="10" fill="#666">6</text>
-  <circle cx="62" cy="255" r="3" fill="#1565C0"/>
-  <circle cx="68" cy="240" r="3" fill="#1565C0"/>
-  <circle cx="75" cy="210" r="3" fill="#1565C0"/>
-  <circle cx="85" cy="185" r="3" fill="#1565C0"/>
-  <circle cx="95" cy="160" r="3" fill="#1565C0"/>
-  <circle cx="105" cy="140" r="3" fill="#1565C0"/>
-  <circle cx="115" cy="135" r="3" fill="#1565C0"/>
-  <circle cx="130" cy="120" r="3" fill="#1565C0"/>
-  <circle cx="145" cy="110" r="3" fill="#1565C0"/>
-  <circle cx="160" cy="100" r="3" fill="#1565C0"/>
-  <circle cx="175" cy="95" r="3" fill="#1565C0"/>
-  <circle cx="190" cy="88" r="3" fill="#1565C0"/>
-  <circle cx="210" cy="80" r="3" fill="#1565C0"/>
-  <circle cx="230" cy="75" r="3" fill="#1565C0"/>
-  <circle cx="250" cy="72" r="3" fill="#1565C0"/>
-  <circle cx="270" cy="68" r="3" fill="#1565C0"/>
-  <circle cx="290" cy="64" r="3" fill="#1565C0"/>
-  <circle cx="310" cy="62" r="3" fill="#1565C0"/>
-  <circle cx="330" cy="58" r="3" fill="#1565C0"/>
-  <circle cx="355" cy="55" r="3" fill="#1565C0"/>
-  <circle cx="370" cy="52" r="3" fill="#1565C0"/>
-</svg>
+平均 $\mu$ と分散 $\sigma^2$ だけが既知で、それ以外の余計な偏りを持たない分布を選びたいとします。
 
-### 6.2 近似曲線の予想
+微分エントロピーを
 
-**ステップ1：** どのような近似曲線になるか予想する
+$$
+H[f] = -\int_{-\infty}^{\infty} f(x)\ln f(x)\,dx
+$$
 
-- 実験の理論的背景から推定する
-- プロットの形状から判断する
+とします。
 
-ここでは、急激に上昇してから緩やかになる形状から、**対数関数**であると予想します：
+制約条件は
 
-$$y = a \ln x + b$$
+$$
+\int f(x)\,dx = 1,
+\qquad
+\int x f(x)\,dx = \mu,
+\qquad
+\int (x-\mu)^2 f(x)\,dx = \sigma^2
+$$
 
-### 6.3 残差の計算
+です。
 
-計測データ $(x_i, y_i)$ の全てについて、残差を求めます：
+ラグランジュ未定乗数法により、汎関数
 
-$$r_i = (a \ln x_i + b) - y_i$$
+$$
+\mathcal{L}[f]
+= -\int f\ln f\,dx
+-\lambda_0\left(\int f\,dx -1\right)
+-\lambda_1\left(\int x f\,dx -\mu\right)
+-\lambda_2\left(\int (x-\mu)^2 f\,dx -\sigma^2\right)
+$$
 
-### 6.4 二乗和の最小化
+を考えます。
 
-残差の二乗和：
+$f$ に関する変分をとると、停留条件は
 
-$$J(a, b) = \sum_{i=1}^{n} r_i^2$$
+$$
+\frac{\delta \mathcal{L}}{\delta f}
+= -(\ln f +1) - \lambda_0 - \lambda_1 x - \lambda_2 (x-\mu)^2 = 0
+$$
 
-- 残差は正負で現れるので二乗する
-- $J$ は係数 $a, b$ を変数とする関数
+となるので、
 
-$J(a,b)$ を最小化する $a, b$ を求めれば、最適な近似曲線が得られます。
+$$
+\ln f(x) = -1-\lambda_0-\lambda_1 x-\lambda_2 (x-\mu)^2
+$$
 
-<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" style="max-width: 400px; margin: 20px auto; display: block;">
-  <rect x="50" y="20" width="330" height="240" fill="#fafafa" stroke="#ddd" rx="3"/>
-  <line x1="50" y1="260" x2="380" y2="260" stroke="#333" stroke-width="1.5"/>
-  <line x1="50" y1="260" x2="50" y2="20" stroke="#333" stroke-width="1.5"/>
-  <text x="215" y="285" text-anchor="middle" font-size="13" fill="#333">x</text>
-  <text x="25" y="140" text-anchor="middle" font-size="13" fill="#333" transform="rotate(-90,25,140)">y</text>
-  <circle cx="62" cy="255" r="3" fill="#1565C0"/>
-  <circle cx="68" cy="240" r="3" fill="#1565C0"/>
-  <circle cx="75" cy="210" r="3" fill="#1565C0"/>
-  <circle cx="85" cy="185" r="3" fill="#1565C0"/>
-  <circle cx="95" cy="160" r="3" fill="#1565C0"/>
-  <circle cx="105" cy="140" r="3" fill="#1565C0"/>
-  <circle cx="115" cy="135" r="3" fill="#1565C0"/>
-  <circle cx="130" cy="120" r="3" fill="#1565C0"/>
-  <circle cx="145" cy="110" r="3" fill="#1565C0"/>
-  <circle cx="160" cy="100" r="3" fill="#1565C0"/>
-  <circle cx="175" cy="95" r="3" fill="#1565C0"/>
-  <circle cx="190" cy="88" r="3" fill="#1565C0"/>
-  <circle cx="210" cy="80" r="3" fill="#1565C0"/>
-  <circle cx="230" cy="75" r="3" fill="#1565C0"/>
-  <circle cx="250" cy="72" r="3" fill="#1565C0"/>
-  <circle cx="270" cy="68" r="3" fill="#1565C0"/>
-  <circle cx="290" cy="64" r="3" fill="#1565C0"/>
-  <circle cx="310" cy="62" r="3" fill="#1565C0"/>
-  <circle cx="330" cy="58" r="3" fill="#1565C0"/>
-  <circle cx="355" cy="55" r="3" fill="#1565C0"/>
-  <circle cx="370" cy="52" r="3" fill="#1565C0"/>
-  <path d="M55,260 Q70,200 90,160 Q110,125 140,105 Q175,85 215,72 Q260,60 310,52 Q355,47 380,45" fill="none" stroke="#FF5722" stroke-width="2.5"/>
-  <text x="340" y="38" font-size="12" fill="#FF5722" font-weight="bold">y = a ln x + b</text>
-</svg>
+です。定数をまとめ直せば、
 
----
+$$
+\ln f(x)=C_0 + C_1 x + C_2 (x-\mu)^2
+$$
 
-## 📝 確認問題
+したがって指数をとると、
 
-### Q1. 標本の分散を正しく表す式は？
+$$
+f(x)=\exp\big(C_0 + C_1 x + C_2 (x-\mu)^2\big)
+= A\exp(C_1x)\exp\big(C_2(x-\mu)^2\big)
+$$
 
-- [ ] A. $\sigma^2 = \frac{1}{N} \sum_{i=1}^{N} x_i$
-- [x] B. $\sigma^2 = \frac{1}{N} \sum_{i=1}^{N} (x_i - \bar{x})^2$
-- [ ] C. $\sigma^2 = \frac{1}{N} \sum_{i=1}^{N} |x_i - \bar{x}|$
-- [ ] D. $\sigma^2 = \sum_{i=1}^{N} (x_i - \bar{x})^2$
+となります。
 
-### Q2. 標準偏差について正しい記述は？
+ここで
 
-- [ ] A. 標準偏差は分散の2倍である
-- [x] B. 標準偏差は元のデータと同じ単位を持つ
-- [ ] C. 標準偏差は常に1より小さい
-- [ ] D. 標準偏差はデータ数に依存しない
+1. $\int_{-\infty}^{\infty}f(x)dx$ が有限であるためには $C_2<0$
+2. 制約条件は左右対称なので $C_1=0$
 
-### Q3. 計測データ A の平均が 2.03、B の平均が 1.87 で、真値が 2.0 のとき、確度が高いのは？
+です。よって $C_2=-k$（$k>0$）と書けば
 
-- [x] A. データA（平均が真値に近い）
-- [ ] B. データB（平均が真値に近い）
-- [ ] C. どちらも同じ
-- [ ] D. 情報が不足している
+$$
+f(x)=A\exp\big(-k(x-\mu)^2\big)
+$$
 
-### Q4. 最小二乗法で最小化するのは？
+が得られます。
 
-- [ ] A. 残差の総和
-- [x] B. 残差の二乗和
-- [ ] C. データの平均値
-- [ ] D. 近似式の傾き
+#### 2次変分
 
-### Q5. 確率誤差 $E$ について正しいのは？
+さらに、
 
-- [ ] A. 測定回数を増やすと大きくなる
-- [x] B. 測定回数を増やすと小さくなる
-- [ ] C. 測定回数に依存しない
-- [ ] D. 常に一定の値である
+$$
+\delta^2 H = -\int_{-\infty}^{\infty}\frac{(\delta f)^2}{f(x)}dx \le 0
+$$
 
----
+なので、この停留点は極大です。したがって、得られた分布は最大エントロピー分布です。
 
-## 📚 次週の予習
+### A.2 ガウス積分による規格化定数の導出
 
-- **第4週**: 計測データの統計的処理(2)：回帰分析、相関
-- 予習ポイント：相関係数の意味、散布図の読み方
+規格化条件
+
+$$
+\int_{-\infty}^{\infty} A e^{-k(x-\mu)^2}dx = 1
+$$
+
+に対して、変数変換 $u=\sqrt{k}(x-\mu)$ を使うと、
+
+$$
+A\cdot \frac{1}{\sqrt{k}}\int_{-\infty}^{\infty} e^{-u^2}du = 1
+$$
+
+となります。そこで
+
+$$
+I=\int_{-\infty}^{\infty}e^{-u^2}du
+$$
+
+を計算します。
+
+$$
+I^2
+= \left(\int_{-\infty}^{\infty}e^{-x^2}dx\right)
+  \left(\int_{-\infty}^{\infty}e^{-y^2}dy\right)
+= \iint_{\mathbb{R}^2} e^{-(x^2+y^2)}dxdy
+$$
+
+極座標変換 $x=r\cos\theta,\; y=r\sin\theta$ を使うと、$dxdy = r\,dr\,d\theta$ より
+
+$$
+I^2 = \int_0^{2\pi}\int_0^{\infty} e^{-r^2}r\,dr\,d\theta
+= 2\pi \int_0^{\infty} e^{-r^2}r\,dr
+$$
+
+$t=r^2$ と置けば $dt=2rdr$ なので
+
+$$
+I^2 = 2\pi\cdot\frac{1}{2}\int_0^{\infty} e^{-t}dt = \pi
+$$
+
+よって
+
+$$
+\int_{-\infty}^{\infty}e^{-u^2}du = \sqrt{\pi}
+$$
+
+です。したがって
+
+$$
+A\cdot\frac{\sqrt{\pi}}{\sqrt{k}}=1
+\qquad\Rightarrow\qquad
+A=\sqrt{\frac{k}{\pi}}
+$$
+
+### A.3 分散条件から $k$ を決める
+
+$y=x-\mu$ と置くと、
+
+$$
+\mathrm{Var}(X)=E[(X-\mu)^2]=\int_{-\infty}^{\infty} y^2 \cdot A e^{-ky^2}dy
+$$
+
+です。
+
+ここで
+
+$$
+I(k)=\int_{-\infty}^{\infty}e^{-ky^2}dy = \sqrt{\frac{\pi}{k}}
+$$
+
+を $k$ で微分すると、
+
+$$
+I'(k)=\int_{-\infty}^{\infty}(-y^2)e^{-ky^2}dy
+= -\frac{1}{2}\sqrt{\pi}k^{-3/2}
+$$
+
+したがって、
+
+$$
+\int_{-\infty}^{\infty}y^2e^{-ky^2}dy
+= -I'(k)
+= \frac{1}{2}\sqrt{\pi}k^{-3/2}
+$$
+
+です。また、$A=\sqrt{k/\pi}$ なので、
+
+$$
+\mathrm{Var}(X)
+= \sqrt{\frac{k}{\pi}}\cdot \frac{1}{2}\sqrt{\pi}k^{-3/2}
+= \frac{1}{2k}
+$$
+
+よって分散条件 $\mathrm{Var}(X)=\sigma^2$ から
+
+$$
+\frac{1}{2k}=\sigma^2
+\qquad\Rightarrow\qquad
+k=\frac{1}{2\sigma^2}
+$$
+
+となります。これを $A=\sqrt{k/\pi}$ に代入すると
+
+$$
+A=\frac{1}{\sqrt{2\pi}\sigma}
+$$
+
+です。したがって最終的に
+
+$$
+f(x)=\frac{1}{\sqrt{2\pi}\sigma}\exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right)
+$$
+
+が得られます。
+:::
