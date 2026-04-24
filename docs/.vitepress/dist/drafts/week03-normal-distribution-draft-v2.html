@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>第3週草案：統計処理（1）完全版 v2</title>
+  <style>
+    :root{
+      --bg:#f5f7fb; --card:#fff; --ink:#1f2937; --muted:#6b7280; --line:#d8e0ec;
+      --blue:#2563eb; --violet:#7c3aed; --green:#0f766e; --orange:#b45309; --red:#b91c1c;
+      --soft:#eef4ff; --soft2:#f7f3ff; --soft3:#f0fdfa; --soft4:#fff8eb;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:"Hiragino Sans","Yu Gothic","Meiryo",system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.82}
+    .wrap{max-width:1080px;margin:0 auto;padding:28px 18px 80px}
+    .hero,.card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 10px 26px rgba(15,23,42,.06)}
+    .hero{padding:28px 28px 22px;margin-bottom:22px}
+    .card{padding:24px 24px 16px;margin-bottom:18px}
+    h1,h2,h3{line-height:1.35;margin-top:0}
+    h1{font-size:2rem;margin-bottom:10px}
+    h2{font-size:1.45rem;border-bottom:2px solid #e8edf6;padding-bottom:9px;margin-bottom:14px}
+    h3{font-size:1.08rem;margin:16px 0 8px}
+    p,li{font-size:1rem}
+    .lead{font-size:1.04rem;color:#374151}
+    .meta,.small{color:var(--muted)}
+    .pill{display:inline-block;padding:4px 10px;border-radius:999px;background:var(--soft);color:var(--blue);border:1px solid #d7e4ff;font-size:.88rem;margin-right:8px;margin-bottom:8px}
+    .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+    .two{display:grid;gap:18px;grid-template-columns:1.1fr .9fr}
+    .three{display:grid;gap:16px;grid-template-columns:repeat(3,1fr)}
+    @media(max-width:860px){.two,.three{grid-template-columns:1fr}}
+    .box{border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:12px 0;background:#fbfdff}
+    .info{background:#f8fbff;border-color:#cde0ff}.tip{background:var(--soft3);border-color:#bce9df}.warn{background:var(--soft4);border-color:#f3d19d}.vio{background:#faf7ff;border-color:#ddd0ff}
+    .formula{padding:14px 16px;border-radius:12px;background:#0f172a;color:#f8fafc;text-align:center;overflow-x:auto;margin:12px 0;font-size:1.08rem;font-family:"Times New Roman",serif}
+    table{width:100%;border-collapse:collapse;margin:12px 0 16px;font-size:.96rem}
+    th,td{border:1px solid var(--line);padding:10px 12px;vertical-align:top} th{background:#f0f5fb;text-align:left}
+    .center{text-align:center}.right{text-align:right}
+    code{background:#eef2f7;border-radius:6px;padding:2px 6px}
+    .step li{margin-bottom:8px}
+    .em{color:var(--violet);font-weight:700}.good{color:var(--green);font-weight:700}.bad{color:var(--orange);font-weight:700}.strong{font-weight:700}
+    .toc ul{margin:0;padding-left:1.2em}.toc li{margin-bottom:6px}
+    .footer{margin-top:18px;color:var(--muted);font-size:.92rem}
+  </style>
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <section class="hero">
+    <div>
+      <span class="pill">ローカル草案</span>
+      <span class="pill">未コミット</span>
+      <span class="pill">week03 完全版 v2</span>
+    </div>
+    <h1>第3週草案：測定値の統計処理（1）完全版 v2</h1>
+    <div class="meta">Jason 確認用 / HTML draft only / 公開・push なし / cache-busting版</div>
+    <p class="lead">
+      この草案は <strong>第3週の主要内容を一通り入れた完全版</strong> です。<br>
+      重点は 2 つあります。<br>
+      1) week02 ですでに学んだ「平均・分散・標準偏差・確度/精度」を前提に、<span class="em">残差・不偏分散・確率誤差</span>まで進めること。<br>
+      2) 正規分布については、<span class="em">形の直感</span>だけでなく、<span class="em">なぜ $\exp$ が出てくるのか</span>、<span class="em">なぜ $(x-\mu)^2$ なのか</span>、<span class="em">規格化定数はどう決まるのか</span>まで、できるだけ厳密に説明すること。
+    </p>
+  </section>
+
+  <section class="card toc">
+    <h2>目次</h2>
+    <ul>
+      <li>0. この週の狙い</li>
+      <li>1. 前回の復習と今回の前進</li>
+      <li>2. 残差と残差の二乗和</li>
+      <li>3. 不偏分散と自由度</li>
+      <li>4. 正規分布を直感的に理解する</li>
+      <li>5. 正規分布を数式で厳密に理解する</li>
+      <li>6. ±1σ, ±2σ, ±3σ の意味</li>
+      <li>7. 確率誤差</li>
+      <li>8. 完全計算例</li>
+      <li>9. この週のまとめ</li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2>0. この週の狙い</h2>
+    <div class="grid">
+      <div class="box info">
+        <h3>week02 ですでに学んだこと</h3>
+        <ul>
+          <li>平均・分散・標準偏差の基本的な意味</li>
+          <li>確度と精度の違い</li>
+          <li>正規分布の形のイメージ</li>
+        </ul>
+      </div>
+      <div class="box tip">
+        <h3>week03 で新しく深めること</h3>
+        <ul>
+          <li>残差と残差二乗和</li>
+          <li>不偏分散と自由度</li>
+          <li>正規分布の数式の意味と導出</li>
+          <li>確率誤差と「信頼できる測定値」の表し方</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>1. 前回の復習と今回の前進</h2>
+    <p>前回は、繰り返し測定したデータに対して、平均・分散・標準偏差を使って「中心」と「ばらつき」を見る方法を学びました。</p>
+    <table>
+      <thead><tr><th>量</th><th>役割</th><th>前回の理解</th><th>今回の発展</th></tr></thead>
+      <tbody>
+        <tr><td>平均 $\bar{x}$</td><td>中心</td><td>代表値</td><td>最も信頼したい値の土台</td></tr>
+        <tr><td>分散</td><td>ばらつきの二乗尺度</td><td>散らばりの大小</td><td>不偏分散へ発展</td></tr>
+        <tr><td>標準偏差 $s$</td><td>ばらつきの幅</td><td>元の単位で解釈</td><td>正規分布・確率誤差と接続</td></tr>
+      </tbody>
+    </table>
+    <div class="box warn">
+      <strong>ここが第3週の本質</strong><br>
+      第3週は「平均や標準偏差の意味をもう一回やる回」ではありません。<br>
+      <span class="strong">平均値がどの程度信用できるのか</span>を、数式と分布の両面から評価する回です。
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>2. 残差と残差の二乗和</h2>
+    <h3>2.1 残差とは何か</h3>
+    <p>各測定値 $x_i$ が平均値 $\bar{x}$ からどれだけずれているかを、<strong>残差</strong> と呼びます。</p>
+    <div class="formula">$$d_i = x_i - \bar{x}$$</div>
+    <div class="box info">
+      <strong>意味</strong><br>
+      残差は、「その測定値が平均より上にあるか下にあるか」「どれくらい離れているか」を同時に表します。
+    </div>
+    <h3>2.2 残差の和が 0 になる理由</h3>
+    <div class="formula">
+      $$
+      \sum_{i=1}^{n} d_i
+      = \sum_{i=1}^{n}(x_i-\bar{x})
+      = \sum_{i=1}^{n}x_i - n\bar{x}
+      = \sum_{i=1}^{n}x_i - n\cdot\frac{1}{n}\sum_{i=1}^{n}x_i
+      = 0
+      $$
+    </div>
+    <p>つまり、残差をそのまま足し合わせても、正と負が打ち消し合ってしまい、ばらつきの大きさは見えません。</p>
+    <h3>2.3 だから二乗する</h3>
+    <div class="formula">$$S = \sum_{i=1}^{n} d_i^2 = \sum_{i=1}^{n}(x_i-\bar{x})^2$$</div>
+    <p>この $S$ を <strong>残差の二乗和</strong> と呼びます。二乗するとすべて正になるので、全体としてどのくらい散っているかを表せます。</p>
+  </section>
+
+  <section class="card">
+    <h2>3. 不偏分散と自由度</h2>
+    <h3>3.1 なぜ $n$ ではなく $n-1$ で割るのか</h3>
+    <p>単純に考えると、分散は</p>
+    <div class="formula">$$\frac{1}{n}\sum_{i=1}^{n}(x_i-\bar{x})^2$$</div>
+    <p>と書きたくなります。しかし、測定工学や統計学では、標本から母集団のばらつきを推定したいので、通常は <strong>不偏分散</strong> を使います。</p>
+    <div class="formula">$$s^2 = \frac{1}{n-1}\sum_{i=1}^{n}(x_i-\bar{x})^2$$</div>
+    <h3>3.2 自由度の直感</h3>
+    <p>$n$ 個の測定値があっても、平均値 $\bar{x}$ を固定した瞬間、残差 $d_1,d_2,\dots,d_n$ は勝手に $n$ 個全部を自由に選べません。なぜなら、</p>
+    <div class="formula">$$d_1+d_2+\cdots+d_n=0$$</div>
+    <p>という制約が必ずあるからです。つまり最後の 1 個は他の $n-1$ 個で自動的に決まります。これが <strong>自由度が $n-1$</strong> と言われる理由です。</p>
+    <div class="box tip">
+      <strong>直感的に言うと</strong><br>
+      平均値をデータ自身から求めてしまったぶん、ばらつきの評価に 1 つ分の「自由」が失われています。
+    </div>
+    <h3>3.3 なぜ「不偏」と呼ぶのか</h3>
+    <p>母分散を $\sigma^2$ とすると、標本から作った量 $s^2$ が</p>
+    <div class="formula">$$E[s^2]=\sigma^2$$</div>
+    <p>を満たすとき、$s^2$ は母分散の <strong>不偏推定量</strong> と呼ばれます。つまり平均的に見て、母分散を過大にも過小にも見積もらない、という意味です。</p>
+  </section>
+
+  <section class="card">
+    <h2>4. 正規分布を直感的に理解する</h2>
+    <div class="two">
+      <div>
+        <p>測定誤差は、たいてい一つの大きな原因で決まるのではなく、多数の小さな原因の和として現れます。</p>
+        <ul>
+          <li>読み取り誤差</li>
+          <li>環境の小さな変動</li>
+          <li>機械の微振動</li>
+          <li>ノイズ</li>
+          <li>人間の反応時間の揺れ</li>
+        </ul>
+        <p>これらが独立に少しずつ加わると、<span class="good">小さい誤差はよく起こり</span>、<span class="bad">大きい誤差は起こりにくい</span>という山形の分布が自然に現れます。</p>
+      </div>
+      <div class="box info center">
+        <svg viewBox="0 0 420 250" width="100%">
+          <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#60a5fa" stop-opacity="0.45"/><stop offset="100%" stop-color="#60a5fa" stop-opacity="0.06"/></linearGradient></defs>
+          <line x1="45" y1="210" x2="390" y2="210" stroke="#334155" stroke-width="2"/>
+          <line x1="45" y1="210" x2="45" y2="25" stroke="#334155" stroke-width="2"/>
+          <path d="M45,210 C110,210 115,110 170,65 C195,45 215,35 218,35 C221,35 245,45 270,65 C325,110 330,210 390,210" fill="url(#g)" stroke="#2563eb" stroke-width="3"/>
+          <line x1="218" y1="35" x2="218" y2="214" stroke="#e11d48" stroke-width="2" stroke-dasharray="6 5"/>
+          <text x="218" y="232" text-anchor="middle" font-size="14" fill="#e11d48">μ</text>
+          <text x="220" y="245" text-anchor="middle" font-size="12" fill="#334155">測定値 x</text>
+          <text x="20" y="120" transform="rotate(-90 20 120)" text-anchor="middle" font-size="12" fill="#334155">確率密度</text>
+          <text x="218" y="58" text-anchor="middle" font-size="12" fill="#0f766e">平均の近くがもっとも起こりやすい</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>5. 正規分布を数式で厳密に理解する</h2>
+    <h3>5.1 まず最終形</h3>
+    <div class="formula">$$f(x)=\frac{1}{\sqrt{2\pi}\sigma}\exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right)$$</div>
+    <p>ここで重要なのは、ただ式を覚えることではなく、<strong>なぜこの形になるのか</strong>を理解することです。</p>
+
+    <h3>5.2 なぜ $(x-\mu)^2$ が現れるのか</h3>
+    <ol class="step">
+      <li>分布の中心は平均値 $\mu$ に置きたいので、変数は $x-\mu$ で測るのが自然。</li>
+      <li>平均より右に 0.2 離れた場合と、左に 0.2 離れた場合は、同じ程度に起こりやすいと考えたい。</li>
+      <li>そのため、符号を消して距離だけを見る必要がある。</li>
+      <li>最も自然な滑らかな量が $(x-\mu)^2$ である。</li>
+    </ol>
+    <div class="formula">$$(\mu+0.2-\mu)^2 = (\mu-0.2-\mu)^2 = 0.04$$</div>
+
+    <h3>5.3 なぜ $\exp$ が現れるのか —— 最大エントロピーによる厳密導出</h3>
+    <p>ここでは、正規分布が「なんとなく便利だから」ではなく、<strong>ある条件のもとで最も情報の偏りが少ない分布</strong>として導かれることを示します。</p>
+    <div class="box vio">
+      <strong>仮定</strong><br>
+      平均 $\mu$ と分散 $\sigma^2$ だけが既知であり、それ以外の余計な偏りを持たない分布を選びたい。<br>
+      すると、微分エントロピー
+      $$H[f]= -\int_{-\infty}^{\infty} f(x)\ln f(x)\,dx$$
+      を最大にする $f(x)$ を求めればよい。
+    </div>
+    <p>制約条件は次の 3 つです。</p>
+    <div class="formula">
+      $$\int f(x)\,dx = 1, \qquad \int x f(x)\,dx = \mu, \qquad \int (x-\mu)^2 f(x)\,dx = \sigma^2$$
+    </div>
+    <p>ラグランジュ未定乗数法により、次の汎関数を考えます。</p>
+    <div class="formula">
+      $$
+      \mathcal{L}[f]
+      = -\int f\ln f\,dx
+      -\lambda_0\left(\int f\,dx -1\right)
+      -\lambda_1\left(\int x f\,dx -\mu\right)
+      -\lambda_2\left(\int (x-\mu)^2 f\,dx -\sigma^2\right)
+      $$
+    </div>
+    <p>$f$ に関する変分をとると、停留条件は</p>
+    <div class="formula">
+      $$
+      \frac{\delta \mathcal{L}}{\delta f}
+      = -(\ln f +1) - \lambda_0 - \lambda_1 x - \lambda_2 (x-\mu)^2 = 0
+      $$
+    </div>
+    <p>したがって、</p>
+    <div class="formula">
+      $$
+      \ln f(x) = -1-\lambda_0-\lambda_1 x-\lambda_2 (x-\mu)^2
+      $$
+    </div>
+    <p>定数をまとめ直すと</p>
+    <div class="formula">
+      $$
+      \ln f(x) = C_0 + C_1 x + C_2 (x-\mu)^2
+      $$
+    </div>
+    <p>ゆえに、指数をとって</p>
+    <div class="formula">
+      $$
+      f(x)=\exp\big(C_0 + C_1 x + C_2 (x-\mu)^2\big)
+      = A\exp(C_1x)\exp\big(C_2(x-\mu)^2\big)
+      $$
+    </div>
+    <p>という形になります。ここで次の 2 点が必要です。</p>
+    <ol class="step">
+      <li><strong>可積分性</strong><br>
+        $\int_{-\infty}^{\infty}f(x)dx$ が有限であるためには、$x\to\pm\infty$ で $f(x)$ が十分速く 0 に近づかなければなりません。したがって 2 次項の係数は負、すなわち $C_2&lt;0$ でなければなりません。
+      </li>
+      <li><strong>平均を $\mu$ に固定したときの対称性</strong><br>
+        制約条件が平均 $\mu$ と分散 $\sigma^2$ のみであり、左右どちらかを特別扱いしていないので、得られる最大エントロピー解も $\mu$ を中心に対称でなければなりません。したがって 1 次項は消え、$C_1=0$ です。
+      </li>
+    </ol>
+    <p>よって $C_2=-k$（ただし $k&gt;0$）と書けば</p>
+    <div class="formula">$$f(x)=A\exp\big(-k(x-\mu)^2\big) \qquad (A>0,\;k>0)$$</div>
+    <p>が得られます。ここで <strong>$\exp$ が現れるのは、変分方程式を解くと $\ln f$ が 2 次式になり、その両辺の指数をとるから</strong> です。</p>
+    <div class="box info">
+      <strong>最大値になっていることの確認</strong><br>
+      2 次変分は
+      $$
+      \delta^2 H = -\int_{-\infty}^{\infty}\frac{(\delta f)^2}{f(x)}dx \le 0
+      $$
+      となるため、この停留点は極大です。つまり、求めた分布は本当にエントロピーを最大にします。
+    </div>
+
+    <h3>5.4 規格化定数の厳密導出（ガウス積分）</h3>
+    <p>次に、$A$ と $k$ を決めます。まず規格化条件</p>
+    <div class="formula">$$\int_{-\infty}^{\infty} A e^{-k(x-\mu)^2}\,dx = 1$$</div>
+    <p>を使います。変数変換 $u=\sqrt{k}(x-\mu)$ をすると、</p>
+    <div class="formula">$$A\cdot \frac{1}{\sqrt{k}}\int_{-\infty}^{\infty}e^{-u^2}\,du = 1$$</div>
+    <p>ここでガウス積分</p>
+    <div class="formula">$$I=\int_{-\infty}^{\infty}e^{-u^2}\,du$$</div>
+    <p>を求めます。厳密計算は次の通りです。</p>
+    <div class="formula">
+      $$
+      I^2 = \left(\int_{-\infty}^{\infty}e^{-x^2}\,dx\right)\left(\int_{-\infty}^{\infty}e^{-y^2}\,dy\right)
+      = \iint_{\mathbb{R}^2} e^{-(x^2+y^2)}\,dx\,dy
+      $$
+    </div>
+    <p>極座標 $x=r\cos\theta,\; y=r\sin\theta$ を使うと、$dx\,dy = r\,dr\,d\theta$ より</p>
+    <div class="formula">
+      $$
+      I^2 = \int_{0}^{2\pi}\int_{0}^{\infty} e^{-r^2} r\,dr\,d\theta
+      = 2\pi \int_0^{\infty} e^{-r^2}r\,dr
+      $$
+    </div>
+    <p>$t=r^2$ と置けば $dt=2rdr$ なので</p>
+    <div class="formula">
+      $$
+      I^2 = 2\pi \cdot \frac{1}{2}\int_0^{\infty} e^{-t}\,dt
+      = \pi
+      $$
+    </div>
+    <p>したがって</p>
+    <div class="formula">$$\int_{-\infty}^{\infty}e^{-u^2}\,du = \sqrt{\pi}$$</div>
+    <p>となります。よって</p>
+    <div class="formula">$$A\cdot\frac{\sqrt{\pi}}{\sqrt{k}}=1 \quad\Rightarrow\quad A=\sqrt{\frac{k}{\pi}}$$</div>
+
+    <h3>5.5 分散条件から $k$ を決める</h3>
+    <p>分散が $\sigma^2$ になるように $k$ を決めます。まず $y=x-\mu$ と置くと、対称性により平均は 0 ですから</p>
+    <div class="formula">
+      $$
+      \mathrm{Var}(X)=E[(X-\mu)^2]=\int_{-\infty}^{\infty} y^2 \cdot A e^{-ky^2}\,dy
+      $$
+    </div>
+    <p>ここで、規格化積分
+      $$I(k)=\int_{-\infty}^{\infty}e^{-ky^2}dy=\sqrt{\frac{\pi}{k}}$$
+      を $k$ で微分すると
+    </p>
+    <div class="formula">
+      $$
+      I'(k)=\int_{-\infty}^{\infty}(-y^2)e^{-ky^2}dy
+      = -\frac{1}{2}\sqrt{\pi}\,k^{-3/2}
+      $$
+    </div>
+    <p>したがって</p>
+    <div class="formula">
+      $$
+      \int_{-\infty}^{\infty} y^2 e^{-ky^2}dy
+      = -I'(k)
+      = \frac{1}{2}\sqrt{\pi}\,k^{-3/2}
+      $$
+    </div>
+    <p>また $A=\sqrt{k/\pi}$ なので、</p>
+    <div class="formula">
+      $$
+      \mathrm{Var}(X)
+      = \sqrt{\frac{k}{\pi}}\cdot \frac{1}{2}\sqrt{\pi}\,k^{-3/2}
+      = \frac{1}{2k}
+      $$
+    </div>
+    <p>ゆえに分散条件 $\mathrm{Var}(X)=\sigma^2$ から</p>
+    <div class="formula">$$\frac{1}{2k}=\sigma^2 \quad\Rightarrow\quad k=\frac{1}{2\sigma^2}$$</div>
+    <p>これを $A=\sqrt{k/\pi}$ に代入すると</p>
+    <div class="formula">$$A = \frac{1}{\sqrt{2\pi}\sigma}$$</div>
+    <p>よって最終的に</p>
+    <div class="formula">$$f(x)=\frac{1}{\sqrt{2\pi}\sigma}\exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right)$$</div>
+    <div class="box tip">
+      <strong>ここまでの結論</strong><br>
+      正規分布の式は、
+      <ol class="step">
+        <li>平均と分散だけを固定したときの最大エントロピー分布</li>
+        <li>ガウス積分で規格化</li>
+        <li>分散条件で係数を決定</li>
+      </ol>
+      という流れで、かなり厳密に導かれます。
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>6. ±1σ, ±2σ, ±3σ の意味</h2>
+    <p>標準化変数</p>
+    <div class="formula">$$Z=\frac{X-\mu}{\sigma}$$</div>
+    <p>を使うと、標準正規分布</p>
+    <div class="formula">$$\phi(z)=\frac{1}{\sqrt{2\pi}}e^{-z^2/2}$$</div>
+    <p>に変換できます。したがって</p>
+    <div class="formula">$$P(|X-\mu|\le a\sigma)=P(|Z|\le a)=\int_{-a}^{a}\frac{1}{\sqrt{2\pi}}e^{-z^2/2}dz$$</div>
+    <p>この積分値を数値的に求めると、</p>
+    <table>
+      <thead><tr><th>範囲</th><th>確率</th><th>意味</th></tr></thead>
+      <tbody>
+        <tr><td>$\mu\pm1\sigma$</td><td>約 68.27%</td><td>もっとも典型的なばらつきの範囲</td></tr>
+        <tr><td>$\mu\pm2\sigma$</td><td>約 95.45%</td><td>かなり多くの測定値が入る範囲</td></tr>
+        <tr><td>$\mu\pm3\sigma$</td><td>約 99.73%</td><td>ここを超えると外れ値の疑いが強い</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="card">
+    <h2>7. 確率誤差</h2>
+    <h3>7.1 定義</h3>
+    <p>確率誤差は、<strong>算術平均値がどの程度まで信用できるか</strong>を表す量です。</p>
+    <div class="formula">$$\text{もっとも信頼しうる値} = \bar{x} \pm E$$</div>
+    <h3>7.2 各測定の確率誤差</h3>
+    <div class="formula">$$\epsilon = \pm 0.6745\sqrt{\frac{1}{n-1}\sum_{i=1}^{n}(x_i-\bar{x})^2} = \pm 0.6745\, s$$</div>
+    <p>ここで 0.6745 は、標準正規分布で中央 50% を切り出す位置から出てくる係数です。</p>
+    <h3>7.3 $n$ 回測定したときの平均の確率誤差</h3>
+    <div class="formula">$$E=\frac{\epsilon}{\sqrt{n}}$$</div>
+    <div class="box info">
+      <strong>重要</strong><br>
+      繰り返し測定回数を増やすと、平均値の信頼性は $\sqrt{n}$ の割合で良くなります。<br>
+      つまり、4 倍回数を増やしても誤差は 1/4 ではなく 1/2 になります。
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>8. 完全計算例</h2>
+    <p>測定値：$4.66,\;4.65,\;4.67,\;4.66,\;4.64$</p>
+    <h3>8.1 平均値</h3>
+    <div class="formula">$$\bar{x}=\frac{4.66+4.65+4.67+4.66+4.64}{5}=4.656$$</div>
+    <h3>8.2 残差と残差二乗</h3>
+    <table>
+      <thead><tr><th>測定値</th><th>残差 $d_i=x_i-\bar{x}$</th><th>$d_i^2$</th></tr></thead>
+      <tbody>
+        <tr><td>4.66</td><td>+0.004</td><td>0.000016</td></tr>
+        <tr><td>4.65</td><td>-0.006</td><td>0.000036</td></tr>
+        <tr><td>4.67</td><td>+0.014</td><td>0.000196</td></tr>
+        <tr><td>4.66</td><td>+0.004</td><td>0.000016</td></tr>
+        <tr><td>4.64</td><td>-0.016</td><td>0.000256</td></tr>
+      </tbody>
+    </table>
+    <div class="formula">$$\sum d_i^2 = 0.00052$$</div>
+    <h3>8.3 不偏分散と標本標準偏差</h3>
+    <div class="formula">$$s^2=\frac{0.00052}{5-1}=0.00013$$</div>
+    <div class="formula">$$s=\sqrt{0.00013}=0.01140$$</div>
+    <h3>8.4 各測定の確率誤差</h3>
+    <div class="formula">$$\epsilon = 0.6745\times 0.01140 = 0.00769$$</div>
+    <h3>8.5 平均の確率誤差</h3>
+    <div class="formula">$$E=\frac{0.00769}{\sqrt{5}}=0.00344$$</div>
+    <h3>8.6 最終結果</h3>
+    <div class="formula">$$\boxed{4.656\pm0.003}$$</div>
+    <div class="box tip">
+      <strong>読み方</strong><br>
+      「この測定では、もっとも信頼できる値は 4.656 であり、その信用幅は約 ±0.003 である」と解釈します。
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>9. この週のまとめ</h2>
+    <ol class="step">
+      <li>残差は平均からのずれを表す</li>
+      <li>残差の和は 0 になるので、ばらつきを見るには二乗和が必要</li>
+      <li>標本から母集団のばらつきを推定するときは、不偏分散を使う</li>
+      <li>正規分布の式は、平均・分散固定の最大エントロピー分布として厳密に導ける</li>
+      <li>$\exp$ は「中心から離れるほど滑らかに、しかも急速に減少する」ことを表す</li>
+      <li>確率誤差を使うと、平均値がどの程度信用できるかを数値で表現できる</li>
+    </ol>
+    <div class="box warn">
+      <strong>次週へのつながり</strong><br>
+      今週は「1つの量を何回も測ったときの統計処理」でした。<br>
+      次週は「2つの量の関係をどう式にするか」へ進み、回帰分析と最小二乗法を学びます。
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>施工メモ（Jason 確認用）</h2>
+    <ul>
+      <li>この版では、あなたの要望どおり、正規分布について <strong>厳密寄りの導出</strong> を入れました。</li>
+      <li>同時に、元の week03 の他の柱である <strong>残差・不偏分散・確率誤差・完全計算例</strong> も戻しました。</li>
+      <li>まだローカル草案です。未コミット・未プッシュです。</li>
+      <li>このまま公開ページに入れるにはやや重いので、確認後に
+        <ul>
+          <li>公開用の短縮版</li>
+          <li>講義用の詳細版</li>
+        </ul>
+        に分けるのがよいと思います。
+      </li>
+    </ul>
+  </section>
+
+  <div class="footer">Local draft only. 未コミット・未プッシュ。</div>
+</div>
+</body>
+</html>
