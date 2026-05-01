@@ -71,6 +71,11 @@
 - 相関があっても因果とは限らない理由
 - 相関係数だけで判断すると危険な場面
 
+<div style="display:flex;justify-content:center;margin:20px 0 8px;">
+  <img src="/figures/week04-colab-copy-to-drive.jpg" alt="Google Colabで『ファイル』メニューから『ドライブにコピーを保存』を選ぶ画面例" style="width:100%;max-width:520px;border:1px solid #ddd;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,0.08);" />
+</div>
+<p style="text-align:center;color:#666;font-size:0.95rem;margin-top:0;">ノートブックを開いたら、まず「ファイル → ドライブにコピーを保存」を選び、自分の Drive 側のコピーで作業してください。</p>
+
 ---
 
 ## ノートブックを開いたら最初にすること
