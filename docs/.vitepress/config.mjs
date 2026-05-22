@@ -39,7 +39,7 @@ export default withMermaid({
             { text: '第3週：統計処理(1)', link: '/weeks/week-03' },
             { text: '第4週：統計処理(2)', link: '/weeks/week-04' },
             { text: '第5週：補間・外挿', link: '/weeks/week-05' },
-            { text: '🔒 第6週：A/D変換・サンプリング' },  // link: '/weeks/week-06'
+            { text: '第6週：A/D変換・サンプリング', link: '/weeks/week-06' },
             { text: '🔒 第7週：信号特性' },  // link: '/weeks/week-07'
           ]
         },
