@@ -1,485 +1,591 @@
-# 第7週：センサ信号の特性
+# 第7週：センサ信号のノイズ除去と中間復習
 
-> ⏱️ 読了時間：約25分 | 📝 確認問題：5問
+> 📄 [第7回講義スライド（PDF）を開く](../slides/week07.pdf)
+
+> ⏱️ 読了時間：約45分 | 📝 移動平均演習：3問 | 総復習問題：30問
 
 ## 学習目標
 
 この週の講義を終えると、以下のことができるようになります：
 
-- [ ] 正確さ（Accuracy）と精密さ（Precision）の違いを説明できる
-- [ ] 線形性（Linearity）の意味と重要性を理解できる
-- [ ] ヒステリシス（Hysteresis）の意味を説明できる
-- [ ] 繰り返し精度とゼロドリフトの概念を理解できる
-- [ ] 過渡応答と周波数応答の基本を説明できる
+- [ ] センサ信号における「ノイズ」の意味を、目的に応じて説明できる
+- [ ] ローパス、ハイパスなど各フィルタの役割を区別して選択できる
+- [ ] 3点・5点移動平均を計算し、平滑化の効果を確認できる
+- [ ] 移動平均による「時間遅れ」や「特徴の消失」といった副作用を説明できる
+- [ ] 第2週〜第7週の主要な公式と概念を使い分けられる
 
 ---
 
-## 1. 正確さと精密さ
+## 1. センサ信号とノイズ（Denoise）
 
-### 1.1 正確さ（Accuracy）
+### 1.1 実際の信号とノイズの考え方
 
-::: info 定義
-**正確さ**：真値に対して誤差が小さいこと。平均するとだいたい真値に近い。
+理想的な理論計算とは異なり、実際のセンサから得られる信号には、細かな揺れや突発的なスパイク、環境による変動などが混ざります。これを一般に<strong>ノイズ（Noise）</strong>と呼びます。
+
+::: info ノイズの定義
+<strong>ノイズ</strong>とは、「現在の目的に対して不必要な変動成分」のことです。
 :::
 
-### 1.2 精密さ（Precision）
+<strong>重要なポイント：</strong>
+ある変動がノイズであるかどうかは、<strong>「何を知りたいか（目的）」</strong>によって変わります。
+- 大きな動作の傾向を知りたい場合、細かなガタガタした振動は「ノイズ」として消したい対象です。
+- しかし、機械の微細な「異常振動」を診断したい場合、その細かな揺れこそが「必要な信号」になります。
 
-::: info 定義
-**精密さ**：ばらつきが小さいこと。繰り返し精度が良い。
-:::
-
-### 1.3 正確さと精密さの違い
-
-<svg viewBox="0 0 520 220" xmlns="http://www.w3.org/2000/svg" style="max-width: 520px; margin: 20px auto; display: block;">
-  <text x="130" y="20" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">正確だが精密でない</text>
-  <text x="390" y="20" text-anchor="middle" font-size="13" fill="#333" font-weight="bold">精密だが正確でない</text>
-  <circle cx="130" cy="120" r="80" fill="none" stroke="#ccc" stroke-width="1"/>
-  <circle cx="130" cy="120" r="55" fill="none" stroke="#ccc" stroke-width="1"/>
-  <circle cx="130" cy="120" r="30" fill="none" stroke="#ccc" stroke-width="1"/>
-  <circle cx="130" cy="120" r="3" fill="#F44336"/>
-  <circle cx="115" cy="95" r="4" fill="#1565C0"/>
-  <circle cx="150" cy="105" r="4" fill="#1565C0"/>
-  <circle cx="120" cy="145" r="4" fill="#1565C0"/>
-  <circle cx="145" cy="140" r="4" fill="#1565C0"/>
-  <circle cx="108" cy="115" r="4" fill="#1565C0"/>
-  <circle cx="140" cy="92" r="4" fill="#1565C0"/>
-  <circle cx="155" cy="130" r="4" fill="#1565C0"/>
-  <circle cx="110" cy="130" r="4" fill="#1565C0"/>
-  <text x="130" y="210" text-anchor="middle" font-size="11" fill="#666">だいたい真ん中だが、ばらつく</text>
-  <circle cx="390" cy="120" r="80" fill="none" stroke="#ccc" stroke-width="1"/>
-  <circle cx="390" cy="120" r="55" fill="none" stroke="#ccc" stroke-width="1"/>
-  <circle cx="390" cy="120" r="30" fill="none" stroke="#ccc" stroke-width="1"/>
-  <circle cx="390" cy="120" r="3" fill="#F44336"/>
-  <circle cx="420" cy="80" r="4" fill="#FF9800"/>
-  <circle cx="425" cy="85" r="4" fill="#FF9800"/>
-  <circle cx="418" cy="78" r="4" fill="#FF9800"/>
-  <circle cx="422" cy="82" r="4" fill="#FF9800"/>
-  <circle cx="416" cy="84" r="4" fill="#FF9800"/>
-  <circle cx="424" cy="76" r="4" fill="#FF9800"/>
-  <circle cx="419" cy="81" r="4" fill="#FF9800"/>
-  <circle cx="421" cy="79" r="4" fill="#FF9800"/>
-  <text x="390" y="210" text-anchor="middle" font-size="11" fill="#666">外れているが、集まっている</text>
-</svg>
-
-| 特性 | 正確さ（Accuracy） | 精密さ（Precision） |
-|------|:------------------:|:------------------:|
-| **評価基準** | 真値との差 | ばらつきの小ささ |
-| **統計量** | 平均値の偏り（バイアス） | 標準偏差 |
-| **改善方法** | 較正（キャリブレーション） | 機器の精度向上 |
-
-::: tip 📌 振り返り
-正確さと精密さの概念は [第2週：誤差と精度](/weeks/week-02) でも学びました。
-:::
+<strong>Denoise（ノイズ除去）</strong>は、単に信号を「きれいにする魔法」ではなく、<strong>「目的に合わせて情報を丸め込み、一部の情報を捨てる処理」</strong>であることを意識しましょう。
 
 ---
 
-## 2. 線形性（Linearity）
+### 1.2 フィルタリングの直感
 
-### 2.1 線形性とは
+時系列データは、「ゆっくりとした変化（低周波成分）」と「細かく速い揺れ（高周波成分）」の重ね合わせでできています。
+<strong>フィルタ（Filter）</strong>は、特定の周波数成分だけを通し、他の成分を弱める（減衰させる）処理です。
 
-::: info 定義
-**線形性**：入力に対して出力の応答が**比例的**であること
-:::
-
-**例：線形ばねの伸びと復元力**
-
-<svg viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg" style="max-width: 500px; margin: 20px auto; display: block;">
-  <rect x="20" y="50" width="15" height="100" fill="#999"/>
-  <line x1="35" y1="60" x2="50" y2="70" stroke="#666" stroke-width="1.5"/>
-  <line x1="50" y1="70" x2="35" y2="80" stroke="#666" stroke-width="1.5"/>
-  <line x1="35" y1="80" x2="50" y2="90" stroke="#666" stroke-width="1.5"/>
-  <line x1="50" y1="90" x2="35" y2="100" stroke="#666" stroke-width="1.5"/>
-  <line x1="35" y1="100" x2="50" y2="110" stroke="#666" stroke-width="1.5"/>
-  <line x1="50" y1="110" x2="35" y2="120" stroke="#666" stroke-width="1.5"/>
-  <line x1="35" y1="120" x2="50" y2="130" stroke="#666" stroke-width="1.5"/>
-  <line x1="50" y1="130" x2="35" y2="140" stroke="#666" stroke-width="1.5"/>
-  <rect x="50" y="85" width="30" height="30" fill="#FF9800" rx="3"/>
-  <line x1="80" y1="100" x2="130" y2="100" stroke="#1565C0" stroke-width="2"/>
-  <polygon points="126,96 134,100 126,104" fill="#1565C0"/>
-  <line x1="50" y1="100" x2="10" y2="100" stroke="#F44336" stroke-width="2" stroke-dasharray="5,3"/>
-  <polygon points="14,96 6,100 14,104" fill="#F44336"/>
-  <text x="115" y="90" font-size="13" fill="#1565C0" font-weight="bold">F</text>
-  <text x="18" y="90" font-size="11" fill="#F44336">F_R</text>
-  <text x="65" y="75" font-size="10" fill="#666">x</text>
-  <line x1="250" y1="170" x2="430" y2="170" stroke="#333" stroke-width="1.5"/>
-  <line x1="250" y1="170" x2="250" y2="40" stroke="#333" stroke-width="1.5"/>
-  <text x="340" y="190" text-anchor="middle" font-size="11" fill="#333">変位 x</text>
-  <text x="235" y="100" text-anchor="middle" font-size="11" fill="#333" transform="rotate(-90,235,100)">復元力 |F_R|</text>
-  <line x1="250" y1="170" x2="420" y2="50" stroke="#FF9800" stroke-width="2.5"/>
-  <text x="260" y="175" font-size="10" fill="#333">O</text>
-  <text x="380" y="65" font-size="11" fill="#FF9800" font-weight="bold">線形</text>
-</svg>
-
-線形性があると、**内挿・外挿**に有利です。
-
-### 2.2 線形範囲の重要性
-
-実際のセンサでは、入力全範囲で完全に線形であることは稀です。**できるだけ線形な関係とみなせる範囲**での使用が好ましいです。
-
-<svg viewBox="0 0 450 220" xmlns="http://www.w3.org/2000/svg" style="max-width: 450px; margin: 20px auto; display: block;">
-  <line x1="60" y1="190" x2="400" y2="190" stroke="#333" stroke-width="1.5"/>
-  <line x1="60" y1="190" x2="60" y2="30" stroke="#333" stroke-width="1.5"/>
-  <text x="230" y="210" text-anchor="middle" font-size="11" fill="#333">入力（input）</text>
-  <text x="40" y="110" text-anchor="middle" font-size="11" fill="#333" transform="rotate(-90,40,110)">出力（output）</text>
-  <path d="M60,190 Q120,140 180,100 Q240,65 280,50 Q320,42 350,40 Q380,39 400,39" fill="none" stroke="#FF9800" stroke-width="2.5"/>
-  <line x1="60" y1="190" x2="250" y2="70" stroke="#4CAF50" stroke-width="1.5" stroke-dasharray="5,3"/>
-  <rect x="60" y="70" width="190" height="125" fill="#C8E6C9" fill-opacity="0.15" stroke="#4CAF50" stroke-width="1.5" stroke-dasharray="5,3" rx="3"/>
-  <text x="155" y="88" text-anchor="middle" font-size="11" fill="#4CAF50" font-weight="bold">線形範囲（Linear）</text>
-  <text x="155" y="102" text-anchor="middle" font-size="10" fill="#4CAF50">計測の信頼性が高い</text>
-  <text x="350" y="60" font-size="10" fill="#FF9800">飽和領域</text>
-  <text x="68" y="195" font-size="10" fill="#333">O</text>
-</svg>
-
-::: warning ⚠️ 注意
-線形範囲を超えた領域では、出力が入力に比例しなくなり（飽和など）、計測の信頼性が低下します。
-:::
+| フィルタの種類 | 通す成分 | 弱める成分 | 使いどころの例 |
+|:---|:---|:---|:---|
+| <strong>ローパスフィルタ（LPF）</strong> | 低周波 | 高周波 | 細かい揺れを消して、なめらかな全体傾向を見たいとき |
+| <strong>ハイパスフィルタ（HPF）</strong> | 高周波 | 低周波 | ゆっくりとした温度変化（ドリフト）を消して、急な変化だけを見たいとき |
+| <strong>バンドパスフィルタ（BPF）</strong> | 特定帯域 | それ以外 | 特定の速さの振動や、特定の周期の動作だけを抽出したいとき |
+| <strong>帯域阻止フィルタ（BRF）</strong> | 特定帯域以外 | 特定帯域 | 電源由来のノイズ（50Hz/60Hzなど）だけをピンポイントで消したいとき |
 
 ---
 
-## 3. ヒステリシス（Hysteresis）
+### 1.3 移動平均（Moving Average）による平滑化
 
-### 3.1 ヒステリシスとは
+最も直感的でよく使われるデジタルノイズ除去手法が<strong>移動平均</strong>です。
+注目しているデータ点とその前後の点の平均を取ることで、突発的なピーク（スパイク）を周囲と馴染ませ、波形全体をなめらか（平滑化）にします。
 
-::: info 定義
-**ヒステリシス**：増加側と減少側で**出力応答が異なる**現象
-:::
+#### 3点移動平均の計算式
+注目する時刻 $i$ のデータを $y_i$ としたとき、前後1点ずつを含めた3点の平均 $y_i^*$ を計算します。
 
-<svg viewBox="0 0 450 250" xmlns="http://www.w3.org/2000/svg" style="max-width: 450px; margin: 20px auto; display: block;">
-  <style>
-    @keyframes traceHyst {
-      0%    { transform: translate(0px, 0px); }
-      3.5%  { transform: translate(40px, -22px); }
-      7%    { transform: translate(80px, -50px); }
-      10.5% { transform: translate(120px, -85px); }
-      14%   { transform: translate(160px, -118px); }
-      17.5% { transform: translate(200px, -142px); }
-      21%   { transform: translate(240px, -154px); }
-      24.5% { transform: translate(280px, -160px); }
-      28%   { transform: translate(300px, -162px); }
-      32%   { transform: translate(300px, -162px); }
-      36%   { transform: translate(280px, -152px); }
-      40%   { transform: translate(240px, -138px); }
-      44%   { transform: translate(200px, -118px); }
-      48%   { transform: translate(160px, -92px); }
-      52%   { transform: translate(120px, -62px); }
-      56%   { transform: translate(80px, -38px); }
-      60%   { transform: translate(40px, -17px); }
-      64%   { transform: translate(0px, 0px); }
-      100%  { transform: translate(0px, 0px); }
-    }
-    @keyframes dotColor {
-      0%, 28%   { fill: #9C27B0; }
-      32%, 64%  { fill: #1565C0; }
-      68%, 100% { fill: #9C27B0; }
-    }
-    @keyframes drawUp {
-      0%   { stroke-dashoffset: 380; }
-      28%  { stroke-dashoffset: 0; }
-      100% { stroke-dashoffset: 0; }
-    }
-    @keyframes drawDown {
-      0%, 28%  { stroke-dashoffset: 380; }
-      32%      { stroke-dashoffset: 380; }
-      60%      { stroke-dashoffset: 0; }
-      100%     { stroke-dashoffset: 0; }
-    }
-    .hyst-dot {
-      animation: traceHyst 6s ease-in-out infinite, dotColor 6s ease-in-out infinite;
-    }
-    .path-up {
-      stroke-dasharray: 380;
-      animation: drawUp 6s ease-in-out infinite;
-    }
-    .path-down {
-      stroke-dasharray: 380;
-      animation: drawDown 6s ease-in-out infinite;
-    }
-  </style>
-  <line x1="60" y1="220" x2="400" y2="220" stroke="#333" stroke-width="1.5"/>
-  <line x1="60" y1="220" x2="60" y2="30" stroke="#333" stroke-width="1.5"/>
-  <text x="230" y="245" text-anchor="middle" font-size="11" fill="#333">入力（input）</text>
-  <text x="40" y="125" text-anchor="middle" font-size="11" fill="#333" transform="rotate(-90,40,125)">出力（output）</text>
-  <path d="M80,200 Q120,180 160,150 Q200,110 240,80 Q280,55 320,45 Q360,40 380,38" fill="none" stroke="#9C27B0" stroke-width="2.5" class="path-up"/>
-  <path d="M380,38 Q360,50 320,65 Q280,85 240,110 Q200,140 160,165 Q120,185 80,200" fill="none" stroke="#1565C0" stroke-width="2.5" class="path-down"/>
-  <circle cx="80" cy="200" r="4" fill="#9C27B0"/>
-  <circle cx="120" cy="178" r="4" fill="#9C27B0"/>
-  <circle cx="160" cy="150" r="4" fill="#9C27B0"/>
-  <circle cx="200" cy="115" r="4" fill="#9C27B0"/>
-  <circle cx="240" cy="82" r="4" fill="#9C27B0"/>
-  <circle cx="280" cy="58" r="4" fill="#9C27B0"/>
-  <circle cx="320" cy="46" r="4" fill="#9C27B0"/>
-  <circle cx="360" cy="40" r="4" fill="#9C27B0"/>
-  <circle cx="360" cy="48" r="4" fill="#1565C0"/>
-  <circle cx="320" cy="62" r="4" fill="#1565C0"/>
-  <circle cx="280" cy="82" r="4" fill="#1565C0"/>
-  <circle cx="240" cy="108" r="4" fill="#1565C0"/>
-  <circle cx="200" cy="138" r="4" fill="#1565C0"/>
-  <circle cx="160" cy="162" r="4" fill="#1565C0"/>
-  <circle cx="120" cy="183" r="4" fill="#1565C0"/>
-  <circle cx="80" cy="200" r="6" fill="#9C27B0" opacity="0.9" class="hyst-dot"/>
-  <text x="300" y="35" font-size="11" fill="#9C27B0" font-weight="bold">増加 &#x2197;</text>
-  <text x="130" y="210" font-size="11" fill="#1565C0" font-weight="bold">減少 &#x2198;</text>
-  <text x="68" y="225" font-size="10" fill="#333">O</text>
-</svg>
+$$
+y_i^* = \frac{y_{i-1} + y_i + y_{i+1}}{3}
+$$
 
-近似すればだいたい直線性がありますが、入力の**増減方向で出力特性が異なります**。
+> ※ 両端（最初と最後）のデータは、外側が存在しないため、「外側を 0 とみなす」「端のデータはそのまま残す」などの処理ルールをあらかじめ決めて計算します。
 
-### 3.2 具体例：手指の筋腱複合体の弾性特性
+#### 計算例
 
-手指の筋腱複合体（Muscle-Tendon Complex）のヒステリシスの例：
+以下のデータ $Y$ に対して、両端の外側を $0$ として3点移動平均を計算します。
 
-- 指先を伸展（反らす）方向に押し込むと、指屈筋腱が伸長して**復元力**が発揮される（ばねを引き延ばすような作用）
-- 外力を取り除くと蓄積された弾性エネルギーにより、手指は筋力以上に**高速に運動**する
+| 時刻 $t$ | 1 | 2 | 3 | 4 | 5 |
+|:---|---:|---:|---:|---:|---:|
+| <strong>元の値 $Y$</strong> | 1.0 | 4.0 | 2.0 | 10.0 | 3.0 |
 
-<svg viewBox="0 0 450 220" xmlns="http://www.w3.org/2000/svg" style="max-width: 450px; margin: 20px auto; display: block;">
-  <line x1="60" y1="200" x2="400" y2="200" stroke="#333" stroke-width="1.5"/>
-  <line x1="60" y1="200" x2="60" y2="30" stroke="#333" stroke-width="1.5"/>
-  <text x="230" y="220" text-anchor="middle" font-size="11" fill="#333">関節角度 [deg]</text>
-  <text x="40" y="115" text-anchor="middle" font-size="11" fill="#333" transform="rotate(-90,40,115)">外力 [N]</text>
-  <path d="M80,185 Q120,170 160,140 Q200,100 250,65 Q300,42 350,30" fill="none" stroke="#4CAF50" stroke-width="2.5"/>
-  <path d="M350,30 Q300,55 250,85 Q200,120 160,155 Q120,175 80,185" fill="none" stroke="#9C27B0" stroke-width="2.5"/>
-  <text x="300" y="25" font-size="11" fill="#4CAF50" font-weight="bold">反らす（loading）&#x2197;</text>
-  <text x="280" y="110" font-size="11" fill="#9C27B0" font-weight="bold">&#x2199; 戻す（unloading）</text>
-</svg>
+- $t=2$ のとき： $\frac{1.0 + 4.0 + 2.0}{3} = 2.33$
+- $t=4$ のとき： $\frac{2.0 + 10.0 + 3.0}{3} = 5.00$
+
+$t=4$ にあった $10.0$ という突発的な大きな値（スパイク）が、平滑化によって $5.00$ まで抑え込まれました。
 
 ---
 
-## 4. 繰り返し精度とゼロドリフト
+### 1.4 移動平均の副作用（欠点）
 
-### 4.1 繰り返し精度（Repeatability）
+移動平均は波形をきれいにする強力なツールですが、以下の<strong>副作用</strong>があることに注意してください。
 
-::: info 定義
-**繰り返し精度**：同じ大きさの入力に対して、**同じだけの出力**をすること
-:::
-
-ロボットの制御においては、例えば毎回同じ位置に移動できること。
-
-### 4.2 ゼロドリフト（Zero Drift）
-
-::: info 定義
-**ゼロドリフト**：ゼロ点のゆらぎ。無入力状態であっても、時間経過とともに**原点の値がずれてしまう**こと。
-:::
-
-<svg viewBox="0 0 450 180" xmlns="http://www.w3.org/2000/svg" style="max-width: 450px; margin: 20px auto; display: block;">
-  <line x1="60" y1="150" x2="400" y2="150" stroke="#333" stroke-width="1.5"/>
-  <line x1="60" y1="150" x2="60" y2="20" stroke="#333" stroke-width="1.5"/>
-  <text x="230" y="172" text-anchor="middle" font-size="11" fill="#333">時間 t</text>
-  <text x="40" y="85" text-anchor="middle" font-size="11" fill="#333" transform="rotate(-90,40,85)">出力（output）</text>
-  <line x1="60" y1="120" x2="400" y2="120" stroke="#ccc" stroke-width="1" stroke-dasharray="4,3"/>
-  <text x="410" y="123" font-size="10" fill="#ccc">理想（ゼロ）</text>
-  <path d="M70,118 Q100,115 130,112 Q160,118 190,108 Q220,105 250,100 Q280,102 310,95 Q340,90 370,85 Q390,80 400,78" fill="none" stroke="#FF9800" stroke-width="2.5"/>
-  <line x1="80" y1="118" x2="80" y2="120" stroke="#F44336" stroke-width="2"/>
-  <line x1="250" y1="100" x2="250" y2="120" stroke="#F44336" stroke-width="2"/>
-  <line x1="390" y1="80" x2="390" y2="120" stroke="#F44336" stroke-width="2"/>
-  <text x="250" y="135" text-anchor="middle" font-size="10" fill="#F44336">ドリフト量が増加</text>
-</svg>
-
-::: warning ⚠️ ゼロドリフトの対策
-- 定期的な**ゼロ点補正**（キャリブレーション）が必要
-- 温度変化が大きい環境では特に注意
-:::
+1. <strong>時間遅れが発生する</strong>
+   リアルタイムで処理を行おうとした場合、未来のデータ（$y_{i+1}$）を待たないと現在の平均値を確定できないか、過去のデータだけで平均を取るため、結果の波形が実際の波形よりも時間的に遅れて出力されます。
+2. <strong>重要な急変（特徴）も消えてしまう</strong>
+   ノイズのスパイクが潰れるのと同時に、本当に起きた「急激な力の立ち上がり」や「鋭いピーク」も丸められて小さくなってしまいます。平滑化の点数（3点、5点、10点…）を増やすほど波形はなめらかになりますが、本来の信号の特徴も大きく失われます。
 
 ---
 
-## 5. 過渡応答（Transient Response）
+## 2. 中間試験に向けた総復習（第2週〜第7週）
 
-### 5.1 ステップ応答
+これまでの講義では、「公式を暗記すること」以上に、<strong>「自分が何を知りたいのかに合わせて、どの方法（公式）を選ぶべきかを判断できること」</strong>を重視してきました。
 
-::: info 定義
-どんな素子・デバイスも入力に対して**瞬間的に応答できることはありません**。
-:::
+試験前に、以下の判断基準と計算式を整理しておきましょう。
 
-<svg viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg" style="max-width: 500px; margin: 20px auto; display: block;">
-  <text x="130" y="18" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">理想</text>
-  <text x="370" y="18" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">現実</text>
-  <line x1="40" y1="170" x2="220" y2="170" stroke="#333" stroke-width="1"/>
-  <line x1="40" y1="170" x2="40" y2="30" stroke="#333" stroke-width="1"/>
-  <line x1="40" y1="140" x2="100" y2="140" stroke="#1565C0" stroke-width="2"/>
-  <line x1="100" y1="140" x2="100" y2="60" stroke="#1565C0" stroke-width="2"/>
-  <line x1="100" y1="60" x2="210" y2="60" stroke="#1565C0" stroke-width="2"/>
-  <line x1="40" y1="140" x2="100" y2="140" stroke="#FF9800" stroke-width="2" stroke-dasharray="5,3"/>
-  <line x1="100" y1="140" x2="100" y2="60" stroke="#FF9800" stroke-width="2" stroke-dasharray="5,3"/>
-  <line x1="100" y1="60" x2="210" y2="60" stroke="#FF9800" stroke-width="2" stroke-dasharray="5,3"/>
-  <text x="60" y="155" font-size="10" fill="#1565C0">入力</text>
-  <text x="160" y="55" font-size="10" fill="#FF9800">出力</text>
-  <line x1="280" y1="170" x2="460" y2="170" stroke="#333" stroke-width="1"/>
-  <line x1="280" y1="170" x2="280" y2="30" stroke="#333" stroke-width="1"/>
-  <line x1="280" y1="140" x2="340" y2="140" stroke="#1565C0" stroke-width="2"/>
-  <line x1="340" y1="140" x2="340" y2="60" stroke="#1565C0" stroke-width="2"/>
-  <line x1="340" y1="60" x2="450" y2="60" stroke="#1565C0" stroke-width="2"/>
-  <path d="M280,140 L340,140 Q360,140 370,110 Q380,80 390,70 Q400,65 420,62 Q440,60 450,60" fill="none" stroke="#FF9800" stroke-width="2.5"/>
-  <text x="300" y="155" font-size="10" fill="#1565C0">入力</text>
-  <text x="430" y="55" font-size="10" fill="#FF9800">出力</text>
-  <text x="400" y="85" font-size="9" fill="#FF9800">遅れ</text>
-</svg>
+### 何を求めたいか？ → 使う方法
+- <strong>真値とのズレ</strong>を知りたい → <strong>誤差</strong>、<strong>相対誤差</strong>
+- <strong>データのばらつき</strong>を知りたい → <strong>平均</strong>、<strong>分散</strong>、<strong>標準偏差</strong>
+- <strong>直線の当てはまりの良さ</strong>を比べたい → <strong>残差平方和（RSS）</strong>
+- <strong>2つのデータの間</strong>の値を予測したい → <strong>線形補間</strong>
+- <strong>連続信号をPCに取り込む間隔</strong>を決めたい → <strong>サンプリング周波数</strong>
+- <strong>電圧をデジタル値にする細かさ</strong>を知りたい → <strong>分解能</strong>
+- <strong>高周波ノイズを減らしたい</strong> → <strong>ローパスフィルタ（LPF）</strong>、<strong>移動平均</strong>
 
-### 5.2 応答の特性値
+### 必須公式まとめ
 
-定常状態に落ち着くまでの応答を表す用語：
+<strong>第2週：誤差</strong>
+- 絶対誤差 = $| 測定値 - 真値 |$
+- 相対誤差 = $\frac{| 測定値 - 真値 |}{| 真値 |} \times 100 \ [\%]$
 
-<svg viewBox="0 0 500 220" xmlns="http://www.w3.org/2000/svg" style="max-width: 500px; margin: 20px auto; display: block;">
-  <style>
-    @keyframes drawOutput {
-      0%, 15%  { stroke-dashoffset: 600; }
-      16%      { stroke-dashoffset: 600; }
-      75%      { stroke-dashoffset: 0; }
-      100%     { stroke-dashoffset: 0; }
-    }
-    @keyframes showSteady {
-      0%, 60%  { opacity: 0; }
-      75%      { opacity: 1; }
-      100%     { opacity: 1; }
-    }
-    @keyframes showBracket {
-      0%, 70%  { opacity: 0; }
-      80%      { opacity: 1; }
-      100%     { opacity: 1; }
-    }
-    @keyframes drawStep {
-      0%       { stroke-dashoffset: 500; }
-      15%      { stroke-dashoffset: 0; }
-      100%     { stroke-dashoffset: 0; }
-    }
-    @keyframes showThreshold {
-      0%, 55%  { opacity: 0; }
-      65%      { opacity: 1; }
-      100%     { opacity: 1; }
-    }
-    .anim-output {
-      stroke-dasharray: 600;
-      animation: drawOutput 8s ease-in-out infinite;
-    }
-    .anim-step {
-      stroke-dasharray: 500;
-      animation: drawStep 8s ease-out infinite;
-    }
-    .anim-steady {
-      animation: showSteady 8s ease-in-out infinite;
-    }
-    .anim-threshold {
-      animation: showThreshold 8s ease-in-out infinite;
-    }
-    .anim-bracket {
-      animation: showBracket 8s ease-in-out infinite;
-    }
-  </style>
-  <line x1="60" y1="190" x2="450" y2="190" stroke="#333" stroke-width="1.5"/>
-  <line x1="60" y1="190" x2="60" y2="20" stroke="#333" stroke-width="1.5"/>
-  <text x="255" y="215" text-anchor="middle" font-size="11" fill="#333">時間 t</text>
-  <text x="40" y="105" text-anchor="middle" font-size="11" fill="#333" transform="rotate(-90,40,105)">出力</text>
-  <g class="anim-steady">
-    <line x1="60" y1="70" x2="450" y2="70" stroke="#4CAF50" stroke-width="1" stroke-dasharray="4,3"/>
-    <text x="455" y="73" font-size="9" fill="#4CAF50">定常値</text>
-  </g>
-  <g class="anim-threshold">
-    <line x1="60" y1="80" x2="450" y2="80" stroke="#F44336" stroke-width="1" stroke-dasharray="3,2"/>
-    <line x1="60" y1="60" x2="450" y2="60" stroke="#F44336" stroke-width="1" stroke-dasharray="3,2"/>
-    <text x="455" y="63" font-size="8" fill="#F44336">閾値</text>
-    <text x="455" y="83" font-size="8" fill="#F44336">閾値</text>
-  </g>
-  <path d="M80,190 L110,190 L110,70 L430,70" fill="none" stroke="#1565C0" stroke-width="1.5" class="anim-step"/>
-  <path d="M80,190 Q100,190 110,180 Q130,80 140,40 Q150,30 160,45 Q170,60 180,78 Q190,82 200,72 Q210,65 220,68 Q230,72 240,71 Q250,69 260,70 Q280,70 300,70 Q350,70 430,70" fill="none" stroke="#FF9800" stroke-width="2.5" class="anim-output"/>
-  <g class="anim-bracket">
-    <line x1="110" y1="195" x2="110" y2="200" stroke="#333" stroke-width="1.5"/>
-    <line x1="240" y1="195" x2="240" y2="200" stroke="#333" stroke-width="1.5"/>
-    <line x1="110" y1="198" x2="240" y2="198" stroke="#9C27B0" stroke-width="2"/>
-    <text x="175" y="210" text-anchor="middle" font-size="10" fill="#9C27B0" font-weight="bold">整定時間</text>
-  </g>
-</svg>
+<strong>第3週：統計処理</strong>
+- 平均値 $\bar{x} = \frac{\sum x_i}{n}$
+- 分散 $\sigma^2 = \frac{1}{n} \sum (x_i - \bar{x})^2$ （偏差の2乗の平均）
+- 標準偏差 $\sigma = \sqrt{分散}$
 
-| 用語 | 意味 |
-|------|------|
-| **整定時間（Settling Time）** | 出力が定常値の一定範囲（閾値内）に収まるまでの時間 |
-| **時定数（Time Constant）** | 応答が定常値の約63.2%に達するまでの時間 |
-| **応答時間（Response Time）** | 入力変化から出力が規定値に達するまでの時間 |
+<strong>第4週：回帰・相関</strong>
+- 残差 $e_i = (実際の測定値) - (モデルの予測値)$
+- 残差平方和 $RSS = \sum e_i^2$ （これが最小になる直線が最も当てはまりが良い）
+- ※ 相関があるからといって、因果関係があるとは限らない（疑似相関に注意）。
+
+<strong>第5週：補間と差分</strong>
+- 線形補間 $y = y_0 + \frac{y_1 - y_0}{x_1 - x_0} (x - x_0)$
+- 外挿（測定範囲外の予測）は、モデルが急変する可能性があり危険を伴う。
+
+<strong>第6週：A/D変換</strong>
+- サンプリング周波数 $f_s = \frac{1}{T}$ （$T$ はサンプリング周期）
+- ナイキスト周波数 $f_N = \frac{f_s}{2}$ （これより高い周波数の波は正しく測れず、エリアシングを起こす）
+- 分解能 $\Delta = \frac{測定範囲}{2^{bit数}}$
+
+<strong>第7週：ノイズ除去</strong>
+- 3点移動平均 $y_i^* = \frac{y_{i-1} + y_i + y_{i+1}}{3}$
+- 高周波ノイズを減らすには、LPFや移動平均を使う。
+- ただし、エリアシング対策では<strong>サンプリング前のLPF</strong>が重要。サンプリング後の移動平均で波形をなめらかにしても、エリアシングした成分を完全には元に戻せない。
 
 ---
 
-## 6. 周波数応答（Frequency Response）
+## 授業後の自己復習：計算・判断問題
 
-### 6.1 周波数による応答の違い
+まずは自分で解いてから、クリックして解答を確認してください。移動平均は第7週の新しい計算なので、専用に3問用意しています。その後に、中間試験向けの総復習問題を30問置いています。
 
-高周波の入力に対しては、応答が**追いつかない**。
+### 【移動平均演習：3問】
 
-<svg viewBox="0 0 500 170" xmlns="http://www.w3.org/2000/svg" style="max-width: 500px; margin: 20px auto; display: block;">
-  <text x="130" y="15" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">低周波入力</text>
-  <text x="370" y="15" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">高周波入力</text>
-  <text x="55" y="42" font-size="10" fill="#1565C0">入力</text>
-  <line x1="40" y1="60" x2="220" y2="60" stroke="#333" stroke-width="0.5"/>
-  <path d="M45,60 Q70,25 95,60 Q120,95 145,60 Q170,25 195,60" fill="none" stroke="#1565C0" stroke-width="2"/>
-  <text x="55" y="82" font-size="10" fill="#FF9800">出力</text>
-  <line x1="40" y1="110" x2="220" y2="110" stroke="#333" stroke-width="0.5"/>
-  <path d="M45,110 Q70,77 95,110 Q120,143 145,110 Q170,77 195,110" fill="none" stroke="#FF9800" stroke-width="2"/>
-  <text x="130" y="150" text-anchor="middle" font-size="10" fill="#4CAF50" font-weight="bold">振幅がほぼ同じ</text>
-  <text x="295" y="42" font-size="10" fill="#1565C0">入力</text>
-  <line x1="280" y1="60" x2="460" y2="60" stroke="#333" stroke-width="0.5"/>
-  <path d="M285,60 Q295,25 305,60 Q315,95 325,60 Q335,25 345,60 Q355,95 365,60 Q375,25 385,60 Q395,95 405,60 Q415,25 425,60 Q435,95 445,60" fill="none" stroke="#1565C0" stroke-width="2"/>
-  <text x="295" y="82" font-size="10" fill="#FF9800">出力</text>
-  <line x1="280" y1="110" x2="460" y2="110" stroke="#333" stroke-width="0.5"/>
-  <path d="M285,110 Q295,100 305,110 Q315,120 325,110 Q335,100 345,110 Q355,120 365,110 Q375,100 385,110 Q395,120 405,110 Q415,100 425,110 Q435,120 445,110" fill="none" stroke="#FF9800" stroke-width="2"/>
-  <text x="370" y="150" text-anchor="middle" font-size="10" fill="#F44336" font-weight="bold">振幅が大幅に減少（減衰）</text>
-</svg>
+### 移動平均1：全点の3点移動平均
+次の時系列データに対して、両端の外側を $0$ とみなして、全時刻の3点移動平均を求めなさい。
 
-### 6.2 センサ特性のまとめ
+| 時刻 $t$ | 1 | 2 | 3 | 4 | 5 | 6 |
+|:---|---:|---:|---:|---:|---:|---:|
+| 測定値 $Y$ | 2 | 4 | 3 | 12 | 5 | 4 |
 
-```mermaid
-graph TD
-    A["センサ出力の特性"] --> B["静的特性"]
-    A --> C["動的特性"]
-    B --> D["正確さ<br>Accuracy"]
-    B --> E["精密さ<br>Precision"]
-    B --> F["線形性<br>Linearity"]
-    B --> G["ヒステリシス<br>Hysteresis"]
-    B --> H["繰り返し精度<br>Repeatability"]
-    C --> I["過渡応答<br>Transient"]
-    C --> J["周波数応答<br>Frequency"]
-    C --> K["ゼロドリフト<br>Zero drift"]
-    style B fill:#E3F2FD,color:#333
-    style C fill:#FFF3E0,color:#333
-```
+<details>
+<summary>解答</summary>
 
----
+3点移動平均は、注目点と前後1点の平均です。外側は $0$ とします。
 
-## 📝 確認問題
+| 時刻 $t$ | 使用する値 | 3点移動平均 |
+|:---:|:---|---:|
+| 1 | $(0, 2, 4)$ | $2.00$ |
+| 2 | $(2, 4, 3)$ | $3.00$ |
+| 3 | $(4, 3, 12)$ | $6.33$ |
+| 4 | $(3, 12, 5)$ | $6.67$ |
+| 5 | $(12, 5, 4)$ | $7.00$ |
+| 6 | $(5, 4, 0)$ | $3.00$ |
 
-### Q1. 正確さ（Accuracy）の説明として正しいのは？
+元のスパイク $12$ は、周囲と平均されて $6.67$ になります。
+</details>
 
-- [x] A. 真値に対して誤差が小さいこと
-- [ ] B. ばらつきが小さいこと
-- [ ] C. 繰り返し精度が良いこと
-- [ ] D. 応答が速いこと
+### 移動平均2：3点平均と5点平均の比較
+次のデータでは、$t=5$ にスパイクがあります。
 
-### Q2. 線形性が重要な理由は？
+| 時刻 $t$ | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
+|:---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 測定値 $Y$ | 3 | 4 | 4 | 5 | 18 | 5 | 4 | 4 | 3 |
 
-- [ ] A. センサの寿命が延びるから
-- [x] B. 入力と出力の関係が予測しやすく、計測の信頼性が高いから
-- [ ] C. ノイズが減少するから
-- [ ] D. コストが下がるから
+$t=5$ における3点移動平均と5点移動平均を求め、どちらの方がスパイクを強く抑えるか答えなさい。
 
-### Q3. ヒステリシスの説明として正しいのは？
+<details>
+<summary>解答</summary>
 
-- [ ] A. 入力に対して出力が常に同じ
-- [ ] B. 時間とともに出力がゼロに戻る
-- [x] C. 入力の増加時と減少時で出力応答が異なる
-- [ ] D. 高周波入力に対して応答が速い
+3点移動平均：
 
-### Q4. ゼロドリフトとは？
+$$
+\frac{5 + 18 + 5}{3} = \frac{28}{3} \approx 9.33
+$$
 
-- [ ] A. センサの出力が常にゼロになること
-- [x] B. 無入力状態でも時間とともに原点の値がずれること
-- [ ] C. 入力がゼロのとき出力が最大になること
-- [ ] D. 周波数がゼロのときの応答
+5点移動平均：
 
-### Q5. 過渡応答について正しいのは？
+$$
+\frac{4 + 5 + 18 + 5 + 4}{5} = \frac{36}{5} = 7.20
+$$
 
-- [ ] A. すべてのデバイスは入力に瞬間的に応答できる
-- [ ] B. 高周波入力ほど応答が良い
-- [x] C. どんな素子も入力変化に対して即座に応答することはできない
-- [ ] D. 整定時間は常にゼロである
+5点移動平均の方が $18$ を強く抑えています。ただし、点数を増やすほど本来の鋭い変化も丸められやすくなります。
+</details>
+
+### 移動平均3：中心平均とリアルタイム処理
+時刻 $t=4$ の値を平滑化したいとします。データは $Y=[1, 2, 2, 8, 3, 2]$ です。
+
+1. 中心3点移動平均を使う場合、$t=4$ の平滑化値を求めなさい。
+2. リアルタイム処理で未来の値 $t=5$ をまだ使えない場合、過去3点平均 $(t=2,3,4)$ を使うと値はいくつになりますか。
+3. 両者の違いから、移動平均の注意点を一文で説明しなさい。
+
+<details>
+<summary>解答</summary>
+
+1. 中心3点移動平均は $(t=3,4,5)$ を使うため、
+   $$
+   \frac{2+8+3}{3}=4.33
+   $$
+2. 過去3点平均は $(t=2,3,4)$ を使うため、
+   $$
+   \frac{2+2+8}{3}=4.00
+   $$
+3. 中心平均は未来のデータを使うので、リアルタイムでは遅れや処理方法の違いが問題になることがあります。
+</details>
 
 ---
 
-## 📚 次週の予習
+### 【総復習編：30問】
 
-- **第8週**: 中間試験
-- 復習ポイント：第1週〜第7週の全内容、特に誤差・精度・統計処理・信号処理・センサ特性
+### 総復習1：誤差の分類
+次の例を、人為的誤差・系統誤差・不定誤差のいずれかに分類しなさい。
+
+1. 2.36 を 2.63 と記録した。
+2. センサのゼロ点が毎回 +0.2 V ずれている。
+3. 同じ量を測っても、周囲の電気ノイズで値が少しずつ揺れる。
+
+<details>
+<summary>解答</summary>
+
+1. 人為的誤差。記録ミスである。
+2. 系統誤差。一定方向にずれる原因がある。
+3. 不定誤差。偶然的にばらつく。
+</details>
+
+### 総復習2：絶対誤差と相対誤差
+真値が $80.0$ mm、測定値が $79.2$ mm であった。誤差、絶対誤差、相対誤差 [%] を求めなさい。
+
+<details>
+<summary>解答</summary>
+
+誤差は $79.2-80.0=-0.8$ mm。絶対誤差は $0.8$ mm。
+
+$$
+\frac{0.8}{80.0}\times 100 = 1.0\%
+$$
+</details>
+
+### 総復習3：確度と精度
+真値を $20.0$ とする。A: $20.2, 19.9, 20.1, 20.0, 19.8$、B: $19.2, 19.2, 19.3, 19.2, 19.3$ について、確度が高いものと精度が高いものを答えなさい。
+
+<details>
+<summary>解答</summary>
+
+確度が高いのは A です。平均が真値 $20.0$ に近いためです。
+
+精度が高いのは B です。値のばらつきが小さいためです。
+</details>
+
+### 総復習4：2点校正
+ある温度センサは、$0^\circ\mathrm{C}$ で $0.10$ V、$100^\circ\mathrm{C}$ で $4.10$ V を示した。関係を $y=ax+b$ とするとき、$a,b$ を求めなさい。また、出力が $2.10$ V のときの温度を求めなさい。
+
+<details>
+<summary>解答</summary>
+
+$$
+a=\frac{4.10-0.10}{100-0}=0.040\ \mathrm{V/^\circ C},\quad b=0.10
+$$
+
+$2.10=0.040x+0.10$ より、$x=50^\circ\mathrm{C}$。
+</details>
+
+### 総復習5：有効数字
+次の値の有効数字の桁数を答えなさい。$5.20$, $0.0048$, $100.0$, $3.141$。
+
+<details>
+<summary>解答</summary>
+
+$5.20$ は3桁、$0.0048$ は2桁、$100.0$ は4桁、$3.141$ は4桁です。
+</details>
+
+### 総復習6：平均・分散・標準偏差
+測定値 $6.8, 7.0, 7.1, 6.9, 7.2$ について、平均、分散、標準偏差を求めなさい。分散は $\frac{1}{n}\sum(x_i-\bar{x})^2$ とします。
+
+<details>
+<summary>解答</summary>
+
+平均は $7.0$。偏差は $-0.2, 0, 0.1, -0.1, 0.2$。
+
+偏差二乗和は $0.04+0+0.01+0.01+0.04=0.10$。
+
+分散は $0.10/5=0.02$、標準偏差は $\sqrt{0.02}\approx 0.14$。
+</details>
+
+### 総復習7：センサのばらつき比較
+センサAの標準偏差は $0.05$ V、センサBの標準偏差は $0.20$ V であった。ばらつきが小さいのはどちらか。また、それは確度と精度のどちらに関係しますか。
+
+<details>
+<summary>解答</summary>
+
+ばらつきが小さいのはセンサAです。標準偏差が小さいほど値が集中しています。これは主に<strong>精度</strong>に関係します。
+</details>
+
+### 総復習8：残差とRSS
+データ点 $(1,4),(2,5),(3,7)$ に対して、直線 $y=x+3$ を使う。各点の残差と RSS を求めなさい。
+
+<details>
+<summary>解答</summary>
+
+予測値は $4,5,6$。残差は $0,0,1$。
+
+$$
+RSS=0^2+0^2+1^2=1
+$$
+</details>
+
+### 総復習9：2つの直線の比較
+同じデータに対して、モデルAの RSS は $3.2$、モデルBの RSS は $0.8$ であった。どちらの当てはまりがよいですか。
+
+<details>
+<summary>解答</summary>
+
+モデルBです。RSS は残差の二乗和なので、小さいほどデータとのずれが小さいと判断できます。
+</details>
+
+### 総復習10：回帰直線の意味
+回帰直線 $y=2.5x+1.0$ が得られた。傾き $2.5$ と切片 $1.0$ の意味を説明しなさい。
+
+<details>
+<summary>解答</summary>
+
+傾き $2.5$ は、$x$ が1増えると $y$ が平均的に $2.5$ 増える傾向を表します。
+
+切片 $1.0$ は、$x=0$ のときの予測値が $1.0$ であることを表します。
+</details>
+
+### 総復習11：相関の向き
+$x$ が増えるほど $y$ が減る傾向がある。この関係は正の相関・負の相関・無相関のどれですか。
+
+<details>
+<summary>解答</summary>
+
+負の相関です。一方が増えるともう一方が減る関係です。
+</details>
+
+### 総復習12：相関と因果
+「勉強時間が長い学生ほど睡眠時間も長い」という相関が見えた。これだけで「勉強すると睡眠時間が増える」と言えるか。理由を答えなさい。
+
+<details>
+<summary>解答</summary>
+
+言えません。相関は因果を証明しません。生活習慣、学年、課題量など第三の要因が両方に関係している可能性があります。
+</details>
+
+### 総復習13：線形補間
+$x=2$ で $y=10$、$x=6$ で $y=22$ であった。$x=4$ の値を線形補間で求めなさい。
+
+<details>
+<summary>解答</summary>
+
+傾きは $(22-10)/(6-2)=3$。
+
+$$
+y=10+3(4-2)=16
+$$
+</details>
+
+### 総復習14：補間と外挿
+$0 \le x \le 10$ の範囲で測定したデータを使って、$x=7$ と $x=15$ の値を推定する。どちらが補間で、どちらが外挿ですか。
+
+<details>
+<summary>解答</summary>
+
+$x=7$ は測定範囲内なので補間です。$x=15$ は測定範囲外なので外挿です。
+</details>
+
+### 総復習15：中心差分
+位置データが $x_{i-1}=1.2$ m、$x_{i+1}=1.8$ m、時間間隔が $h=0.1$ s である。中心差分で速度を近似しなさい。
+
+<details>
+<summary>解答</summary>
+
+$$
+v \approx \frac{x_{i+1}-x_{i-1}}{2h}
+=\frac{1.8-1.2}{0.2}=3.0\ \mathrm{m/s}
+$$
+</details>
+
+### 総復習16：サンプリング周波数
+サンプリング周期が $T=0.02$ s のとき、サンプリング周波数 $f_s$ を求めなさい。
+
+<details>
+<summary>解答</summary>
+
+$$
+f_s=\frac{1}{T}=\frac{1}{0.02}=50\ \mathrm{Hz}
+$$
+</details>
+
+### 総復習17：ナイキスト周波数
+$f_s=200$ Hz でサンプリングするとき、ナイキスト周波数を求めなさい。
+
+<details>
+<summary>解答</summary>
+
+$$
+f_N=\frac{f_s}{2}=100\ \mathrm{Hz}
+$$
+</details>
+
+### 総復習18：エリアシング判断
+$f_s=100$ Hz で測定しているとき、$30$ Hz と $80$ Hz の信号はそれぞれ正しく扱える可能性が高いですか。
+
+<details>
+<summary>解答</summary>
+
+ナイキスト周波数は $50$ Hz です。$30$ Hz は $50$ Hz 以下なので扱える可能性があります。$80$ Hz は $50$ Hz を超えるので、エリアシングの危険があります。
+</details>
+
+### 総復習19：分解能
+測定範囲 $0$〜$5$ V を 10 bit で A/D 変換する。分解能 $\Delta$ を求めなさい。
+
+<details>
+<summary>解答</summary>
+
+10 bit なので $2^{10}=1024$ 段階です。
+
+$$
+\Delta=\frac{5}{1024}\approx 0.00488\ \mathrm{V}
+$$
+</details>
+
+### 総復習20：最大量子化誤差
+分解能が $\Delta=0.02$ V のとき、最大量子化誤差をおよそ何 V と考えますか。
+
+<details>
+<summary>解答</summary>
+
+最大量子化誤差はおよそ $\Delta/2$ なので、$0.01$ V です。
+</details>
+
+### 総復習21：方法選択
+次の目的に対して使う方法を答えなさい。真値との差、ばらつき、測定点の間の値、高周波ノイズ、bit数から細かさ。
+
+<details>
+<summary>解答</summary>
+
+真値との差は誤差・相対誤差。ばらつきは平均・分散・標準偏差。測定点の間の値は補間。高周波ノイズは LPF・移動平均。bit数から細かさを知るには分解能を使います。
+</details>
+
+### 総復習22：ノイズの定義
+同じ細かい振動が、ある実験ではノイズ、別の実験では必要な信号になることがある。なぜですか。
+
+<details>
+<summary>解答</summary>
+
+ノイズかどうかは目的で決まるからです。大きな傾向を見たいとき細かい振動は不要ですが、振動診断をしたいときはその振動自体が重要な信号になります。
+</details>
+
+### 総復習23：フィルタ選択
+ゆっくりした温度変化だけを見たい。細かい高周波ノイズを弱めたい。このとき基本的に使うフィルタは何ですか。
+
+<details>
+<summary>解答</summary>
+
+ローパスフィルタ（LPF）です。低周波のゆっくりした変化を通し、高周波成分を弱めます。
+</details>
+
+### 総復習24：denoise の副作用
+強く平滑化しすぎると、どのような問題が起きますか。2つ挙げなさい。
+
+<details>
+<summary>解答</summary>
+
+本当の急な変化やピークが小さく見えること、時間遅れが出ることが代表的です。目的に必要な情報まで捨てる可能性があります。
+</details>
+
+### 総復習25：サンプリング前LPF
+エリアシング対策で「サンプリング前のLPF」が重要な理由を説明しなさい。
+
+<details>
+<summary>解答</summary>
+
+ナイキスト周波数を超える成分は、サンプリング後には低い周波数の偽信号に化けます。化けた後では本来の信号と区別しにくいため、サンプリング前に高周波成分を弱める必要があります。
+</details>
+
+### 総復習26：総合問題 A/D + denoise
+サンプリング周期 $T=0.005$ s でセンサを測定している。環境から $150$ Hz のノイズが入っている。
+
+1. $f_s$ を求めなさい。
+2. $f_N$ を求めなさい。
+3. $150$ Hz 成分はエリアシングの危険がありますか。
+4. 本質的な対策を1つ書きなさい。
+
+<details>
+<summary>解答</summary>
+
+$f_s=1/0.005=200$ Hz。$f_N=100$ Hz。
+
+$150$ Hz は $100$ Hz を超えるため、エリアシングの危険があります。
+
+本質的な対策は、サンプリング前にLPFを入れる、またはサンプリング周波数を上げることです。サンプリング後の移動平均だけでは、エリアシングした成分を完全には戻せません。
+</details>
+
+### 総復習27：RSSでモデル選択
+データ点 $(1,2),(2,3),(3,5),(4,6)$ がある。モデルAは $y=x+1$、モデルBは $y=1.4x+0.6$ である。RSSを計算し、どちらがよいか答えなさい。
+
+<details>
+<summary>解答</summary>
+
+モデルAの予測値は $2,3,4,5$。残差は $0,0,1,1$ なので、$RSS_A=2$。
+
+モデルBの予測値は $2.0,3.4,4.8,6.2$。残差は $0,-0.4,0.2,-0.2$ なので、
+
+$$
+RSS_B=0^2+(-0.4)^2+0.2^2+(-0.2)^2=0.24
+$$
+
+RSS が小さいため、モデルBの方がよいです。
+</details>
+
+### 総復習28：校正・補間・相対誤差
+距離センサの校正で、$0$ cm のとき $0.20$ V、$100$ cm のとき $4.20$ V であった。線形関係とする。
+
+1. 出力 $2.60$ V のときの距離を求めなさい。
+2. 真値が $62.0$ cm だった場合、相対誤差 [%] を求めなさい。
+
+<details>
+<summary>解答</summary>
+
+傾きは $(4.20-0.20)/100=0.040$ V/cm。式は $y=0.040x+0.20$。
+
+$2.60=0.040x+0.20$ より、$x=60.0$ cm。
+
+相対誤差は
+
+$$
+\frac{|60.0-62.0|}{62.0}\times 100 \approx 3.23\%
+$$
+</details>
+
+### 総復習29：複数手法の選択
+次の解析手順で、どの方法を使うか答えなさい。
+
+1. A/D変換のbit数から電圧の細かさを知る。
+2. 得られた時系列の細かいギザギザを減らす。
+3. 測定点と測定点の間の値を推定する。
+4. 2つの量が一緒に増えるか調べる。
+5. 候補直線の当てはまりを比べる。
+
+<details>
+<summary>解答</summary>
+
+1. 分解能
+2. LPF または移動平均
+3. 補間
+4. 相関
+5. 残差平方和（RSS）
+
+試験では、公式そのものだけでなく「どの場面でどの方法を使うか」を判断することが重要です。
+</details>
+
+### 総復習30：量子化と測定条件の設計
+測定範囲 $-5$ V〜$5$ V の信号を A/D 変換する。分解能を $0.01$ V 以下にしたい。
+
+1. 測定範囲の幅を求めなさい。
+2. 10 bit では条件を満たしますか。
+3. 最低何 bit 必要ですか。
+
+<details>
+<summary>解答</summary>
+
+測定範囲の幅は $10$ V。
+
+10 bit では $2^{10}=1024$ 段階なので、
+
+$$
+\Delta=\frac{10}{1024}\approx 0.00977\ \mathrm{V}
+$$
+
+$0.01$ V 以下なので、10 bit で条件を満たします。
+
+9 bit では $10/512\approx 0.0195$ V で条件を満たしません。したがって最低10 bit必要です。
+</details>
+
+---
+
+## 📚 次週の予定
+
+- <strong>第8週</strong>: 中間試験
+- 試験範囲：第2週〜第7週を中心。公式の丸暗記だけでなく、「目的に応じてどの方法を使うべきか」という判断力を問う問題が出題されます。
