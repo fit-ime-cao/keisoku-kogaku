@@ -53,7 +53,7 @@ export default withMermaid({
           text: '第2部：各種センサ',
           collapsed: false,
           items: [
-            { text: '🔒 第9週：位置・距離センサ' },  // link: '/weeks/week-09'
+            { text: '第9週：位置・距離センサ', link: '/weeks/week-09' },
             { text: '🔒 第10週：画像センサ' },  // link: '/weeks/week-10'
             { text: '🔒 第11週：角度・回転計測' },  // link: '/weeks/week-11'
             { text: '🔒 第12週：加速度センサ' },  // link: '/weeks/week-12'
