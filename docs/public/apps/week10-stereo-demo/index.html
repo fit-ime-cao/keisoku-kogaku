@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ステレオ視差デモ</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: system-ui, -apple-system, "Noto Sans CJK JP", sans-serif;
+      --ink: #1f2933;
+      --muted: #52616b;
+      --blue: #1565c0;
+      --orange: #ef6c00;
+      --purple: #6a1b9a;
+      --line: #d8e0e8;
+    }
+    body { margin: 0; background: #f6f8fb; color: var(--ink); }
+    main { max-width: 1180px; margin: 0 auto; padding: 22px; }
+    h1 { margin: 0 0 8px; font-size: clamp(28px, 4vw, 44px); }
+    .lead { margin: 0 0 16px; color: var(--muted); font-size: 18px; }
+    .panel { background: white; border: 1px solid var(--line); border-radius: 8px; padding: 18px; }
+    svg { width: 100%; height: auto; display: block; }
+    .controls { display: grid; grid-template-columns: 1fr 170px 170px; gap: 16px; align-items: center; margin-top: 16px; }
+    label { font-weight: 700; }
+    input[type=range] { width: 100%; }
+    .metric { border: 1px solid var(--line); border-radius: 8px; padding: 12px; background: #fbfcfe; }
+    .metric b { display: block; font-size: 24px; color: #0d47a1; }
+    .formula { font-size: 23px; font-weight: 800; color: #0d47a1; margin: 16px 0 0; }
+    .q { margin-top: 12px; padding: 13px 16px; background: #fff8e1; border-left: 5px solid #f9a825; border-radius: 4px; }
+    @media (max-width: 760px) { .controls { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+<main>
+  <h1>ステレオカメラの視差デモ</h1>
+  <p class="lead">視差 d は実空間の距離ではなく、左右の画像平面上にできる投影点のずれです。</p>
+  <section class="panel">
+    <svg viewBox="0 0 1120 720" aria-label="Stereo camera disparity and image plane demo">
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#37474f"></path>
+        </marker>
+        <marker id="arrowOrange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef6c00"></path>
+        </marker>
+      </defs>
+
+      <text x="80" y="38" font-size="22" font-weight="800" fill="#263238">1. 実空間の俯瞰図</text>
+      <text x="638" y="38" font-size="22" font-weight="800" fill="#263238">2. 左右画像で見えるずれ</text>
+
+      <rect x="50" y="58" width="520" height="470" rx="10" fill="#ffffff" stroke="#cfd8dc" stroke-width="2"/>
+      <rect x="615" y="58" width="455" height="470" rx="10" fill="#ffffff" stroke="#cfd8dc" stroke-width="2"/>
+
+      <line x1="145" y1="575" x2="475" y2="575" stroke="#263238" stroke-width="4" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+      <text x="310" y="607" text-anchor="middle" font-size="21" font-weight="800">B = 120 mm</text>
+
+      <rect x="85" y="520" width="120" height="60" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+      <text x="145" y="557" text-anchor="middle" font-size="19" font-weight="800" fill="#1565c0">左カメラ</text>
+      <rect x="415" y="520" width="120" height="60" rx="8" fill="#e3f2fd" stroke="#1565c0" stroke-width="3"/>
+      <text x="475" y="557" text-anchor="middle" font-size="19" font-weight="800" fill="#1565c0">右カメラ</text>
+
+      <line id="leftPlane" x1="85" y1="472" x2="205" y2="472" stroke="#0d47a1" stroke-width="4"/>
+      <line id="rightPlane" x1="415" y1="472" x2="535" y2="472" stroke="#0d47a1" stroke-width="4"/>
+      <text x="145" y="454" text-anchor="middle" font-size="15" font-weight="700" fill="#0d47a1">左画像平面</text>
+      <text x="475" y="454" text-anchor="middle" font-size="15" font-weight="700" fill="#0d47a1">右画像平面</text>
+      <line x1="212" y1="550" x2="212" y2="472" stroke="#6a1b9a" stroke-width="3" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+      <text x="224" y="516" font-size="19" font-weight="800" fill="#6a1b9a">f</text>
+
+      <line id="rayL" x1="145" y1="520" x2="310" y2="170" stroke="#ef6c00" stroke-width="3"/>
+      <line id="rayR" x1="475" y1="520" x2="310" y2="170" stroke="#ef6c00" stroke-width="3"/>
+      <line id="projLineL" x1="145" y1="520" x2="145" y2="472" stroke="#ef6c00" stroke-width="2" stroke-dasharray="5 4"/>
+      <line id="projLineR" x1="475" y1="520" x2="475" y2="472" stroke="#ef6c00" stroke-width="2" stroke-dasharray="5 4"/>
+      <circle id="projL" cx="145" cy="472" r="7" fill="#1565c0"/>
+      <circle id="projR" cx="475" cy="472" r="7" fill="#ef6c00"/>
+      <text id="xLLabel" x="145" y="445" text-anchor="middle" font-size="17" font-weight="800" fill="#1565c0">xL</text>
+      <text id="xRLabel" x="475" y="445" text-anchor="middle" font-size="17" font-weight="800" fill="#ef6c00">xR</text>
+
+      <circle id="object" cx="310" cy="170" r="19" fill="#ff9800"/>
+      <text id="objectLabel" x="340" y="164" font-size="21" font-weight="800" fill="#ef6c00">対象物</text>
+      <line id="zLine" x1="558" y1="520" x2="558" y2="170" stroke="#6a1b9a" stroke-width="4" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+      <text id="zText" x="575" y="350" font-size="22" font-weight="800" fill="#6a1b9a">Z</text>
+
+      <g id="leftImage">
+        <rect x="640" y="88" width="180" height="128" rx="8" fill="#f8fbff" stroke="#b7c9dc" stroke-width="2"/>
+        <text x="730" y="116" text-anchor="middle" font-size="18" font-weight="800">左画像</text>
+        <line x1="660" y1="158" x2="800" y2="158" stroke="#d8e0e8" stroke-width="3"/>
+        <circle id="leftPhotoBall" cx="730" cy="158" r="17" fill="#1565c0"/>
+        <text id="leftXText" x="730" y="205" text-anchor="middle" font-size="15" fill="#52616b">xL</text>
+      </g>
+      <g id="rightImage">
+        <rect x="860" y="88" width="180" height="128" rx="8" fill="#fffaf5" stroke="#e4c7aa" stroke-width="2"/>
+        <text x="950" y="116" text-anchor="middle" font-size="18" font-weight="800">右画像</text>
+        <line x1="880" y1="158" x2="1020" y2="158" stroke="#d8e0e8" stroke-width="3"/>
+        <circle id="rightPhotoBall" cx="950" cy="158" r="17" fill="#ef6c00"/>
+        <text id="rightXText" x="950" y="205" text-anchor="middle" font-size="15" fill="#52616b">xR</text>
+      </g>
+
+      <rect x="655" y="260" width="370" height="185" rx="9" fill="#ffffff" stroke="#cfd8dc" stroke-width="3"/>
+      <text x="840" y="292" text-anchor="middle" font-size="20" font-weight="800">左右画像を重ねる</text>
+      <line x1="705" y1="352" x2="975" y2="352" stroke="#e0e6ec" stroke-width="5"/>
+      <circle id="overlayLeftBall" cx="810" cy="352" r="18" fill="#1565c0" opacity="0.62"/>
+      <circle id="overlayRightBall" cx="870" cy="352" r="18" fill="#ef6c00" opacity="0.62"/>
+      <line id="dLine" x1="810" y1="392" x2="870" y2="392" stroke="#263238" stroke-width="4" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+      <text id="dText" x="840" y="424" text-anchor="middle" font-size="23" font-weight="900" fill="#263238">d = xL - xR</text>
+      <text x="675" y="475" font-size="28" font-weight="900" fill="#0d47a1">Z = fB / d</text>
+      <text x="675" y="508" font-size="18" fill="#52616b">近いほど d は大きい。遠いほど d は小さい。</text>
+
+      <rect x="75" y="635" width="995" height="50" rx="8" fill="#eef5ff" stroke="#d3e4f7" />
+      <text id="explainText" x="96" y="667" font-size="19" font-weight="700" fill="#263238">d は実空間ではなく、左右画像を重ねたときの水平ずれ。</text>
+    </svg>
+
+    <div class="controls">
+      <div>
+        <label for="zRange">対象物までの距離 Z</label>
+        <input id="zRange" type="range" min="400" max="2400" step="50" value="1200" />
+      </div>
+      <div class="metric">Z <b id="zValue">1200 mm</b></div>
+      <div class="metric">d <b id="dValue">0.40 mm</b></div>
+    </div>
+    <p class="formula" id="formulaText">d = xL - xR = fB/Z = 4.0×120/1200 = 0.40 mm</p>
+    <div class="q">問い：自分の指を近くに置いて左右の目を交互に閉じると、背景に対する「跳び」は大きいか小さいか。</div>
+  </section>
+</main>
+<script>
+const range = document.getElementById('zRange');
+const object = document.getElementById('object');
+const objectLabel = document.getElementById('objectLabel');
+const rayL = document.getElementById('rayL');
+const rayR = document.getElementById('rayR');
+const projLineL = document.getElementById('projLineL');
+const projLineR = document.getElementById('projLineR');
+const projL = document.getElementById('projL');
+const projR = document.getElementById('projR');
+const xLLabel = document.getElementById('xLLabel');
+const xRLabel = document.getElementById('xRLabel');
+const zLine = document.getElementById('zLine');
+const leftPhotoBall = document.getElementById('leftPhotoBall');
+const rightPhotoBall = document.getElementById('rightPhotoBall');
+const overlayLeftBall = document.getElementById('overlayLeftBall');
+const overlayRightBall = document.getElementById('overlayRightBall');
+const dLine = document.getElementById('dLine');
+const dText = document.getElementById('dText');
+const leftXText = document.getElementById('leftXText');
+const rightXText = document.getElementById('rightXText');
+const zValue = document.getElementById('zValue');
+const dValue = document.getElementById('dValue');
+const formulaText = document.getElementById('formulaText');
+
+const f = 4.0;
+const B = 120;
+const leftCam = { x: 145, y: 520 };
+const rightCam = { x: 475, y: 520 };
+const planeY = 472;
+
+function setLine(line, x1, y1, x2, y2) {
+  line.setAttribute('x1', x1.toFixed(1));
+  line.setAttribute('y1', y1.toFixed(1));
+  line.setAttribute('x2', x2.toFixed(1));
+  line.setAttribute('y2', y2.toFixed(1));
+}
+
+function projectToPlane(cam, obj) {
+  const t = (planeY - cam.y) / (obj.y - cam.y);
+  return { x: cam.x + t * (obj.x - cam.x), y: planeY };
+}
+
+function update() {
+  const Z = Number(range.value);
+  const disp = f * B / Z;
+  const obj = {
+    x: 310 + (Z - 1200) / 2000 * 44,
+    y: 430 - (Z - 400) / 2000 * 292
+  };
+  const pL = projectToPlane(leftCam, obj);
+  const pR = projectToPlane(rightCam, obj);
+
+  object.setAttribute('cx', obj.x.toFixed(1));
+  object.setAttribute('cy', obj.y.toFixed(1));
+  objectLabel.setAttribute('x', (obj.x + 28).toFixed(1));
+  objectLabel.setAttribute('y', (obj.y - 6).toFixed(1));
+  setLine(rayL, leftCam.x, leftCam.y, obj.x, obj.y);
+  setLine(rayR, rightCam.x, rightCam.y, obj.x, obj.y);
+  setLine(projLineL, leftCam.x, leftCam.y, pL.x, pL.y);
+  setLine(projLineR, rightCam.x, rightCam.y, pR.x, pR.y);
+  projL.setAttribute('cx', pL.x.toFixed(1));
+  projR.setAttribute('cx', pR.x.toFixed(1));
+  xLLabel.setAttribute('x', pL.x.toFixed(1));
+  xRLabel.setAttribute('x', pR.x.toFixed(1));
+  zLine.setAttribute('y2', obj.y.toFixed(1));
+
+  const visualDisp = Math.max(26, Math.min(150, disp * 185));
+  const leftCenter = 730 + visualDisp / 4;
+  const rightCenter = 950 - visualDisp / 4;
+  const overlayCenter = 840;
+  const overlayL = overlayCenter - visualDisp / 2;
+  const overlayR = overlayCenter + visualDisp / 2;
+
+  leftPhotoBall.setAttribute('cx', leftCenter.toFixed(1));
+  rightPhotoBall.setAttribute('cx', rightCenter.toFixed(1));
+  overlayLeftBall.setAttribute('cx', overlayL.toFixed(1));
+  overlayRightBall.setAttribute('cx', overlayR.toFixed(1));
+  dLine.setAttribute('x1', overlayL.toFixed(1));
+  dLine.setAttribute('x2', overlayR.toFixed(1));
+  dText.setAttribute('x', overlayCenter.toFixed(1));
+  dText.textContent = `d = xL - xR = ${disp.toFixed(2)} mm`;
+  leftXText.textContent = `xL = +${(disp / 2).toFixed(2)} mm`;
+  rightXText.textContent = `xR = -${(disp / 2).toFixed(2)} mm`;
+  zValue.textContent = `${Z} mm`;
+  dValue.textContent = `${disp.toFixed(2)} mm`;
+  formulaText.textContent = `d = xL - xR = fB/Z = 4.0×120/${Z} = ${disp.toFixed(2)} mm`;
+}
+
+range.addEventListener('input', update);
+update();
+</script>
+</body>
+</html>
