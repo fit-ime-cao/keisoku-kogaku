@@ -55,7 +55,7 @@ export default withMermaid({
           items: [
             { text: '第9週：位置・距離センサ', link: '/weeks/week-09' },
             { text: '第10週：画像センサと3D計測', link: '/weeks/week-10' },
-            { text: '🔒 第11週：角度・回転計測' },  // link: '/weeks/week-11'
+            { text: '第11週：角度・回転計測', link: '/weeks/week-11' },
             { text: '🔒 第12週：加速度センサ' },  // link: '/weeks/week-12'
             { text: '🔒 第13週：力センサ' },  // link: '/weeks/week-13'
             { text: '🔒 第14週：圧力センサ' },  // link: '/weeks/week-14'
@@ -132,6 +132,8 @@ export default withMermaid({
   
   // 最后更新时间
   lastUpdated: true,
+
+  ignoreDeadLinks: [/^\/slides\/.*\.pptx$/],
 
   // Mermaid 配置
   mermaid: {

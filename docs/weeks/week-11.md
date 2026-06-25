@@ -108,14 +108,6 @@ graph TD
 :::
 
 <svg viewBox="0 0 500 220" xmlns="http://www.w3.org/2000/svg" style="max-width: 500px; margin: 20px auto; display: block;">
-  <style>
-    @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    @keyframes blink { 0%, 40% { opacity: 1; } 50%, 90% { opacity: 0.2; } 100% { opacity: 1; } }
-    @keyframes pulse { 0%, 40% { fill: #4CAF50; } 50%, 90% { fill: #E0E0E0; } 100% { fill: #4CAF50; } }
-    .disk { animation: rotate 2s linear infinite; transform-origin: 150px 110px; }
-    .light-beam { animation: blink 0.5s ease-in-out infinite; }
-    .signal-on { animation: pulse 0.5s ease-in-out infinite; }
-  </style>
   <text x="250" y="18" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">光学式エンコーダの動作原理（アニメーション）</text>
   
   <!-- LED -->
@@ -123,10 +115,10 @@ graph TD
   <text x="52" y="115" text-anchor="middle" font-size="9" fill="#F9A825" font-weight="bold">LED</text>
   
   <!-- Light beam (animated) -->
-  <line x1="75" y1="110" x2="100" y2="110" stroke="#FFD54F" stroke-width="3" class="light-beam"/>
+  <line x1="75" y1="110" x2="100" y2="110" stroke="#FFD54F" stroke-width="3"/>
   
   <!-- Rotating disk with slits -->
-  <g class="disk">
+  <g>
     <circle cx="150" cy="110" r="50" fill="#ECEFF1" stroke="#607D8B" stroke-width="2"/>
     <rect x="145" y="60" width="10" height="20" fill="white"/>
     <rect x="145" y="140" width="10" height="20" fill="white"/>
@@ -141,7 +133,7 @@ graph TD
   <text x="150" y="175" text-anchor="middle" font-size="10" fill="#757575">スリット円盤（回転中）</text>
   
   <!-- Light beam after disk (animated) -->
-  <line x1="200" y1="110" x2="240" y2="110" stroke="#FFD54F" stroke-width="3" class="light-beam"/>
+  <line x1="200" y1="110" x2="240" y2="110" stroke="#FFD54F" stroke-width="3"/>
   
   <!-- Phototransistor -->
   <rect x="240" y="95" width="50" height="30" fill="#E3F2FD" stroke="#1565C0" stroke-width="2" rx="3"/>
@@ -158,7 +150,7 @@ graph TD
   <polyline points="340,140 340,95 360,95 360,140 380,140 380,95 400,95 400,140 420,140 420,95 440,95 440,140 460,140" fill="none" stroke="#4CAF50" stroke-width="2"/>
   
   <!-- Signal indicator -->
-  <circle cx="305" cy="110" r="8" class="signal-on"/>
+  <circle cx="305" cy="110" r="8" fill="#4CAF50"/>
   <line x1="290" y1="110" x2="297" y2="110" stroke="#333" stroke-width="1"/>
   
   <!-- Explanation -->
