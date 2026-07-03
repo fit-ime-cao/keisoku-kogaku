@@ -13,7 +13,7 @@
 - [ ] 差分・積分をセンサ信号処理の道具として使うときの注意点を説明できる
 
 ::: tip 講義スライド
-- [PowerPointを開く](/slides/week12.pptx)
+- <a href="/keisoku-kogaku/slides/week12.pptx" target="_blank" rel="noopener">PowerPointを開く</a>
 - [PDFで確認する](/slides/week12.pdf)
 :::
 
