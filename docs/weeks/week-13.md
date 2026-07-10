@@ -1,341 +1,732 @@
-# 第13週：力センサとひずみゲージ
+# 第13週：力センサ・ひずみゲージ
 
-> ⏱️ 読了時間：約40分 | 📝 確認問題：5問
+> ⏱️ 読了時間：約45分 | 📝 確認問題：6問
 
 ## 学習目標
 
 この週の講義を終えると、以下のことができるようになります：
 
-- [ ] 応力・ひずみ・ヤング率の関係（フックの法則）を説明できる
-- [ ] ひずみゲージの原理と荷重の計算ができる
-- [ ] ホイートストンブリッジの平衡条件と出力電圧を計算できる
-- [ ] 金属ゲージと半導体ゲージの特徴を比較できる
-- [ ] トルクセンサの原理を理解できる
+- [ ] 力センサが力を直接電気にするのではなく、弾性体の変形を利用していることを説明できる
+- [ ] 応力、ひずみ、ヤング率を使って、荷重からひずみまでの計算ができる
+- [ ] ひずみゲージの抵抗変化とゲージ率 $K$ の意味を説明できる
+- [ ] ホイートストンブリッジが微小な抵抗変化を差動電圧に変える理由を説明できる
+- [ ] ロードセルでゲージを貼る位置と、4ゲージ法の利点を説明できる
+- [ ] トルクセンサで ±45° ゲージを使う理由を、せん断ひずみから説明できる
 
----
-
-## 1. 力とひずみの基礎
-
-### 1.1 応力とひずみ
-
-::: info 基本定義
-- **応力**（Stress）：物体の単位面積あたりに作用する力
-- **ひずみ**（Strain）：物体の変形量を元の長さで割った無次元量
-:::
-
-$$\sigma = \frac{\omega}{A} \quad [\text{Pa}]$$
-
-$$\varepsilon = \frac{\Delta l}{l} \quad [\text{無次元}]$$
-
-- $\sigma$：応力 [Pa]
-- $\omega$：荷重（力）[N]
-- $A$：断面積 [m²]
-- $\varepsilon$：ひずみ [-]
-- $\Delta l$：伸び（変形量）[m]
-- $l$：元の長さ [m]
-
-### 1.2 フックの法則
-
-::: info フックの法則
-弾性範囲内では、応力とひずみは比例関係にあります：
-
-$$\sigma = E\varepsilon$$
-
-$E$：**ヤング率**（Young's modulus, 縦弾性係数）[Pa]
-:::
-
-<svg viewBox="0 0 450 200" xmlns="http://www.w3.org/2000/svg" style="max-width: 450px; margin: 20px auto; display: block;">
-  <text x="225" y="18" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">フックの法則（応力-ひずみ線図）</text>
-  <line x1="60" y1="170" x2="400" y2="170" stroke="#333" stroke-width="1.5"/>
-  <line x1="60" y1="170" x2="60" y2="30" stroke="#333" stroke-width="1.5"/>
-  <text x="400" y="185" text-anchor="end" font-size="10" fill="#333">ひずみ ε</text>
-  <text x="55" y="35" text-anchor="end" font-size="10" fill="#333">応力 σ</text>
-  <line x1="60" y1="170" x2="250" y2="50" stroke="#1565C0" stroke-width="2.5"/>
-  <path d="M250,50 Q280,42 310,45 Q340,55 370,90" fill="none" stroke="#F44336" stroke-width="2" stroke-dasharray="5,3"/>
-  <circle cx="250" cy="50" r="4" fill="#FF9800"/>
-  <text x="260" y="45" font-size="10" fill="#FF9800">弾性限界</text>
-  <text x="150" y="95" font-size="11" fill="#1565C0" transform="rotate(-40,150,95)">σ = Eε（線形領域）</text>
-  <text x="340" y="80" font-size="10" fill="#F44336">塑性域</text>
-</svg>
-
----
-
-## 2. ひずみゲージの原理
-
-### 2.1 基本原理
-
-::: info ひずみゲージの原理
-金属線や箔に力が加わると、長さと断面積の変化により**電気抵抗**が変化します。この抵抗変化からひずみを検出するのがひずみゲージです。
-
-$$\frac{\Delta R}{R} = K\varepsilon$$
-
-$K$：**ゲージ率**（Gauge Factor）
-:::
-
-<svg viewBox="0 0 450 160" xmlns="http://www.w3.org/2000/svg" style="max-width: 450px; margin: 20px auto; display: block;">
-  <text x="225" y="18" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">ひずみゲージの構造</text>
-  <rect x="100" y="40" width="250" height="100" fill="#FFF9C4" fill-opacity="0.3" stroke="#F9A825" stroke-width="1.5" rx="5"/>
-  <text x="225" y="150" text-anchor="middle" font-size="10" fill="#F9A825">ベース（絶縁フィルム）</text>
-  <polyline points="140,60 140,120 160,120 160,60 180,60 180,120 200,120 200,60 220,60 220,120 240,120 240,60 260,60 260,120 280,120 280,60 300,60 300,120" fill="none" stroke="#1565C0" stroke-width="2"/>
-  <line x1="130" y1="60" x2="140" y2="60" stroke="#1565C0" stroke-width="2"/>
-  <line x1="300" y1="120" x2="310" y2="120" stroke="#1565C0" stroke-width="2"/>
-  <line x1="120" y1="60" x2="130" y2="60" stroke="#F44336" stroke-width="2"/>
-  <line x1="310" y1="120" x2="320" y2="120" stroke="#F44336" stroke-width="2"/>
-  <circle cx="120" cy="60" r="4" fill="#F44336"/>
-  <circle cx="320" cy="120" r="4" fill="#F44336"/>
-  <text x="110" y="50" text-anchor="middle" font-size="9" fill="#F44336">端子</text>
-  <text x="330" y="130" text-anchor="middle" font-size="9" fill="#F44336">端子</text>
-  <text x="225" y="95" text-anchor="middle" font-size="10" fill="#1565C0" font-weight="bold">金属箔パターン</text>
-</svg>
-
-### 2.2 荷重の計算
-
-フックの法則とゲージ率の関係から、荷重 $\omega$ を算出できます：
-
-$$\varepsilon = \frac{1}{K} \cdot \frac{\Delta R}{R}$$
-
-$$\sigma = E\varepsilon = \frac{E}{K} \cdot \frac{\Delta R}{R}$$
-
-$$\omega = \sigma \cdot A = \frac{EA}{K} \cdot \frac{\Delta R}{R}$$
-
-::: details 演習：荷重の計算
-**問題**：ヤング率 $E = 200$ GPa、断面積 $A = 10$ mm²、ゲージ率 $K = 2.0$ のひずみゲージで $\Delta R/R = 0.001$ を検出した。荷重は？
-
-**解答**：
-
-$$\omega = \frac{EA}{K} \cdot \frac{\Delta R}{R} = \frac{200 \times 10^9 \times 10 \times 10^{-6}}{2.0} \times 0.001$$
-
-$$= \frac{2 \times 10^6}{2.0} \times 0.001 = 1000 \text{ [N]} = 1 \text{ [kN]}$$
+::: tip 講義スライド
+- <a href="/keisoku-kogaku/slides/week13.pptx" target="_blank" rel="noopener">PowerPointを開く</a>
+- <a href="/keisoku-kogaku/slides/week13.pdf" target="_blank" rel="noopener">PDFで確認する</a>
 :::
 
 ---
 
-## 3. 抵抗変化の検出
+## 1. 力はどうやって電圧になるか
 
-### 3.1 分圧回路による検出
+力センサの基本は、力を直接電気信号にすることではありません。センサ内部の弾性体を少しだけ変形させ、その変形をひずみとして読み、さらに電気抵抗と電圧に変換します。
 
-::: warning ⚠️ 問題点
-単純な分圧回路では、ひずみによる微小な抵抗変化を高精度に検出することが困難です。初期電圧が大きく、微小な変化分を抽出しにくいためです。
-:::
+![力センサ・ひずみゲージの全体像](/figures/week13/slide-01.png)
 
-### 3.2 ホイートストンブリッジ
+全体の流れは次のように整理できます。
 
-::: info ホイートストンブリッジ
-4つの抵抗をブリッジ状に接続し、**微小な抵抗変化**を高精度に検出する回路です。
-:::
+![力から電圧への変換の流れ](/figures/week13/slide-02.png)
 
-<svg viewBox="0 0 450 280" xmlns="http://www.w3.org/2000/svg" style="max-width: 450px; margin: 20px auto; display: block;">
-  <style>
-    @keyframes resistChange { 
-      0%, 40% { fill: #FFCDD2; }
-      50%, 90% { fill: #EF9A9A; }
-      100% { fill: #FFCDD2; }
-    }
-    @keyframes voltPulse { 
-      0%, 40% { opacity: 0.3; }
-      50%, 90% { opacity: 1; }
-      100% { opacity: 0.3; }
-    }
-    @keyframes arrowPulse {
-      0%, 40% { transform: translateY(0); }
-      50%, 90% { transform: translateY(5px); }
-      100% { transform: translateY(0); }
-    }
-    .strain-gauge { animation: resistChange 3s ease-in-out infinite; }
-    .volt-indicator { animation: voltPulse 3s ease-in-out infinite; }
-    .arrow-move { animation: arrowPulse 3s ease-in-out infinite; transform-origin: center; }
-  </style>
-  <text x="225" y="18" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">ホイートストンブリッジの動作（アニメーション）</text>
-  
-  <!-- ブリッジ回路 -->
-  <line x1="225" y1="45" x2="100" y2="125" stroke="#333" stroke-width="2"/>
-  <line x1="225" y1="45" x2="350" y2="125" stroke="#333" stroke-width="2"/>
-  <line x1="100" y1="125" x2="225" y2="205" stroke="#333" stroke-width="2"/>
-  <line x1="350" y1="125" x2="225" y2="205" stroke="#333" stroke-width="2"/>
-  
-  <!-- 抵抗 R1, R2, R4 (固定) -->
-  <rect x="145" y="65" width="40" height="25" fill="#E3F2FD" stroke="#1565C0" stroke-width="1.5" rx="3"/>
-  <text x="165" y="83" text-anchor="middle" font-size="10" fill="#1565C0" font-weight="bold">R₁</text>
-  <rect x="265" y="65" width="40" height="25" fill="#E3F2FD" stroke="#1565C0" stroke-width="1.5" rx="3"/>
-  <text x="285" y="83" text-anchor="middle" font-size="10" fill="#1565C0" font-weight="bold">R₂</text>
-  <rect x="265" y="150" width="40" height="25" fill="#E3F2FD" stroke="#1565C0" stroke-width="1.5" rx="3"/>
-  <text x="285" y="168" text-anchor="middle" font-size="10" fill="#1565C0" font-weight="bold">R₄</text>
-  
-  <!-- R3 (ひずみゲージ - 変化する) -->
-  <rect x="145" y="150" width="40" height="25" class="strain-gauge" stroke="#F44336" stroke-width="2" rx="3"/>
-  <text x="165" y="168" text-anchor="middle" font-size="10" fill="#C62828" font-weight="bold">R₃+ΔR</text>
-  <text x="165" y="182" text-anchor="middle" font-size="8" fill="#F44336">ゲージ</text>
-  
-  <!-- 入力電圧 -->
-  <text x="225" y="38" text-anchor="middle" font-size="10" fill="#333" font-weight="bold">V_in</text>
-  <text x="225" y="222" text-anchor="middle" font-size="10" fill="#333">GND</text>
-  
-  <!-- 出力電圧線（点滅） -->
-  <line x1="100" y1="125" x2="350" y2="125" stroke="#FF9800" stroke-width="2.5" class="volt-indicator"/>
-  <circle cx="100" cy="125" r="5" fill="#FF9800" class="volt-indicator"/>
-  <circle cx="350" cy="125" r="5" fill="#FF9800" class="volt-indicator"/>
-  <text x="225" y="118" text-anchor="middle" font-size="11" fill="#FF9800" font-weight="bold" class="volt-indicator">V_out</text>
-  
-  <!-- 電圧計インジケータ -->
-  <rect x="380" y="100" width="55" height="50" fill="#FFF8E1" stroke="#FFA000" stroke-width="1.5" rx="5"/>
-  <text x="407" y="118" text-anchor="middle" font-size="8" fill="#F57C00">電圧計</text>
-  <g class="arrow-move">
-    <line x1="407" y1="128" x2="407" y2="140" stroke="#4CAF50" stroke-width="2"/>
-    <polygon points="403,138 407,145 411,138" fill="#4CAF50"/>
-  </g>
-  <text x="407" y="145" text-anchor="middle" font-size="7" fill="#4CAF50" class="volt-indicator">↑ΔV</text>
-  
-  <!-- 説明 -->
-  <text x="225" y="250" text-anchor="middle" font-size="10" fill="#757575">R₃が変化（ΔR）すると、ブリッジの平衡が崩れる</text>
-  <text x="225" y="265" text-anchor="middle" font-size="10" fill="#FF9800">→ V_outが変化し、ひずみを検出できる</text>
-</svg>
+$$
+F \rightarrow \text{弾性体の変形} \rightarrow \varepsilon
+\rightarrow \frac{\Delta R}{R}
+\rightarrow V_{\mathrm{out}}
+\rightarrow \text{力の値}
+$$
 
-#### 平衡条件
+| 段階 | 見ている量 | 代表的な記号 | この段階の役割 |
+|---|---|---:|---|
+| 力 | 荷重・トルク | $F$, $T$ | 外力がセンサに加わる |
+| 変形 | 伸び、曲げ、ねじり | $\Delta L$, $M$, $\gamma$ | 弾性体が微小に変形する |
+| ひずみ | 相対的な変形 | $\varepsilon$, $\gamma$ | 変形を無次元量として表す |
+| 抵抗変化 | ゲージ抵抗の変化 | $\Delta R/R$ | ひずみゲージが抵抗変化に変える |
+| 電圧 | ブリッジ出力 | $V_{\mathrm{out}}$ | 微小な抵抗変化を電圧で読む |
+| 校正 | 力の表示値 | N, kg, N·m | 電圧を力の値に換算する |
 
-ブリッジが**平衡**（$V_{out} = 0$）となる条件：
-
-$$R_1 R_4 = R_2 R_3$$
-
-#### 出力電圧
-
-$$V_{out} = V_{in} \left(\frac{R_3}{R_1 + R_3} - \frac{R_4}{R_2 + R_4}\right)$$
-
-::: tip 💡 ポイント
-$R_1 = R_2 = R_3 = R_4 = R$ とし、$R_3$ のみひずみゲージで $R + \Delta R$ に変化した場合：
-
-$$V_{out} \approx \frac{V_{in}}{4} \cdot \frac{\Delta R}{R} = \frac{V_{in}}{4} \cdot K\varepsilon$$
-:::
-
-::: details 演習：ホイートストンブリッジの計算
-**問題**：$R_1 = R_2 = R_4 = 120\ \Omega$、$R_3 = 120.05\ \Omega$（ゲージ）、$V_{in} = 5$ V のとき、$V_{out}$ は？
-
-**解答**：
-
-$$V_{out} = 5 \left(\frac{120.05}{120 + 120.05} - \frac{120}{120 + 120}\right)$$
-
-$$= 5 \left(\frac{120.05}{240.05} - \frac{120}{240}\right)$$
-
-$$= 5 \left(0.50010 - 0.50000\right) = 5 \times 0.00010 \approx 0.52 \text{ [mV]}$$
+::: warning 今日の重点
+公式を単独で覚えるのではなく、**どの物理量が次の物理量に変換されているか**を追うことが重要です。
 :::
 
 ---
 
-## 4. ゲージの種類と特徴
+## 2. 変形とひずみ
 
-| 特性 | 金属線/箔ゲージ | 半導体ゲージ |
-|------|---------------|-------------|
-| **ゲージ率 $K$** | 約2 | 約100〜200 |
-| **感度** | 高い | 超高感度 |
-| **温度係数** | 小さい（安定） | 大きい（温度依存大） |
-| **線形性** | 良好 | やや非線形 |
-| **用途** | 汎用力計測 | 微小ひずみ検出 |
+力を受けた弾性体は、目では見えないほど小さく変形します。変形には、引張、圧縮、曲げ、ねじり、せん断があります。
 
-::: warning ⚠️ 温度補償
-半導体ゲージは温度特性が大きいため、ブリッジ回路の**ダミーゲージ**（同一環境に設置した非計測用ゲージ）で温度補償を行います。
+![変形の種類](/figures/week13/slide-04.png)
+
+### 2.1 引張・圧縮のひずみ
+
+一番基本的なひずみは、元の長さ $L$ に対する伸び量 $\Delta L$ の割合です。
+
+![引張・圧縮のひずみ](/figures/week13/slide-05.png)
+
+$$
+\varepsilon=\frac{\Delta L}{L}
+$$
+
+ひずみは「長さの変化量」ではなく「割合」です。したがって、長さどうしを割るので単位はありません。
+
+![ひずみは割合である](/figures/week13/slide-06.png)
+
+例えば、長さ $L=100\ \mathrm{mm}$ の棒が $\Delta L=0.05\ \mathrm{mm}$ 伸びた場合、
+
+![ひずみ計算の例](/figures/week13/slide-07.png)
+
+$$
+\varepsilon=\frac{0.05}{100}=0.0005=500\ \mu\varepsilon
+$$
+
+です。ここで、
+
+$$
+1\ \mu\varepsilon=10^{-6}
+$$
+
+です。
+
+### 2.2 応力とヤング率
+
+応力は、断面積あたりに加わる力です。
+
+![応力の考え方](/figures/week13/slide-08.png)
+
+$$
+\sigma=\frac{F}{A}
+$$
+
+| 記号 | 意味 | 単位 |
+|---|---|---|
+| $\sigma$ | 応力 | Pa = N/m² |
+| $F$ | 力・荷重 | N |
+| $A$ | 断面積 | m² |
+
+同じ力でも、断面積が小さいほど応力は大きくなります。
+
+弾性範囲では、応力とひずみはほぼ比例します。
+
+![フックの法則](/figures/week13/slide-09.png)
+
+$$
+\sigma=E\varepsilon
+$$
+
+$E$ はヤング率です。ヤング率が大きい材料ほど、同じ応力を受けてもひずみは小さくなります。
+
+::: warning 記号の区別
+$E$ は材料の硬さを表すヤング率です。後で出てくるゲージ率 $K$ や、せん断の横弾性係数 $G$ とは別の量です。
+:::
+
+単純な引張では、荷重からひずみまでを次の順番で計算できます。
+
+![力からひずみまでの計算ルート](/figures/week13/slide-10.png)
+
+$$
+\sigma=\frac{F}{A}
+$$
+
+$$
+\varepsilon=\frac{\sigma}{E}
+$$
+
+したがって、
+
+$$
+\varepsilon=\frac{F}{AE}
+$$
+
+です。
+
+---
+
+## 3. 曲げを利用する力センサ
+
+ロードセルでは、単純な引張だけでなく、梁の曲げを利用することが多くあります。
+
+### 3.1 曲げでは上面と下面で符号が逆になる
+
+片持ち梁に力が加わると、上面と下面でひずみの符号が逆になります。
+
+![曲げでのひずみの符号](/figures/week13/slide-11.png)
+
+- 上面：圧縮ひずみ $-\varepsilon$
+- 下面：引張ひずみ $+\varepsilon$
+- 中立軸：$\varepsilon=0$
+
+この性質を利用すると、引張側と圧縮側にひずみゲージを貼って、信号を大きく取り出せます。
+
+### 3.2 曲げひずみは表面で最大になる
+
+曲げでは、中立軸から離れるほどひずみが大きくなります。
+
+![曲げひずみは表面で最大](/figures/week13/slide-12.png)
+
+曲率半径を $R$、中立軸からの距離を $y$ とすると、
+
+$$
+\varepsilon(y)=\frac{y}{R}
+$$
+
+と考えられます。したがって、ひずみゲージは表面に貼るのが基本です。
+
+### 3.3 曲げモーメントと梁式センサ
+
+梁のどこでも同じように曲がるわけではありません。片持ち梁では、固定端に近いほど曲げモーメントが大きくなります。
+
+![曲げモーメント](/figures/week13/slide-13.png)
+
+荷重点から断面までの距離を $l$ とすると、
+
+$$
+M=Fl
+$$
+
+です。
+
+曲げによる表面応力とひずみは、次の式で表されます。
+
+![梁式センサのひずみ計算](/figures/week13/slide-14.png)
+
+$$
+\sigma=\frac{My}{I}
+$$
+
+$$
+\varepsilon=\frac{My}{EI}
+$$
+
+ここで $I$ は断面二次モーメントです。長方形断面では、
+
+$$
+I=\frac{bt^3}{12}
+$$
+
+です。
+
+::: tip ここまでの整理
+梁式ロードセルでは、
+
+$$
+F \rightarrow M \rightarrow \sigma \rightarrow \varepsilon
+$$
+
+の順に、荷重が表面ひずみに変換されます。
 :::
 
 ---
 
-## 5. トルクセンサ
+## 4. ひずみゲージ
 
-### 5.1 ねじりモーメントとせん断ひずみ
+### 4.1 ひずみゲージの構造
 
-::: info トルクセンサの原理
-軸にねじりモーメント（トルク）$M_T$ が作用すると、表面に**せん断ひずみ**が発生します。このひずみをひずみゲージで検出します。
+ひずみゲージは、材料表面のひずみを電気抵抗の変化として読むセンサ素子です。
+
+![ひずみゲージの構造](/figures/week13/slide-15.png)
+
+基本構造は、絶縁ベース、蛇行した金属箔、端子、リード線からなります。ゲージは接着剤で試験体に貼られるため、試験体表面が伸びるとゲージも同じように伸びます。
+
+蛇行パターンには、小さい面積に長い導線を入れる意味があります。
+
+![蛇行ゲージの意味](/figures/week13/slide-16.png)
+
+導線が長いほど抵抗が大きくなり、同じひずみでも抵抗変化を読み取りやすくなります。
+
+### 4.2 抵抗が変化する理由
+
+導体の抵抗は、次の式で考えられます。
+
+![抵抗が増える理由](/figures/week13/slide-17.png)
+
+$$
+R=\rho\frac{L}{A}
+$$
+
+引っ張ると、導線は長くなり、断面積は小さくなります。そのため、抵抗は増加します。
+
+![抵抗変化の向き](/figures/week13/slide-18.png)
+
+| ひずみ | 抵抗変化 |
+|---|---|
+| 引張 $+\varepsilon$ | $\Delta R>0$ |
+| 圧縮 $-\varepsilon$ | $\Delta R<0$ |
+
+### 4.3 ゲージ率 $K$
+
+ひずみと抵抗変化率の比例係数をゲージ率 $K$ といいます。
+
+![ゲージ率K](/figures/week13/slide-19.png)
+
+$$
+K=\frac{\Delta R/R}{\varepsilon}
+$$
+
+したがって、
+
+$$
+\frac{\Delta R}{R}=K\varepsilon
+$$
+
+金属箔ひずみゲージでは、$K \approx 2.0$ 程度がよく使われます。
+
+::: warning GF と G を混同しない
+文献ではゲージ率を GF (Gauge Factor) と書くことがあります。本講義では $K$ に統一します。
+
+$G$ は後で出てくる横弾性係数で、せん断変形に対する材料の硬さです。$K$ や GF とは別物です。
 :::
 
-<svg viewBox="0 0 450 160" xmlns="http://www.w3.org/2000/svg" style="max-width: 450px; margin: 20px auto; display: block;">
-  <text x="225" y="18" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">トルクセンサの概念</text>
-  <rect x="80" y="60" width="290" height="40" fill="#E3F2FD" stroke="#1565C0" stroke-width="2" rx="20"/>
-  <text x="225" y="85" text-anchor="middle" font-size="11" fill="#1565C0" font-weight="bold">回転軸</text>
-  <path d="M60,60 C40,70 40,90 60,100" fill="none" stroke="#F44336" stroke-width="2"/>
-  <polygon points="58,56 68,60 60,66" fill="#F44336"/>
-  <text x="40" y="85" text-anchor="end" font-size="10" fill="#F44336" font-weight="bold">M_T</text>
-  <path d="M390,60 C410,70 410,90 390,100" fill="none" stroke="#F44336" stroke-width="2"/>
-  <polygon points="392,104 382,100 390,94" fill="#F44336"/>
-  <text x="415" y="85" font-size="10" fill="#F44336" font-weight="bold">M_T</text>
-  <rect x="190" y="55" width="30" height="10" fill="#FF9800" stroke="#FF9800" stroke-width="1" rx="2" transform="rotate(45,205,60)"/>
-  <text x="225" y="50" text-anchor="middle" font-size="9" fill="#FF9800">ゲージ（45°配置）</text>
-  <text x="225" y="130" text-anchor="middle" font-size="10" fill="#333">ひずみゲージを軸表面に45°方向に貼付</text>
-</svg>
+### 4.4 抵抗変化の大きさ
 
-### 5.2 トルクの公式
+例として、$R=120\ \Omega$、$K=2.0$、$\varepsilon=500\ \mu\varepsilon$ とします。
 
-$$M_T = G\theta I_p$$
+![抵抗変化の例](/figures/week13/slide-20.png)
 
-- $M_T$：ねじりモーメント（トルク）[N·m]
-- $G$：せん断弾性係数（横弾性係数）[Pa]
-- $\theta$：単位長さあたりのねじれ角 [rad/m]
-- $I_p$：断面二次極モーメント [m⁴]
+$$
+\frac{\Delta R}{R}
+=K\varepsilon
+=2.0\times500\times10^{-6}
+=0.001
+$$
 
-円形断面の場合：
+$$
+\Delta R=120\times0.001=0.12\ \Omega
+$$
 
-$$I_p = \frac{\pi d^4}{32}$$
+この変化は、元の抵抗の 0.1 % 程度です。非常に小さいため、そのまま抵抗値を測るだけでは不十分です。
+
+![抵抗変化をそのまま測れない理由](/figures/week13/slide-21.png)
 
 ---
 
-## 6. 演習問題
+## 5. 抵抗変化を電圧にする
 
-### 演習：ひずみゲージの総合問題
+### 5.1 分圧回路
 
-::: details 演習：応力からひずみゲージの出力まで
-**問題**：鋼材（$E = 200$ GPa）の棒（断面積 $A = 50$ mm²）に 5 kN の引張荷重が作用している。ゲージ率 $K = 2.1$ のひずみゲージを用い、$V_{in} = 10$ V のホイートストンブリッジで検出するとき、出力電圧 $V_{out}$ を求めよ。
+抵抗変化を電圧変化にする最も単純な方法は、分圧回路です。
 
-**解答**：
+![分圧回路](/figures/week13/slide-22.png)
 
-1. 応力：$\sigma = \dfrac{5000}{50 \times 10^{-6}} = 100 \times 10^6$ Pa $= 100$ MPa
+$$
+V_g=V_{\mathrm{in}}\frac{R_g}{R_0+R_g}
+$$
 
-2. ひずみ：$\varepsilon = \dfrac{\sigma}{E} = \dfrac{100 \times 10^6}{200 \times 10^9} = 5 \times 10^{-4}$
+例えば $V_{\mathrm{in}}=5\ \mathrm{V}$、$R_0=R_g=120\ \Omega$ なら、
 
-3. 抵抗変化率：$\dfrac{\Delta R}{R} = K\varepsilon = 2.1 \times 5 \times 10^{-4} = 1.05 \times 10^{-3}$
+$$
+V_g=2.5\ \mathrm{V}
+$$
 
-4. 出力電圧（1アクティブゲージ）：
+です。
 
-$$V_{out} \approx \frac{V_{in}}{4} \cdot \frac{\Delta R}{R} = \frac{10}{4} \times 1.05 \times 10^{-3} = 2.625 \text{ [mV]}$$
+しかし、ひずみによる変化は非常に小さいため、大きな直流電圧の上に小さな変化が乗る形になります。
+
+![分圧回路の弱点](/figures/week13/slide-23.png)
+
+この問題を避けるため、力センサではホイートストンブリッジを使います。
+
+### 5.2 ブリッジ回路は2本の分圧回路
+
+ホイートストンブリッジは、左右2本の分圧回路の中点電圧を比較する回路です。
+
+![ブリッジ回路は2本の分圧回路](/figures/week13/slide-24.png)
+
+$$
+V_{\mathrm{out}}=V_L-V_R
+$$
+
+本講義では、次の配置を使います。
+
+![ブリッジ回路の基本形](/figures/week13/slide-25.png)
+
+| 抵抗 | 位置 |
+|---|---|
+| $R_1$ | 左上 |
+| $R_2$ | 左下 |
+| $R_3$ | 右上 |
+| $R_4$ | 右下 |
+
+左中点を $V_L$、右中点を $V_R$ とします。
+
+### 5.3 平衡と不平衡
+
+左右の中点電圧が同じなら、ブリッジ出力は 0 です。
+
+![ブリッジの平衡](/figures/week13/slide-26.png)
+
+$$
+V_L=V_R
+$$
+
+$$
+V_{\mathrm{out}}=0
+$$
+
+平衡条件は、
+
+$$
+R_1R_4=R_2R_3
+$$
+
+です。
+
+ひずみで1つの抵抗が変化すると、平衡が崩れます。
+
+![ひずみによるブリッジの不平衡](/figures/week13/slide-27.png)
+
+この差が出力電圧になります。
+
+### 5.4 1ゲージ法・2ゲージ法・4ゲージ法
+
+1ゲージ法では、1つの抵抗だけがひずみゲージとして変化します。
+
+![1ゲージ法](/figures/week13/slide-28.png)
+
+小信号近似では、
+
+$$
+V_{\mathrm{out}}\approx\frac{V_{\mathrm{in}}}{4}\frac{\Delta R}{R}
+$$
+
+です。ゲージ率を使うと、
+
+$$
+V_{\mathrm{out}}\approx\frac{V_{\mathrm{in}}}{4}K\varepsilon
+$$
+
+となります。
+
+2ゲージ法、4ゲージ法では、引張側と圧縮側のゲージを組み合わせて、信号を大きくします。
+
+![2ゲージ法と4ゲージ法](/figures/week13/slide-29.png)
+
+| 方法 | 出力の目安 | 特徴 |
+|---|---:|---|
+| 1ゲージ法 | 約 $1.25\ \mathrm{mV}$ | 構成は簡単だが出力が小さい |
+| 2ゲージ法 | 約 $2.5\ \mathrm{mV}$ | 引張と圧縮を同時に読む |
+| 4ゲージ法 | 約 $5.0\ \mathrm{mV}$ | 感度が高く、温度補償にも有利 |
+
+::: tip ブリッジ後の処理
+ブリッジ出力は mV 程度です。そのため、計装アンプで増幅し、A/D変換し、校正によって力の値に換算します。
+:::
+
+![ブリッジ後の信号処理](/figures/week13/slide-30.png)
+
+---
+
+## 6. ロードセル
+
+ロードセルは、荷重を測る代表的な力センサです。弾性体を曲げ、その表面ひずみをゲージで読みます。
+
+![ロードセルの構造](/figures/week13/slide-31.png)
+
+ゲージは、ひずみが大きく、引張と圧縮がはっきり分かれる場所に貼ります。
+
+![ロードセルでゲージを貼る位置](/figures/week13/slide-32.png)
+
+梁式ロードセルの計算ルートは次の通りです。
+
+![ロードセルの計算ルート](/figures/week13/slide-33.png)
+
+$$
+M=Fl
+$$
+
+$$
+\varepsilon=\frac{My}{EI}
+$$
+
+$$
+\frac{\Delta R}{R}=K\varepsilon
+$$
+
+4ゲージ法では、近似的に
+
+$$
+V_{\mathrm{out}}\approx V_{\mathrm{in}}K\varepsilon
+$$
+
+と扱えます。
+
+---
+
+## 7. トルクセンサと45°ゲージ
+
+トルクを測る場合、弾性体は曲げではなく、ねじり変形を受けます。
+
+![トルクセンサのねじり](/figures/week13/slide-34.png)
+
+円軸にトルク $T$ が加わると、軸表面の小さな正方形が平行四辺形のようにゆがみます。これをせん断ひずみ $\gamma$ として扱います。
+
+![せん断ひずみ](/figures/week13/slide-35.png)
+
+簡単には、
+
+$$
+\gamma \approx \frac{\delta}{h}
+$$
+
+と考えます。せん断応力 $\tau$ とせん断ひずみ $\gamma$ の関係は、
+
+$$
+\tau=G\gamma
+$$
+
+です。ここで $G$ は横弾性係数です。
+
+### 7.1 なぜ45°に貼るのか
+
+ひずみゲージは、基本的には貼った方向の伸び縮みを読みます。純せん断では、$+45^\circ$ 方向には引張ひずみ、$-45^\circ$ 方向には圧縮ひずみが現れます。
+
+![45度ゲージの理由](/figures/week13/slide-36.png)
+
+純せん断では、近似的に
+
+$$
+\varepsilon_{+45^\circ}\approx+\frac{\gamma}{2}
+$$
+
+$$
+\varepsilon_{-45^\circ}\approx-\frac{\gamma}{2}
+$$
+
+です。
+
+つまり、45°に貼ることで、ねじりによるせん断ひずみを、ゲージが読める引張・圧縮ひずみに変換していると考えられます。
+
+### 7.2 ±45°ゲージをブリッジに入れる
+
+$+45^\circ$ ゲージと $-45^\circ$ ゲージをフルブリッジに入れると、トルクによる信号を加算し、温度変化や共通ひずみを打ち消しやすくなります。
+
+![45度ゲージとブリッジ](/figures/week13/slide-37.png)
+
+第13週では、次の対応として考えます。
+
+| ブリッジ抵抗 | ひずみ |
+|---|---|
+| $R_2$, $R_3$ | $+\varepsilon$, $\Delta R>0$ |
+| $R_1$, $R_4$ | $-\varepsilon$, $\Delta R<0$ |
+
+この配置により、
+
+$$
+V_{\mathrm{out}}\propto T
+$$
+
+としてトルクを検出できます。
+
+---
+
+## 8. 測定で起きる誤差
+
+ひずみゲージは非常に小さな変化を読むため、貼り方や配線の影響を受けます。
+
+![ひずみゲージ測定の誤差](/figures/week13/slide-38.png)
+
+| 原因 | 何が起きるか | 対策 |
+|---|---|---|
+| 方向ずれ | 測りたい方向と違うひずみを読む | けがき線に合わせて貼る |
+| 接着不良 | 表面ひずみがゲージに伝わらない | 薄く均一に接着する |
+| 温度変化 | 抵抗が力以外で変わる | ダミーゲージ、フルブリッジを使う |
+| 過負荷 | 弾性範囲を超えて戻らない | 定格荷重内で使う |
+| リード線抵抗 | 配線抵抗が測定に混ざる | 3線式、短い配線を使う |
+| ノイズ | mV信号が埋もれる | シールド線、計装アンプを使う |
+
+---
+
+## 9. 総合例題
+
+最後に、片持ち梁ロードセルを例に、荷重からブリッジ電圧までをつなげます。
+
+![総合例題](/figures/week13/slide-39.png)
+
+条件：
+
+- $F=10\ \mathrm{N}$
+- $l=100\ \mathrm{mm}=0.100\ \mathrm{m}$
+- $b=15\ \mathrm{mm}=0.015\ \mathrm{m}$
+- $t=2\ \mathrm{mm}=0.002\ \mathrm{m}$
+- $E=200\ \mathrm{GPa}$
+- $K=2.0$
+- $V_{\mathrm{in}}=5\ \mathrm{V}$
+
+まず、断面二次モーメントは、
+
+$$
+I=\frac{bt^3}{12}
+=\frac{0.015(0.002)^3}{12}
+=1.0\times10^{-11}\ \mathrm{m^4}
+$$
+
+曲げモーメントは、
+
+$$
+M=Fl=10\times0.100=1.0\ \mathrm{N\,m}
+$$
+
+外表面では $y=t/2=0.001\ \mathrm{m}$ なので、
+
+$$
+\sigma=\frac{My}{I}
+=\frac{1.0\times0.001}{1.0\times10^{-11}}
+=1.0\times10^8\ \mathrm{Pa}
+=100\ \mathrm{MPa}
+$$
+
+ひずみは、
+
+$$
+\varepsilon=\frac{\sigma}{E}
+=\frac{1.0\times10^8}{2.0\times10^{11}}
+=5.0\times10^{-4}
+=500\ \mu\varepsilon
+$$
+
+ゲージ抵抗変化率は、
+
+$$
+\frac{\Delta R}{R}=K\varepsilon
+=2.0\times5.0\times10^{-4}
+=0.001
+$$
+
+4ゲージ法では、
+
+$$
+V_{\mathrm{out}}\approx V_{\mathrm{in}}K\varepsilon
+=5.0\times0.001
+=5.0\ \mathrm{mV}
+$$
+
+です。
+
+---
+
+## 10. 演習
+
+### 演習1：応力とひずみ
+
+断面積 $A=50\ \mathrm{mm^2}$ の金属棒に $F=5000\ \mathrm{N}$ の荷重が加わった。ヤング率を $E=200\ \mathrm{GPa}$ とする。
+
+1. 応力 $\sigma$ を求めよ。
+2. ひずみ $\varepsilon$ を求めよ。
+
+::: details 解答
+断面積を変換します。
+
+$$
+A=50\times10^{-6}\ \mathrm{m^2}
+$$
+
+したがって、
+
+$$
+\sigma=\frac{5000}{50\times10^{-6}}
+=1.0\times10^8\ \mathrm{Pa}
+=100\ \mathrm{MPa}
+$$
+
+$$
+\varepsilon=\frac{1.0\times10^8}{200\times10^9}
+=5.0\times10^{-4}
+=500\ \mu\varepsilon
+$$
+:::
+
+### 演習2：ゲージ率
+
+ゲージ率 $K=2.0$、ひずみ $\varepsilon=500\ \mu\varepsilon$ のとき、$\Delta R/R$ を求めよ。元の抵抗が $120\ \Omega$ のとき、$\Delta R$ も求めよ。
+
+::: details 解答
+$$
+\frac{\Delta R}{R}
+=K\varepsilon
+=2.0\times500\times10^{-6}
+=0.001
+$$
+
+$$
+\Delta R=120\times0.001=0.12\ \Omega
+$$
+:::
+
+### 演習3：1ゲージ法のブリッジ出力
+
+1ゲージ法で、$V_{\mathrm{in}}=5.0\ \mathrm{V}$、$K=2.0$、$\varepsilon=500\ \mu\varepsilon$ とする。近似式を用いて $V_{\mathrm{out}}$ を求めよ。
+
+::: details 解答
+$$
+V_{\mathrm{out}}\approx\frac{V_{\mathrm{in}}}{4}K\varepsilon
+$$
+
+$$
+V_{\mathrm{out}}
+\approx\frac{5.0}{4}\times2.0\times500\times10^{-6}
+=1.25\times10^{-3}\ \mathrm{V}
+=1.25\ \mathrm{mV}
+$$
+:::
+
+### 演習4：4ゲージ法の出力
+
+4ゲージ法で、$V_{\mathrm{in}}=5.0\ \mathrm{V}$、$K=2.0$、$\varepsilon=500\ \mu\varepsilon$ とする。近似式
+
+$$
+V_{\mathrm{out}}\approx V_{\mathrm{in}}K\varepsilon
+$$
+
+を使って出力を求めよ。
+
+::: details 解答
+$$
+V_{\mathrm{out}}
+\approx5.0\times2.0\times500\times10^{-6}
+=5.0\times10^{-3}\ \mathrm{V}
+=5.0\ \mathrm{mV}
+$$
+:::
+
+### 演習5：45°ゲージ
+
+トルクセンサで、軸表面に $+45^\circ$ と $-45^\circ$ のひずみゲージを貼る理由を説明せよ。
+
+::: details 解答
+トルクにより軸表面にはせん断ひずみが生じる。純せん断では、$+45^\circ$ 方向に引張ひずみ、$-45^\circ$ 方向に圧縮ひずみが現れる。
+
+したがって、±45°方向にゲージを貼ると、ねじりによるせん断をゲージが読める伸び縮みとして検出できる。さらにフルブリッジに入れることで、トルクによる信号を加算し、温度変化や共通ひずみの影響を打ち消しやすくなる。
+:::
+
+### 演習6：ロードセルの貼付位置
+
+梁式ロードセルで、ひずみゲージを中立軸付近ではなく表面に貼る理由を説明せよ。
+
+::: details 解答
+曲げでは中立軸付近のひずみはほぼ0であり、表面に近づくほどひずみが大きくなる。したがって中立軸付近に貼ると信号が小さく、荷重を正しく検出しにくい。
+
+表面の引張側と圧縮側にゲージを貼ることで、信号を大きくし、ブリッジ回路で出力を加算できる。
 :::
 
 ---
 
-## 📝 確認問題
+## 11. 今日のまとめ
 
-### Q1. フックの法則を正しく表す式は？
+![第13週のまとめ](/figures/week13/slide-40.png)
 
-- [ ] A. σ = ε/E
-- [x] B. σ = Eε
-- [ ] C. ε = Eσ
-- [ ] D. E = σ + ε
+- 力センサは、力を直接読むのではなく、弾性体の変形を利用する。
+- ひずみは、変形量そのものではなく、元の長さに対する割合である。
+- 引張・圧縮では $\varepsilon=\Delta L/L$、曲げでは $\varepsilon=My/(EI)$ を使う。
+- ひずみゲージは、$\Delta R/R=K\varepsilon$ により、ひずみを抵抗変化率に変える。
+- ホイートストンブリッジは、微小な抵抗変化を差動電圧として取り出す。
+- ロードセルでは曲げひずみ、トルクセンサでは ±45° ゲージによるせん断ひずみの検出が重要である。
 
-### Q2. ひずみゲージの出力で正しい関係式は？
+::: tip 覚えるべき流れ
+$$
+F \rightarrow M,\sigma \rightarrow \varepsilon
+\rightarrow \frac{\Delta R}{R}
+\rightarrow V_{\mathrm{out}}
+\rightarrow \text{校正された力}
+$$
 
-- [x] A. ΔR/R = Kε
-- [ ] B. ΔR/R = ε/K
-- [ ] C. ΔR = Kε
-- [ ] D. R = Kε
-
-### Q3. ホイートストンブリッジの平衡条件は？
-
-- [ ] A. R₁ + R₄ = R₂ + R₃
-- [ ] B. R₁ / R₄ = R₂ / R₃
-- [x] C. R₁R₄ = R₂R₃
-- [ ] D. R₁R₃ = R₂ + R₄
-
-### Q4. 半導体ゲージの特徴として正しいのは？
-
-- [ ] A. ゲージ率が小さい
-- [ ] B. 温度依存性が小さい
-- [x] C. ゲージ率が非常に大きい（約100〜200）
-- [ ] D. 線形性が金属ゲージより優れている
-
-### Q5. トルクセンサでひずみゲージを軸表面に貼る角度は？
-
-- [ ] A. 0°（軸方向）
-- [x] B. 45°
-- [ ] C. 90°（周方向）
-- [ ] D. 180°
-
----
-
-## 📚 次週の予習
-
-- **第14週**: 圧力センサ
-- 予習ポイント：圧力の定義、圧電効果、静電容量の基礎
+この流れを順番に追えば、力センサの原理と計算を整理できます。
+:::
