@@ -1,581 +1,759 @@
-# 第14週：圧力センサ
+# 第14週：圧力センサ・触覚センサ
 
-> ⏱️ 読了時間：約35分 | 📝 確認問題：5問
+> ⏱️ 読了時間：約50分 | 📝 演習：6問
 
 ## 学習目標
 
 この週の講義を終えると、以下のことができるようになります：
 
-- [ ] 圧力の定義と単位を説明できる
-- [ ] 圧電効果・ダイヤフラム・ピエゾ抵抗効果の原理を説明できる
-- [ ] 静電容量式圧力センサの原理と計算ができる
-- [ ] 感圧ゴムの動作原理を理解できる
-- [ ] LC共振回路を用いた容量計測の原理を説明できる
-- [ ] 触覚センサと滑り覚センサの役割を理解できる
-- [ ] 圧力分布計測の応用事例を説明できる
+- [ ] 圧力 $P=F/A$ の意味と単位 Pa を説明できる
+- [ ] 絶対圧・ゲージ圧・差圧の違いを説明し、$P_{\mathrm{abs}}=P_{\mathrm{gauge}}+P_{\mathrm{atm}}$ を使える
+- [ ] ダイヤフラムを使って、圧力が変形・ひずみに変換される流れを説明できる
+- [ ] ピエゾ抵抗式、静電容量式、圧電式、FSR の違いを「何が変わるか」で整理できる
+- [ ] 触覚センサが単一の圧力値ではなく、圧力分布・接触位置・滑りを扱うことを説明できる
+- [ ] 用途に応じて圧力センサ方式を選ぶための観点を説明できる
 
----
-
-## 1. 圧力の基礎
-
-### 1.1 圧力の定義
-
-::: info 定義
-**圧力**とは、単位面積あたりに作用する力です。
-
-$$P = \frac{F}{A} \quad [\text{Pa}]$$
-
-- $P$：圧力 [Pa = N/m²]
-- $F$：力 [N]
-- $A$：面積 [m²]
-:::
-
-### 1.2 圧力センサの分類
-
-```mermaid
-graph TD
-    A["圧力センサ"] --> B["物性利用型"]
-    A --> C["機械変換型"]
-    B --> B1["圧電効果<br>（Piezo effect）"]
-    B --> B2["ピエゾ抵抗効果"]
-    B --> B3["圧電セラミックス"]
-    B --> B4["感圧ゴム"]
-    C --> C1["ダイヤフラム"]
-    C --> C2["静電容量式"]
-    style A fill:#E8EAF6,color:#333
-    style B fill:#E3F2FD,color:#333
-    style C fill:#FFF3E0,color:#333
-```
-
----
-
-## 2. 圧電効果（Piezo Effect）
-
-### 2.1 原理
-
-::: info 圧電効果
-**強誘電体結晶**（水晶、チタン酸バリウムなど）に圧力を加えると、結晶表面に**電荷**が発生する現象。圧力に比例した電圧を得ることができます。
-:::
-
-<svg viewBox="0 0 450 180" xmlns="http://www.w3.org/2000/svg" style="max-width: 450px; margin: 20px auto; display: block;">
-  <text x="225" y="18" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">圧電効果の原理</text>
-  <rect x="150" y="40" width="150" height="100" fill="#E3F2FD" stroke="#1565C0" stroke-width="2" rx="3"/>
-  <text x="225" y="95" text-anchor="middle" font-size="11" fill="#1565C0" font-weight="bold">圧電結晶</text>
-  <line x1="160" y1="40" x2="290" y2="40" stroke="#FF9800" stroke-width="3"/>
-  <line x1="160" y1="140" x2="290" y2="140" stroke="#FF9800" stroke-width="3"/>
-  <text x="225" y="35" text-anchor="middle" font-size="10" fill="#FF9800">電極（+）</text>
-  <text x="225" y="155" text-anchor="middle" font-size="10" fill="#FF9800">電極（−）</text>
-  <line x1="225" y1="40" x2="225" y2="25" stroke="#F44336" stroke-width="2"/>
-  <polygon points="220,28 225,18 230,28" fill="#F44336"/>
-  <text x="225" y="15" text-anchor="middle" font-size="9" fill="#F44336">F（圧力）</text>
-  <line x1="225" y1="140" x2="225" y2="155" stroke="#F44336" stroke-width="2"/>
-  <polygon points="220,152 225,162 230,152" fill="#F44336"/>
-  <text x="340" y="75" font-size="10" fill="#9C27B0">圧力 → 電荷発生</text>
-  <text x="340" y="95" font-size="10" fill="#9C27B0">Q ∝ F</text>
-  <text x="340" y="115" font-size="10" fill="#9C27B0">V = Q/C</text>
-</svg>
-
-::: tip 💡 ポイント
-圧電素子はAC成分（動的圧力変化）のみ検出でき、静的な一定圧力の計測には向きません（電荷がリークするため）。
+::: tip 講義スライド
+- <a href="/keisoku-kogaku/slides/week14.pptx" target="_blank" rel="noopener">PowerPointを開く</a>
+- <a href="/keisoku-kogaku/slides/week14.pdf" target="_blank" rel="noopener">PDFで確認する</a>
 :::
 
 ---
 
-## 3. ダイヤフラム方式
+## 1. 前回とのつながり
 
-### 3.1 原理
+第13週では、力センサ・ひずみゲージを扱いました。重要だったのは、力をそのまま電圧にするのではなく、次のような変換列として考えることです。
 
-::: info ダイヤフラムの原理
-薄い弾性膜（ダイヤフラム）の片面に圧力を加えると、膜がたわみ変形します。この変形量を検出して圧力を計測します。固定端梁のたわみ変位の理論に基づきます。
-:::
+![第14週の導入](/figures/week14/slide_01.png)
 
-<svg viewBox="0 0 450 180" xmlns="http://www.w3.org/2000/svg" style="max-width: 450px; margin: 20px auto; display: block;">
-  <text x="225" y="18" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">ダイヤフラム式圧力センサ</text>
-  <rect x="80" y="60" width="290" height="10" fill="#757575" stroke="#333" stroke-width="1"/>
-  <rect x="80" y="110" width="290" height="10" fill="#757575" stroke="#333" stroke-width="1"/>
-  <line x1="80" y1="60" x2="80" y2="120" stroke="#333" stroke-width="2"/>
-  <line x1="370" y1="60" x2="370" y2="120" stroke="#333" stroke-width="2"/>
-  <path d="M80,90 Q225,110 370,90" fill="none" stroke="#1565C0" stroke-width="2.5"/>
-  <path d="M80,90 L370,90" fill="none" stroke="#1565C0" stroke-width="1" stroke-dasharray="4,3"/>
-  <text x="225" y="55" text-anchor="middle" font-size="10" fill="#F44336">P（圧力）</text>
-  <line x1="150" y1="58" x2="150" y2="75" stroke="#F44336" stroke-width="1.5"/>
-  <polygon points="147,72 150,80 153,72" fill="#F44336"/>
-  <line x1="225" y1="58" x2="225" y2="75" stroke="#F44336" stroke-width="1.5"/>
-  <polygon points="222,72 225,80 228,72" fill="#F44336"/>
-  <line x1="300" y1="58" x2="300" y2="75" stroke="#F44336" stroke-width="1.5"/>
-  <polygon points="297,72 300,80 303,72" fill="#F44336"/>
-  <line x1="380" y1="90" x2="420" y2="90" stroke="#757575" stroke-width="1" stroke-dasharray="3,3"/>
-  <line x1="380" y1="105" x2="420" y2="105" stroke="#757575" stroke-width="1" stroke-dasharray="3,3"/>
-  <line x1="415" y1="90" x2="415" y2="105" stroke="#9C27B0" stroke-width="1.5"/>
-  <text x="435" y="100" font-size="9" fill="#9C27B0">Δd</text>
-  <text x="225" y="145" text-anchor="middle" font-size="10" fill="#1565C0">ダイヤフラム（弾性膜）</text>
-</svg>
+![前回の復習：力から電圧へ](/figures/week14/slide_02.png)
 
-### 3.2 ピエゾ抵抗効果
+$$
+F \rightarrow \text{弾性体の変形} \rightarrow \varepsilon
+\rightarrow \frac{\Delta R}{R}
+\rightarrow V_{\mathrm{out}}
+$$
 
-::: info ピエゾ抵抗効果
-圧力によるダイヤフラムの変形が、膜上に形成された抵抗体の**抵抗値を変化**させる効果。ひずみゲージと同様の原理ですが、半導体の結晶構造を利用するため高感度です。
+今回もブリッジ回路や抵抗変化の考え方は出てきます。ただし、主役は「点に加わる力」ではなく、**面に加わる圧力**です。
+
+![ブリッジ回路の再利用](/figures/week14/slide_03.png)
+
+::: warning 今回の見方
+第13週の内容をもう一度全部復習するのではありません。  
+今回のポイントは、前回の考え方を **圧力センサや触覚センサにどう使うか** です。
 :::
 
 ---
 
-## 4. 圧電セラミックスと感圧ゴム
+## 2. 力と圧力
 
-### 4.1 圧電セラミックス
+### 2.1 圧力の定義
 
-::: info 特徴
-圧電セラミックス（PZT等）は、応力の方向に**依存しない**電荷を発生させます。多結晶体のため等方的な応答が得られます。
-:::
+圧力は、単位面積あたりに作用する力です。
 
-### 4.2 感圧ゴム
+![力と圧力の違い](/figures/week14/slide_04.png)
 
-::: info 感圧ゴムの原理
-ゴム中に**炭素粒子**（カーボン）が分散されています。荷重が増加すると炭素粒子同士の**接触面積が増加**し、電気抵抗が**減少**します。
-:::
+$$
+P=\frac{F}{A}
+$$
 
-<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" style="max-width: 400px; margin: 20px auto; display: block;">
-  <style>
-    @keyframes rubberCompress { 0%, 15% { y: 40; height: 110; } 40%, 65% { y: 55; height: 80; } 85%, 100% { y: 40; height: 110; } }
-    @keyframes p1Move { 0%, 15% { cx: 90; cy: 70; } 40%, 65% { cx: 160; cy: 82; } 85%, 100% { cx: 90; cy: 70; } }
-    @keyframes p2Move { 0%, 15% { cx: 180; cy: 60; } 40%, 65% { cx: 200; cy: 78; } 85%, 100% { cx: 180; cy: 60; } }
-    @keyframes p3Move { 0%, 15% { cx: 280; cy: 85; } 40%, 65% { cx: 240; cy: 90; } 85%, 100% { cx: 280; cy: 85; } }
-    @keyframes p4Move { 0%, 15% { cx: 120; cy: 110; } 40%, 65% { cx: 160; cy: 105; } 85%, 100% { cx: 120; cy: 110; } }
-    @keyframes p5Move { 0%, 15% { cx: 250; cy: 120; } 40%, 65% { cx: 230; cy: 110; } 85%, 100% { cx: 250; cy: 120; } }
-    @keyframes p6Move { 0%, 15% { cx: 310; cy: 130; } 40%, 65% { cx: 280; cy: 105; } 85%, 100% { cx: 310; cy: 130; } }
-    @keyframes p7Move { 0%, 15% { cx: 70; cy: 130; } 40%, 65% { cx: 130; cy: 112; } 85%, 100% { cx: 70; cy: 130; } }
-    @keyframes p8Move { 0%, 15% { cx: 200; cy: 100; } 40%, 65% { cx: 200; cy: 95; } 85%, 100% { cx: 200; cy: 100; } }
-    @keyframes arrowPress { 0%, 15% { opacity: 0; } 25%, 65% { opacity: 1; } 75%, 100% { opacity: 0; } }
-    @keyframes labelSwitch { 0%, 15% { opacity: 1; } 30%, 70% { opacity: 0; } 85%, 100% { opacity: 1; } }
-    @keyframes labelSwitch2 { 0%, 25% { opacity: 0; } 40%, 65% { opacity: 1; } 80%, 100% { opacity: 0; } }
-    .pr-body { animation: rubberCompress 6s ease-in-out infinite; }
-    .pr-arrow { animation: arrowPress 6s ease-in-out infinite; }
-    .pr-label-spread { animation: labelSwitch 6s ease-in-out infinite; }
-    .pr-label-compressed { animation: labelSwitch2 6s ease-in-out infinite; }
-  </style>
-  <text x="200" y="18" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">感圧ゴムの原理（アニメーション）</text>
-  <rect x="55" y="40" width="290" height="110" fill="#FFF9C4" fill-opacity="0.5" stroke="#F9A825" stroke-width="1.5" rx="5" class="pr-body"/>
-  <polygon points="200,25 195,35 205,35" fill="#F44336" class="pr-arrow"/>
-  <text x="200" y="23" text-anchor="middle" font-size="9" fill="#F44336" class="pr-arrow">F</text>
-  <circle cx="90" cy="70" r="7" fill="#333" style="animation: p1Move 6s ease-in-out infinite;"/>
-  <circle cx="180" cy="60" r="7" fill="#333" style="animation: p2Move 6s ease-in-out infinite;"/>
-  <circle cx="280" cy="85" r="7" fill="#333" style="animation: p3Move 6s ease-in-out infinite;"/>
-  <circle cx="120" cy="110" r="7" fill="#333" style="animation: p4Move 6s ease-in-out infinite;"/>
-  <circle cx="250" cy="120" r="7" fill="#333" style="animation: p5Move 6s ease-in-out infinite;"/>
-  <circle cx="310" cy="130" r="7" fill="#333" style="animation: p6Move 6s ease-in-out infinite;"/>
-  <circle cx="70" cy="130" r="7" fill="#333" style="animation: p7Move 6s ease-in-out infinite;"/>
-  <circle cx="200" cy="100" r="7" fill="#333" style="animation: p8Move 6s ease-in-out infinite;"/>
-  <text x="200" y="175" text-anchor="middle" font-size="11" fill="#FF5722" font-weight="bold" class="pr-label-spread">R：大（粒子分散）</text>
-  <text x="200" y="175" text-anchor="middle" font-size="11" fill="#4CAF50" font-weight="bold" class="pr-label-compressed">R：小（粒子接触）</text>
-  <text x="200" y="193" text-anchor="middle" font-size="9" fill="#757575">炭素粒子が圧縮されると接触が増え抵抗が減少</text>
-</svg>
+| 記号 | 意味 | 単位 |
+|---|---|---|
+| $P$ | 圧力 | Pa = N/m² |
+| $F$ | 力 | N |
+| $A$ | 面積 | m² |
 
-| 特性 | 内容 |
-|------|------|
-| **入力** | 荷重（圧力） |
-| **出力** | 抵抗値の変化 |
-| **荷重増加時** | 炭素粒子の接触増 → 抵抗減少 |
-| **利点** | 柔軟、安価、面状センサ化が容易 |
-| **欠点** | 精度が低い、ヒステリシスが大きい |
+同じ力でも、接触面積が小さくなるほど圧力は大きくなります。靴底で踏む場合と、細い棒の先端で押す場合では、力が同じでも面積が違うため、局所的な圧力は大きく変わります。
 
----
+### 2.2 面積換算の例
 
-## 5. 静電容量式圧力センサ
+圧力計算では、面積の単位換算がよく間違えられます。特に $\mathrm{cm^2}$ から $\mathrm{m^2}$ への換算に注意します。
 
-### 5.1 原理
+![面積が変わると圧力は何倍か](/figures/week14/slide_05.png)
 
-::: info 静電容量の基本式
-平行平板コンデンサの静電容量：
+$$
+100\ \mathrm{cm^2}=1.0\times10^{-2}\ \mathrm{m^2}
+$$
 
-$$C = \varepsilon \frac{A}{d}$$
+$$
+1\ \mathrm{cm^2}=1.0\times10^{-4}\ \mathrm{m^2}
+$$
 
-- $C$：静電容量 [F]
-- $\varepsilon$：誘電率 [F/m]
-- $A$：電極面積 [m²]
-- $d$：電極間距離 [m]
-:::
+したがって、同じ $F=100\ \mathrm{N}$ でも、
 
-<svg viewBox="0 0 450 210" xmlns="http://www.w3.org/2000/svg" style="max-width: 450px; margin: 20px auto; display: block;">
-  <style>
-    @keyframes capPress { 0%, 10% { y: 50; } 45%, 55% { y: 95; } 90%, 100% { y: 50; } }
-    @keyframes capArrow { 0%, 10% { opacity: 0; } 20%, 55% { opacity: 1; } 65%, 100% { opacity: 0; } }
-    @keyframes capGapShrink { 0%, 10% { y1: 58; } 45%, 55% { y1: 103; } 90%, 100% { y1: 58; } }
-    @keyframes capLabelD { 0%, 10% { opacity: 1; } 35%, 65% { opacity: 0; } 85%, 100% { opacity: 1; } }
-    @keyframes capLabelDprime { 0%, 30% { opacity: 0; } 45%, 55% { opacity: 1; } 75%, 100% { opacity: 0; } }
-    @keyframes capCgrow { 0%, 30% { opacity: 0; } 45%, 55% { opacity: 1; } 75%, 100% { opacity: 0; } }
-    @keyframes capFieldDense { 0%, 10% { stroke-dasharray: 8,12; } 45%, 55% { stroke-dasharray: 4,4; } 90%, 100% { stroke-dasharray: 8,12; } }
-    .cap-top { animation: capPress 4s ease-in-out infinite; }
-    .cap-arrow { animation: capArrow 4s ease-in-out infinite; }
-    .cap-gap { animation: capGapShrink 4s ease-in-out infinite; }
-    .cap-label-d { animation: capLabelD 4s ease-in-out infinite; }
-    .cap-label-dprime { animation: capLabelDprime 4s ease-in-out infinite; }
-    .cap-c-increase { animation: capCgrow 4s ease-in-out infinite; }
-    .cap-field { animation: capFieldDense 4s ease-in-out infinite; }
-  </style>
-  <text x="225" y="18" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">静電容量式圧力センサ（アニメーション）</text>
-  <rect x="100" y="50" width="200" height="8" fill="#1565C0" rx="2" class="cap-top"/>
-  <rect x="100" y="130" width="200" height="8" fill="#1565C0" rx="2"/>
-  <text x="330" y="58" font-size="10" fill="#1565C0">上部電極（可動）</text>
-  <text x="330" y="138" font-size="10" fill="#1565C0">下部電極（固定）</text>
-  <line x1="130" y1="70" x2="130" y2="120" stroke="#9C27B0" stroke-width="1" stroke-dasharray="8,12" class="cap-field"/>
-  <line x1="170" y1="70" x2="170" y2="120" stroke="#9C27B0" stroke-width="1" stroke-dasharray="8,12" class="cap-field"/>
-  <line x1="230" y1="70" x2="230" y2="120" stroke="#9C27B0" stroke-width="1" stroke-dasharray="8,12" class="cap-field"/>
-  <line x1="270" y1="70" x2="270" y2="120" stroke="#9C27B0" stroke-width="1" stroke-dasharray="8,12" class="cap-field"/>
-  <line x1="200" y1="58" x2="200" y2="130" stroke="#9C27B0" stroke-width="1.5" stroke-dasharray="4,3" class="cap-gap"/>
-  <text x="215" y="95" font-size="10" fill="#9C27B0" class="cap-label-d">d</text>
-  <text x="215" y="118" font-size="10" fill="#FF5722" class="cap-label-dprime">d’</text>
-  <polygon points="197,38 200,30 203,38" fill="#F44336" class="cap-arrow"/>
-  <text x="200" y="28" text-anchor="middle" font-size="10" fill="#F44336" class="cap-arrow">F</text>
-  <rect x="80" y="160" width="240" height="20" fill="#E0E0E0" stroke="#757575" stroke-width="1.5" rx="3"/>
-  <text x="200" y="175" text-anchor="middle" font-size="10" fill="#757575">基板</text>
-  <text x="200" y="198" text-anchor="middle" font-size="11" fill="#4CAF50" font-weight="bold" class="cap-c-increase">d ↓ → C ↑</text>
-  <text x="200" y="198" text-anchor="middle" font-size="10" fill="#333" class="cap-label-d">荷重 F → d 減少 → C 増加</text>
-</svg>
+$$
+P_1=\frac{100}{1.0\times10^{-2}}=1.0\times10^4\ \mathrm{Pa}
+$$
 
-荷重による電極間距離の変化：
+$$
+P_2=\frac{100}{1.0\times10^{-4}}=1.0\times10^6\ \mathrm{Pa}
+$$
 
-$$d' = d - \Delta d$$
+です。面積が $1/100$ になると、圧力は $100$ 倍になります。
 
-$$C' = \varepsilon \frac{A}{d - \Delta d} > C$$
-
-### 5.2 荷重の算出
-
-バネ定数 $k$ のダイヤフラムの場合：
-
-$$\omega = -k \Delta d = k(d - d')$$
-
-::: details 演習：静電容量式圧力センサの計算
-**問題**：電極面積 $A = 1$ mm²、初期間隔 $d = 100\ \mu$m、誘電率 $\varepsilon = 8.854 \times 10^{-12}$ F/m の静電容量式センサに荷重を加えて間隔が $80\ \mu$m に変化した。バネ定数 $k = 5000$ N/m のとき、容量変化と荷重を求めよ。
-
-**解答**：
-
-1. 初期容量：
-
-$$C = \varepsilon \frac{A}{d} = 8.854 \times 10^{-12} \times \frac{1 \times 10^{-6}}{100 \times 10^{-6}} = 0.0886 \text{ [pF]}$$
-
-2. 変化後の容量：
-
-$$C' = 8.854 \times 10^{-12} \times \frac{1 \times 10^{-6}}{80 \times 10^{-6}} = 0.1107 \text{ [pF]}$$
-
-3. 荷重：
-
-$$\omega = k \cdot \Delta d = 5000 \times (100 - 80) \times 10^{-6} = 0.1 \text{ [N]}$$
+::: tip 圧力の数量感
+- 血圧 120 mmHg は、およそ 16 kPa
+- 大気圧は、およそ 101 kPa
+- 自動車のタイヤ圧は、およそ 230 kPa（ゲージ圧）
 :::
 
 ---
 
-## 6. LC共振回路による容量計測
+## 3. 圧力を測る前に決めること
 
-### 6.1 原理
+圧力センサを選ぶ前に、まず「何の圧力を、何を基準に、点で測るのか面で測るのか」を決める必要があります。
 
-::: info LC共振回路
-インダクタ $L$ とコンデンサ $C$ を接続した回路の**共振周波数**は：
+![圧力センサでまず決めること](/figures/week14/slide_06.png)
 
-$$f = \frac{1}{2\pi\sqrt{LC}}$$
+### 3.1 絶対圧・ゲージ圧・差圧
 
-静電容量 $C$ が変化すると共振周波数が変化するため、**周波数を計測**することで容量変化（＝圧力）を検出できます。
-:::
+圧力の値は、基準によって意味が変わります。
 
-<svg viewBox="0 0 450 160" xmlns="http://www.w3.org/2000/svg" style="max-width: 450px; margin: 20px auto; display: block;">
-  <text x="225" y="18" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">LC共振回路</text>
-  <rect x="100" y="50" width="80" height="60" fill="none" stroke="#333" stroke-width="2" rx="3"/>
-  <path d="M120,60 L120,100" fill="none" stroke="#1565C0" stroke-width="2"/>
-  <path d="M115,70 L125,75 L115,80 L125,85 L115,90" fill="none" stroke="#1565C0" stroke-width="2"/>
-  <text x="140" y="85" font-size="10" fill="#1565C0" font-weight="bold">L</text>
-  <line x1="155" y1="70" x2="165" y2="70" stroke="#F44336" stroke-width="2"/>
-  <line x1="155" y1="90" x2="165" y2="90" stroke="#F44336" stroke-width="2"/>
-  <text x="162" y="85" font-size="10" fill="#F44336" font-weight="bold">C</text>
-  <text x="300" y="60" font-size="10" fill="#333">C が変化すると</text>
-  <text x="300" y="80" font-size="10" fill="#333">f が変化する</text>
-  <text x="300" y="105" font-size="11" fill="#9C27B0" font-weight="bold">f = 1/(2π√LC)</text>
-  <text x="300" y="130" font-size="10" fill="#757575">C↑ → f↓</text>
-  <text x="300" y="145" font-size="10" fill="#757575">C↓ → f↑</text>
-</svg>
+![圧力測定の3つの基準](/figures/week14/slide_07.png)
 
-::: tip 💡 ポイント
-周波数計測は**ノイズに強い**という利点があります。電圧の大きさは伝送中に減衰しますが、周波数は変化しないためです。
+| 種類 | 基準 | 例 |
+|---|---|---|
+| 絶対圧 | 真空を 0 とする | 気圧計 |
+| ゲージ圧 | 大気圧を 0 とする | タイヤ圧、圧力計 |
+| 差圧 | 2点の圧力差 | フィルタ目詰まり、流量 |
+
+絶対圧とゲージ圧の関係は、
+
+$$
+P_{\mathrm{abs}}=P_{\mathrm{gauge}}+P_{\mathrm{atm}}
+$$
+
+です。たとえば、ゲージ圧が $120\ \mathrm{kPa}$、大気圧が $101\ \mathrm{kPa}$ のとき、
+
+$$
+P_{\mathrm{abs}}=120+101=221\ \mathrm{kPa}
+$$
+
+です。
+
+### 3.2 気体・液体・接触面
+
+同じ Pa で表せても、測る対象によって必要な構造は変わります。
+
+![圧力の対象](/figures/week14/slide_08.png)
+
+- 気体圧：密閉性、温度補償、基準圧が重要
+- 液体圧：耐液体性、封止、配管接続が重要
+- 接触圧：柔らかさ、面分布、局所的な高圧が重要
+
+---
+
+## 4. 圧力センサの分類
+
+圧力センサは、名前で覚えるよりも、**圧力によって何が変化するか**で整理すると理解しやすくなります。
+
+![圧力センサの分類](/figures/week14/slide_09.png)
+
+| 方式 | 圧力で変わる量 | 読み出す信号 |
+|---|---|---|
+| ピエゾ抵抗式 | ひずみ、抵抗 | 電圧 |
+| 静電容量式 | 電極間距離 $d$、容量 $C$ | 容量・周波数 |
+| 圧電式 | 電荷 $Q$ | 電圧 |
+| FSR・感圧ゴム | 接触経路、抵抗 | 電圧 |
+| 触覚センサ | 圧力分布、変形画像 | 圧力マップ |
+
+---
+
+## 5. ダイヤフラムとピエゾ抵抗式
+
+### 5.1 ダイヤフラム
+
+多くの圧力センサでは、圧力をまず薄い膜の変形に変換します。この薄い膜をダイヤフラムと呼びます。
+
+![ダイヤフラム](/figures/week14/slide_10.png)
+
+$$
+\text{圧力} \rightarrow \text{たわみ} \rightarrow \text{ひずみ}
+$$
+
+ダイヤフラムは、第13週で扱ったロードセルの「起歪体」に相当します。ロードセルでは力で梁を曲げましたが、圧力センサでは面に加わる圧力で膜を曲げます。
+
+### 5.2 ピエゾ抵抗式
+
+ダイヤフラム上に抵抗体を作り込むと、膜のひずみによって抵抗が変化します。
+
+![ピエゾ抵抗式](/figures/week14/slide_11.png)
+
+$$
+\frac{\Delta R}{R}=K\varepsilon
+$$
+
+これは第13週のひずみゲージと同じ考え方です。違いは、外付けの金属箔ゲージではなく、半導体内部に作られたピエゾ抵抗を使う点です。
+
+![ピエゾ抵抗式の使いどころ](/figures/week14/slide_12.png)
+
+::: tip ピエゾ抵抗式の特徴
+- 小型化しやすい
+- 静圧も測れる
+- MEMS 圧力センサでよく使われる
+- 温度補償と封止が重要
 :::
 
 ---
 
-## 7. 圧力センサの比較まとめ
+## 6. 静電容量式圧力センサ
 
-| センサ方式 | 検出量 | 静的計測 | 動的計測 | 特徴 |
-|-----------|--------|:-------:|:-------:|------|
-| **圧電式** | 電荷 | ✗ | ✓ | 高感度、AC成分のみ |
-| **ピエゾ抵抗式** | 抵抗変化 | ✓ | ✓ | 高精度、MEMS化容易 |
-| **静電容量式** | 容量変化 | ✓ | ✓ | 小型、低消費電力 |
-| **感圧ゴム** | 抵抗変化 | ✓ | △ | 安価、面状化容易 |
-| **ダイヤフラム+ゲージ** | ひずみ | ✓ | ✓ | 高精度、産業用途 |
+### 6.1 基本原理
+
+静電容量式では、圧力によって電極間距離 $d$ が変化し、それによって容量 $C$ が変化します。
+
+![静電容量式](/figures/week14/slide_13.png)
+
+平行板コンデンサの基本式は、
+
+$$
+C=\varepsilon\frac{A}{d}
+$$
+
+です。$d$ が小さくなると、分母が小さくなるので $C$ は大きくなります。
+
+![d と C の関係](/figures/week14/slide_14.png)
+
+$$
+d\downarrow \quad \Rightarrow \quad C\uparrow
+$$
+
+### 6.2 容量の数量感
+
+静電容量式で扱う容量は非常に小さい値になります。
+
+![静電容量の数量感](/figures/week14/slide_15.png)
+
+たとえば、
+
+$$
+A=1\ \mathrm{mm^2},\quad d=100\ \mu\mathrm{m},\quad
+\varepsilon_0=8.85\times10^{-12}\ \mathrm{F/m}
+$$
+
+のとき、
+
+$$
+C=\varepsilon_0\frac{A}{d}
+=8.85\times10^{-12}\frac{1.0\times10^{-6}}{1.0\times10^{-4}}
+=8.85\times10^{-14}\ \mathrm{F}
+$$
+
+です。これは、
+
+$$
+C\approx0.089\ \mathrm{pF}
+$$
+
+という非常に小さな容量です。
+
+### 6.3 なぜ読みにくいか
+
+容量変化が小さいため、配線の雑散容量、周囲環境、ノイズの影響を受けやすくなります。
+
+![容量変化はなぜ測りにくいか](/figures/week14/slide_16.png)
+
+そこで、容量を直接読むだけでなく、容量変化を周波数変化として読む方法があります。
+
+![LC共振](/figures/week14/slide_17.png)
+
+LC共振回路の共振周波数は、
+
+$$
+f=\frac{1}{2\pi\sqrt{LC}}
+$$
+
+です。容量 $C$ が大きくなると、共振周波数 $f$ は低くなります。
+
+$$
+C\uparrow \quad \Rightarrow \quad f\downarrow
+$$
+
+::: warning 注意
+LC共振は、容量式センサの読み出し方法の一例です。実際には、容量デジタル変換器や電荷アンプなど、他の読み出し方法もあります。
+:::
+
+![静電容量式まとめ](/figures/week14/slide_18.png)
 
 ---
 
-## 8. 触覚センサ（Tactile Sensor）
+## 7. 圧電式
 
-### 8.1 概要
+圧電式では、材料そのものが力の変化を電荷として出力します。
 
-::: info 触覚センサとは
-**接触（力）**および**接触位置**を検知するセンサです。ロボットハンドの指先などに搭載し、物体との接触状態を把握するために使用されます。
+![圧電式](/figures/week14/slide_19.png)
+
+圧力 $P$ が面積 $A$ に加わると、力は
+
+$$
+F=P A
+$$
+
+です。圧電材料では、発生する電荷 $Q$ は力に比例します。
+
+$$
+Q=d_p F=d_p P A
+$$
+
+出力電圧は、
+
+$$
+V=\frac{Q}{C}
+$$
+
+と考えられます。
+
+::: warning 記号の注意
+$d_p$ は圧電定数です。  
+静電容量式で出てきた電極間距離 $d$ とは別の量です。
 :::
 
-### 8.2 Finger Vision 方式
+### 7.1 静的圧力が苦手な理由
 
-::: tip 💡 Finger Vision
-カメラで**指先の変形**を検出する方式です。透明な弾性体の内部にカメラを設置し、接触による変形パターンを画像処理で解析することで、接触力と接触位置を同時に推定できます。
+圧電式は、衝撃や振動のような速い変化に強い一方、一定の圧力を長時間測るのは苦手です。
+
+![圧電式は静的圧力が苦手](/figures/week14/slide_20.png)
+
+発生した電荷が、測定回路や材料内部を通して少しずつリークするため、一定圧力では出力が時間とともに減衰します。
+
+![圧電式の応用](/figures/week14/slide_21.png)
+
+| 得意 | 苦手 |
+|---|---|
+| 衝撃 | 一定圧力 |
+| 振動 | 長時間の静圧 |
+| 超音波 | ゼロ点を長く保つ測定 |
+
+---
+
+## 8. 触覚センサへ
+
+ここまでは、主に「1つの圧力値」を測る圧力センサを扱いました。ロボットや人間の接触を考えると、圧力の大きさだけでなく、**どこで接触しているか、どのように分布しているか、滑っているか**が重要になります。
+
+![ここから触覚へ](/figures/week14/slide_22.png)
+
+---
+
+## 9. FSR・感圧ゴム
+
+FSR（Force Sensing Resistor）や感圧ゴムでは、圧力によって内部の導電経路が変化し、抵抗が変化します。
+
+![FSR・感圧ゴム](/figures/week14/slide_23.png)
+
+荷重が増えると、内部の炭素粒子や導電粒子の接触が増えます。その結果、電流が流れやすくなり、抵抗は下がります。
+
+$$
+\text{圧力}\uparrow \quad \Rightarrow \quad \text{接触経路}\uparrow \quad \Rightarrow \quad R\downarrow
+$$
+
+### 9.1 非線形性
+
+FSR は安価で柔らかく、面状センサにしやすい一方で、精密な力計測には向きません。
+
+![FSRの非線形性](/figures/week14/slide_24.png)
+
+- 低荷重では大きく変化する
+- 高荷重では飽和しやすい
+- 荷重を増やすときと戻すときで値がずれる（ヒステリシス）
+
+### 9.2 読み出し回路
+
+FSR は分圧回路で簡単に電圧として読めます。ただし、FSR を上側に置くか下側に置くかで、出力電圧の向きが変わります。
+
+![FSRの読み出し](/figures/week14/slide_25.png)
+
+FSR を上側に置く場合：
+
+$$
+V_{\mathrm{out}}
+=V_{\mathrm{in}}\frac{R_{\mathrm{fixed}}}{R_{\mathrm{FSR}}+R_{\mathrm{fixed}}}
+$$
+
+押すと $R_{\mathrm{FSR}}$ が下がるため、$V_{\mathrm{out}}$ は上がります。
+
+FSR を下側に置く場合：
+
+$$
+V_{\mathrm{out}}
+=V_{\mathrm{in}}\frac{R_{\mathrm{FSR}}}{R_{\mathrm{fixed}}+R_{\mathrm{FSR}}}
+$$
+
+押すと $R_{\mathrm{FSR}}$ が下がるため、$V_{\mathrm{out}}$ は下がります。
+
+---
+
+## 10. 方式比較
+
+ここまでの方式を、「圧力で何が変わるか」で比較すると次のようになります。
+
+![センサ方式の比較](/figures/week14/slide_26.png)
+
+| 方式 | 変わる量 | 静圧 | 動圧 | 特徴 |
+|---|---|:---:|:---:|---|
+| ピエゾ抵抗式 | 抵抗 $R$ | ○ | ○ | 小型・高感度 |
+| 静電容量式 | 容量 $C$ | ○ | ○ | 低消費電力、微小容量の読出しが課題 |
+| 圧電式 | 電荷 $Q$ | × | ◎ | 衝撃・振動に強い |
+| FSR | 抵抗 $R$ | △ | △ | 安価・柔軟、精度は低め |
+
+---
+
+## 11. 分布圧と触覚
+
+### 11.1 圧力を面で見る
+
+触覚センサでは、単一の圧力値ではなく、圧力を面の分布として扱います。
+
+![触覚センサ](/figures/week14/slide_27.png)
+
+![分布圧センサアレイ](/figures/week14/slide_28.png)
+
+8×8 のセンサアレイでは、各セルが小さな圧力センサとして働きます。各セルの値を色で表すと、圧力マップになります。
+
+### 11.2 マトリクス読み出し
+
+センサ数が増えると、配線数が問題になります。8×8 の各セルを2本ずつ直接配線すると、128本必要になります。
+
+![抵抗式マトリクスの読み出し](/figures/week14/slide_29.png)
+
+行列マトリクスにすると、8行 + 8列 = 16本で読み出せます。
+
+::: tip 考え方
+行を1つ選択し、その行に接続された列の値を読む。  
+これを高速に繰り返すと、面全体の圧力分布を読めます。
 :::
 
-<svg viewBox="0 0 450 200" xmlns="http://www.w3.org/2000/svg" style="max-width: 450px; margin: 20px auto; display: block;">
-  <style>
-    @keyframes fingerTouch { 0%, 15% { d: path('M100,80 Q225,80 350,80'); } 40%, 65% { d: path('M100,80 Q225,110 350,80'); } 85%, 100% { d: path('M100,80 Q225,80 350,80'); } }
-    @keyframes fingerObj { 0%, 15% { cy: 55; } 40%, 65% { cy: 75; } 85%, 100% { cy: 55; } }
-    @keyframes fingerArrow { 0%, 15% { opacity: 0; } 25%, 65% { opacity: 1; } 80%, 100% { opacity: 0; } }
-    @keyframes fingerCamFlash { 0%, 48% { fill: #4CAF50; } 50%, 52% { fill: #8BC34A; } 54%, 100% { fill: #4CAF50; } }
-  </style>
-  <text x="225" y="18" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">Finger Vision の原理</text>
-  <rect x="100" y="80" width="250" height="80" fill="#E3F2FD" stroke="#1565C0" stroke-width="2" rx="5"/>
-  <text x="225" y="130" text-anchor="middle" font-size="10" fill="#1565C0">透明弾性体</text>
-  <path d="M100,80 Q225,80 350,80" fill="none" stroke="#1565C0" stroke-width="2.5" style="animation: fingerTouch 5s ease-in-out infinite;"/>
-  <rect x="195" y="140" width="60" height="25" fill="#4CAF50" stroke="#2E7D32" stroke-width="1.5" rx="3" style="animation: fingerCamFlash 5s ease-in-out infinite;"/>
-  <text x="225" y="157" text-anchor="middle" font-size="9" fill="white" font-weight="bold">Camera</text>
-  <circle cx="225" cy="55" r="18" fill="#FF9800" stroke="#E65100" stroke-width="1.5" style="animation: fingerObj 5s ease-in-out infinite;"/>
-  <text x="225" y="59" text-anchor="middle" font-size="9" fill="white">物体</text>
-  <polygon points="222,35 225,25 228,35" fill="#F44336" style="animation: fingerArrow 5s ease-in-out infinite;"/>
-  <text x="225" y="22" text-anchor="middle" font-size="9" fill="#F44336" style="animation: fingerArrow 5s ease-in-out infinite;">F</text>
-  <text x="225" y="190" text-anchor="middle" font-size="10" fill="#757575">接触変形をカメラで検出 → 力・位置を推定</text>
-</svg>
+### 11.3 クロストーク
 
-::: details 🎥 参考動画
-<a href="https://youtu.be/ifOwQdy9gDg" target="_blank">🎥 動画を見る：Combining Finger Vision and Optical Tactile Sensing</a>
+マトリクス読み出しでは、意図しない経路を通って電流が回り込むことがあります。これをクロストークと呼びます。
+
+![クロストーク問題](/figures/week14/slide_30.png)
+
+クロストークを防ぐために、各セルにダイオードを入れる方法や、仮想接地法などが使われます。ここでは詳細な回路までは扱いませんが、面センサでは材料だけでなく読み出し回路も重要です。
+
+---
+
+## 12. 光学触覚センサ
+
+光学触覚センサでは、柔らかい透明弾性体の変形をカメラで観察します。
+
+![光学触覚センサ](/figures/week14/slide_31.png)
+
+表面が押されると、内部のマーカーや表面パターンが移動します。その移動を画像処理で読むことで、接触位置、力、せん断方向、局所形状を推定できます。
+
+![光学触覚の出力](/figures/week14/slide_32.png)
+
+| 得られる情報 | 意味 |
+|---|---|
+| 接触位置 | どこに触れているか |
+| 法線力 | 押し付ける力 |
+| せん断力 | 横方向にずれる力 |
+| 局所形状 | 接触している物体の形 |
+
+---
+
+## 13. 滑り覚
+
+ロボットが物体を把持するとき、単に強く握ればよいわけではありません。
+
+![滑り覚](/figures/week14/slide_33.png)
+
+- 弱すぎる：物体が滑る
+- 強すぎる：物体を壊す
+- 適切：安定して把持できる
+
+滑りは、接触位置の移動や微小振動として検出できます。
+
+![滑りを検出する方法](/figures/week14/slide_34.png)
+
+::: tip 把持制御での意味
+滑り始めを検出できると、必要なときだけ把持力を少し増やせます。  
+これにより、物体を落とさず、壊しにくい制御が可能になります。
 :::
 
 ---
 
-## 9. 滑り覚センサ（Slip Sensor）
+## 14. 応用例
 
-### 9.1 概要
+### 14.1 歩行・床反力・足圧分布
 
-::: info 滑り覚センサとは
-**滑り（接触位置の変化）**を検知するセンサです。把持した物体が指先から滑り始めたことを検出し、把持力を自動調整する制御に応用されます。
-:::
+分布圧センサは、歩行解析やリハビリテーション、スポーツ科学で使われます。
 
-### 9.2 把持力制御への応用
+![歩行・床反力・足圧分布](/figures/week14/slide_35.png)
 
-::: tip 💡 滑り検知による把持力制御
-滑り覚センサで物体の滑りを検知すると、ロボットハンドの把持力を自動的に増加させます。これにより、物体を壊さず、かつ落とさない最適な把持力を実現できます。
-:::
+足裏のどの部分に大きな圧力がかかっているかを見ることで、歩行パターンやバランスを評価できます。
 
-<svg viewBox="0 0 450 180" xmlns="http://www.w3.org/2000/svg" style="max-width: 450px; margin: 20px auto; display: block;">
-  <style>
-    @keyframes slipObj { 0%, 20% { y: 60; } 45%, 55% { y: 90; } 70%, 100% { y: 60; } }
-    @keyframes slipGrip { 0%, 20% { x: 140; width: 170; } 55%, 70% { x: 130; width: 190; } 85%, 100% { x: 140; width: 170; } }
-    @keyframes slipAlert { 0%, 40% { opacity: 0; } 45%, 60% { opacity: 1; } 70%, 100% { opacity: 0; } }
-    @keyframes slipForce { 0%, 20% { opacity: 0; } 60%, 75% { opacity: 1; } 85%, 100% { opacity: 0; } }
-  </style>
-  <text x="225" y="18" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">滑り検知と把持力制御</text>
-  <rect x="140" y="35" width="10" height="120" fill="#1565C0" rx="2" style="animation: slipGrip 5s ease-in-out infinite;"/>
-  <rect x="300" y="35" width="10" height="120" fill="#1565C0" rx="2" style="animation: slipGrip 5s ease-in-out infinite;"/>
-  <text x="120" y="100" text-anchor="end" font-size="9" fill="#1565C0">指</text>
-  <text x="330" y="100" font-size="9" fill="#1565C0">指</text>
-  <rect x="155" y="60" width="140" height="50" fill="#FF9800" stroke="#E65100" stroke-width="1.5" rx="5" style="animation: slipObj 5s ease-in-out infinite;"/>
-  <text x="225" y="90" text-anchor="middle" font-size="10" fill="white" font-weight="bold">物体</text>
-  <text x="225" y="168" text-anchor="middle" font-size="10" fill="#F44336" font-weight="bold" style="animation: slipAlert 5s ease-in-out infinite;">⚠ 滑り検知！</text>
-  <text x="225" y="168" text-anchor="middle" font-size="10" fill="#4CAF50" font-weight="bold" style="animation: slipForce 5s ease-in-out infinite;">✓ 把持力増加</text>
-</svg>
+### 14.2 ロボット把持
 
-::: details 🎥 参考動画
-<a href="https://youtu.be/cu18UJk3eZ8" target="_blank">🎥 動画を見る：Slip Sensing Demo</a>
-:::
+ロボットハンドでは、触覚センサから接触状態を推定し、把持力を調整します。
 
-### 9.3 分布圧計測
+![ロボット把持](/figures/week14/slide_36.png)
 
-::: info 分布圧計測
-**感圧センサを多数配置**して、面全体の圧力分布を取得する手法です。触覚センサアレイとして、接触面の圧力マップをリアルタイムに可視化できます。
-:::
+触覚は「見せるための情報」ではなく、制御に使うための情報です。
 
-<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" style="max-width: 400px; margin: 20px auto; display: block;">
-  <style>
-    @keyframes gridPulse1 { 0%, 30% { fill: #E3F2FD; } 40%, 60% { fill: #F44336; } 70%, 100% { fill: #E3F2FD; } }
-    @keyframes gridPulse2 { 0%, 35% { fill: #E3F2FD; } 45%, 65% { fill: #FF9800; } 75%, 100% { fill: #E3F2FD; } }
-    @keyframes gridPulse3 { 0%, 40% { fill: #E3F2FD; } 50%, 70% { fill: #FFEB3B; } 80%, 100% { fill: #E3F2FD; } }
-  </style>
-  <text x="200" y="18" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">分布圧計測（センサアレイ）</text>
-  <rect x="75" y="30" width="250" height="140" fill="none" stroke="#757575" stroke-width="1.5" rx="3"/>
-  <rect x="80" y="35" width="55" height="40" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1" style="animation: gridPulse3 6s ease-in-out infinite;"/>
-  <rect x="140" y="35" width="55" height="40" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1" style="animation: gridPulse2 6s ease-in-out infinite;"/>
-  <rect x="200" y="35" width="55" height="40" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1" style="animation: gridPulse1 6s ease-in-out infinite;"/>
-  <rect x="260" y="35" width="55" height="40" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1" style="animation: gridPulse3 6s ease-in-out infinite;"/>
-  <rect x="80" y="80" width="55" height="40" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1" style="animation: gridPulse2 6s ease-in-out infinite;"/>
-  <rect x="140" y="80" width="55" height="40" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1" style="animation: gridPulse1 6s ease-in-out infinite;"/>
-  <rect x="200" y="80" width="55" height="40" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1" style="animation: gridPulse2 6s ease-in-out infinite;"/>
-  <rect x="260" y="80" width="55" height="40" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1" style="animation: gridPulse1 6s ease-in-out infinite;"/>
-  <rect x="80" y="125" width="55" height="40" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1" style="animation: gridPulse1 6s ease-in-out infinite;"/>
-  <rect x="140" y="125" width="55" height="40" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1" style="animation: gridPulse3 6s ease-in-out infinite;"/>
-  <rect x="200" y="125" width="55" height="40" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1" style="animation: gridPulse2 6s ease-in-out infinite;"/>
-  <rect x="260" y="125" width="55" height="40" fill="#E3F2FD" stroke="#90CAF9" stroke-width="1" style="animation: gridPulse3 6s ease-in-out infinite;"/>
-  <text x="200" y="188" text-anchor="middle" font-size="10" fill="#757575">各セルの色が圧力の大きさを表す</text>
-</svg>
+### 14.3 産業と生活
 
-::: details 🎥 参考動画
-<a href="https://youtu.be/LKwOpRUCs7s" target="_blank">🎥 動画を見る：Haptic Search</a>
-:::
+圧力センサは、タイヤ圧、気圧計、血圧計、管路圧、触控マットなど、さまざまな場面で使われています。
+
+![産業と生活の圧力センサ](/figures/week14/slide_37.png)
 
 ---
 
-## 10. 圧力分布計測の応用
+## 15. センサ選定
 
-### 10.1 床反力計測（フォースプレート）
+圧力センサを選ぶときは、方式名から選ぶのではなく、要求から考えます。
 
-::: info 床反力計測
-**フォースプレート**は、床面に埋め込んだ力覚センサにより、歩行やジャンプ時の**床反力（Ground Reaction Force）**を計測する装置です。スポーツ科学やリハビリテーション分野で広く使用されています。
-:::
+![センサ選定](/figures/week14/slide_38.png)
 
-::: details 🎥 参考動画
-<a href="https://youtu.be/FC-o7brtpxM" target="_blank">🎥 動画を見る：Ground Reaction Force</a>
-:::
+少なくとも次の5つを確認します。
 
-### 10.2 荷重計測回路
-
-::: info 感圧センサの荷重計測回路
-感圧センサの抵抗変化を電圧に変換するために、**Op-Amp（MCP6004）**を用いた**反転増幅回路**を使用します。
-
-$$V_{out} = -V_{ref} \left(\frac{R_F}{R_S}\right)$$
-
-| パラメータ | 値 | 説明 |
-|-----------|-----|------|
-| $R_F$ | 100kΩ（ポテンショメータ推奨） | フィードバック抵抗 |
-| $R_S$ | 無荷重時 >1MΩ | 感圧センサの抵抗 |
-| $C_1$ | 47pF | フィルタ用コンデンサ |
-| $V_{REF}$ | DC 0.25V〜1.25V or 矩形波（max 5V, 50% duty） | 基準電圧 |
-:::
-
-<svg viewBox="0 0 500 320" xmlns="http://www.w3.org/2000/svg" style="max-width: 500px; margin: 20px auto; display: block;">
-  <style>
-    @keyframes rsChange { 0%, 20% { stroke: #FF9800; stroke-width: 2; } 40%, 60% { stroke: #F44336; stroke-width: 3; } 80%, 100% { stroke: #FF9800; stroke-width: 2; } }
-    @keyframes voutResp { 0%, 20% { y: 240; height: 20; } 40%, 60% { y: 210; height: 50; } 80%, 100% { y: 240; height: 20; } }
-    @keyframes voutLabel { 0%, 20% { opacity: 0.5; } 40%, 60% { opacity: 1; } 80%, 100% { opacity: 0.5; } }
-    @keyframes currentFlow { 0% { stroke-dashoffset: 20; } 100% { stroke-dashoffset: 0; } }
-  </style>
-  <text x="250" y="18" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">反転増幅回路（感圧センサ）</text>
-  <polygon points="200,100 200,200 300,150" fill="#E8EAF6" stroke="#333" stroke-width="2"/>
-  <text x="230" y="155" text-anchor="middle" font-size="14" fill="#333" font-weight="bold">−</text>
-  <text x="230" y="140" text-anchor="middle" font-size="14" fill="#333" font-weight="bold">+</text>
-  <text x="240" y="170" font-size="9" fill="#757575">MCP6004</text>
-  <line x1="60" y1="120" x2="200" y2="120" stroke="#333" stroke-width="1.5"/>
-  <text x="60" y="115" font-size="9" fill="#9C27B0">V_REF</text>
-  <rect x="90" y="112" width="50" height="16" fill="none" stroke="#FF9800" stroke-width="2" rx="2" style="animation: rsChange 4s ease-in-out infinite;"/>
-  <text x="115" y="110" text-anchor="middle" font-size="9" fill="#FF9800">R_S</text>
-  <text x="115" y="140" text-anchor="middle" font-size="8" fill="#757575">感圧センサ</text>
-  <line x1="200" y1="120" x2="200" y2="60" stroke="#333" stroke-width="1.5"/>
-  <line x1="200" y1="60" x2="350" y2="60" stroke="#333" stroke-width="1.5"/>
-  <line x1="350" y1="60" x2="350" y2="150" stroke="#333" stroke-width="1.5"/>
-  <line x1="300" y1="150" x2="420" y2="150" stroke="#333" stroke-width="1.5"/>
-  <rect x="240" y="52" width="60" height="16" fill="none" stroke="#1565C0" stroke-width="2" rx="2"/>
-  <text x="270" y="50" text-anchor="middle" font-size="9" fill="#1565C0">R_F (100kΩ)</text>
-  <line x1="310" y1="55" x2="330" y2="55" stroke="#4CAF50" stroke-width="1"/>
-  <line x1="310" y1="65" x2="330" y2="65" stroke="#4CAF50" stroke-width="1"/>
-  <text x="340" y="50" font-size="8" fill="#4CAF50">C₁ 47pF</text>
-  <line x1="200" y1="160" x2="200" y2="260" stroke="#333" stroke-width="1.5"/>
-  <line x1="180" y1="260" x2="220" y2="260" stroke="#333" stroke-width="2"/>
-  <line x1="190" y1="265" x2="210" y2="265" stroke="#333" stroke-width="1.5"/>
-  <line x1="195" y1="270" x2="205" y2="270" stroke="#333" stroke-width="1"/>
-  <text x="200" y="285" text-anchor="middle" font-size="9" fill="#757575">GND</text>
-  <text x="420" y="145" font-size="10" fill="#333">V_out</text>
-  <rect x="390" y="210" width="60" height="50" fill="#E8F5E9" stroke="#4CAF50" stroke-width="1.5" rx="3" style="animation: voutResp 4s ease-in-out infinite;"/>
-  <text x="420" y="240" text-anchor="middle" font-size="9" fill="#4CAF50" font-weight="bold" style="animation: voutLabel 4s ease-in-out infinite;">V_out↑</text>
-  <line x1="390" y1="150" x2="390" y2="210" stroke="#4CAF50" stroke-width="1" stroke-dasharray="4,3"/>
-  <text x="100" y="300" text-anchor="middle" font-size="9" fill="#F44336">R_S ↓（荷重増加）</text>
-  <text x="100" y="312" text-anchor="middle" font-size="9" fill="#333">→ V_out ↑</text>
-  <text x="320" y="300" text-anchor="middle" font-size="9" fill="#757575">V_out = −V_ref × (R_F / R_S)</text>
-</svg>
-
-::: tip 💡 ポイント
-荷重が増加すると感圧センサの抵抗 $R_S$ が減少し、$R_F / R_S$ の比が大きくなるため、出力電圧 $V_{out}$ が増加します。$R_F$ にポテンショメータを使用することで感度調整が可能です。
-:::
-
-### 10.3 バレーボール解析事例
-
-::: info 応用事例：バレーボールのオーバーハンドパス解析
-指先に**FlexiForceセンサ**を装着し、オーバーハンドパス時の指先力を計測した事例です。
-
-| 計測項目 | 値 |
-|---------|-----|
-| ピーク電圧 | 約 1.6V |
-| 接触時間 | 0.04〜0.06秒 |
-| センサ | FlexiForce（感圧センサ） |
-:::
-
-<svg viewBox="0 0 450 220" xmlns="http://www.w3.org/2000/svg" style="max-width: 450px; margin: 20px auto; display: block;">
-  <style>
-    @keyframes pulseDraw { 0%, 25% { stroke-dashoffset: 300; } 40%, 75% { stroke-dashoffset: 0; } 90%, 100% { stroke-dashoffset: 300; } }
-    @keyframes peakDot { 0%, 30% { opacity: 0; r: 0; } 40%, 70% { opacity: 1; r: 5; } 85%, 100% { opacity: 0; r: 0; } }
-    @keyframes peakLabel { 0%, 35% { opacity: 0; } 42%, 70% { opacity: 1; } 82%, 100% { opacity: 0; } }
-  </style>
-  <text x="225" y="18" text-anchor="middle" font-size="12" fill="#333" font-weight="bold">オーバーハンドパス時の指先力波形</text>
-  <line x1="60" y1="30" x2="60" y2="180" stroke="#333" stroke-width="1.5"/>
-  <line x1="60" y1="180" x2="420" y2="180" stroke="#333" stroke-width="1.5"/>
-  <text x="40" y="105" text-anchor="middle" font-size="9" fill="#333" transform="rotate(-90,40,105)">電圧 [V]</text>
-  <text x="240" y="198" text-anchor="middle" font-size="9" fill="#333">時間 [s]</text>
-  <text x="55" y="45" text-anchor="end" font-size="8" fill="#757575">2.0</text>
-  <line x1="57" y1="42" x2="63" y2="42" stroke="#757575" stroke-width="1"/>
-  <text x="55" y="78" text-anchor="end" font-size="8" fill="#757575">1.5</text>
-  <line x1="57" y1="75" x2="63" y2="75" stroke="#757575" stroke-width="1"/>
-  <text x="55" y="112" text-anchor="end" font-size="8" fill="#757575">1.0</text>
-  <line x1="57" y1="109" x2="63" y2="109" stroke="#757575" stroke-width="1"/>
-  <text x="55" y="145" text-anchor="end" font-size="8" fill="#757575">0.5</text>
-  <line x1="57" y1="142" x2="63" y2="142" stroke="#757575" stroke-width="1"/>
-  <text x="55" y="183" text-anchor="end" font-size="8" fill="#757575">0</text>
-  <line x1="60" y1="42" x2="420" y2="42" stroke="#E0E0E0" stroke-width="0.5" stroke-dasharray="3,3"/>
-  <line x1="60" y1="75" x2="420" y2="75" stroke="#E0E0E0" stroke-width="0.5" stroke-dasharray="3,3"/>
-  <line x1="60" y1="109" x2="420" y2="109" stroke="#E0E0E0" stroke-width="0.5" stroke-dasharray="3,3"/>
-  <line x1="60" y1="142" x2="420" y2="142" stroke="#E0E0E0" stroke-width="0.5" stroke-dasharray="3,3"/>
-  <path d="M60,180 L140,180 L160,178 L180,170 L195,120 L205,62 L215,120 L230,168 L250,178 L280,180 L420,180" fill="none" stroke="#F44336" stroke-width="2.5" stroke-dasharray="300" style="animation: pulseDraw 5s ease-in-out infinite;"/>
-  <circle cx="205" cy="62" r="0" fill="#F44336" style="animation: peakDot 5s ease-in-out infinite;"/>
-  <text x="220" y="55" font-size="9" fill="#F44336" font-weight="bold" style="animation: peakLabel 5s ease-in-out infinite;">~1.6V</text>
-  <line x1="180" y1="185" x2="230" y2="185" stroke="#1565C0" stroke-width="2" style="animation: peakLabel 5s ease-in-out infinite;"/>
-  <text x="205" y="210" text-anchor="middle" font-size="8" fill="#1565C0" style="animation: peakLabel 5s ease-in-out infinite;">0.04~0.06s</text>
-</svg>
+1. 静圧か、動圧か
+2. 1点の圧力か、面の分布か
+3. 必要な量程はどれくらいか
+4. 必要な精度はどれくらいか
+5. 使用環境はどうか
 
 ---
 
-## 📝 確認問題
+## 16. 総合例題
 
-### Q1. 圧力の定義として正しいのは？
+![総合例題](/figures/week14/slide_39.png)
 
-- [x] A. 単位面積あたりの力
-- [ ] B. 単位体積あたりの力
-- [ ] C. 単位長さあたりの力
-- [ ] D. 単位質量あたりの力
+### 例題1：圧力計算
 
-### Q2. 圧電効果で検出できないのは？
+$F=50\ \mathrm{N}$、$A=10\ \mathrm{cm^2}$ のとき、圧力を求めます。
 
-- [ ] A. 振動
-- [ ] B. 衝撃
-- [x] C. 静的な一定圧力
-- [ ] D. 音波
+$$
+10\ \mathrm{cm^2}=1.0\times10^{-3}\ \mathrm{m^2}
+$$
 
-### Q3. 静電容量式圧力センサで荷重を加えると容量はどうなるか？
+$$
+P=\frac{F}{A}
+=\frac{50}{1.0\times10^{-3}}
+=5.0\times10^4\ \mathrm{Pa}
+$$
 
-- [x] A. 増加する（電極間距離が減少するため）
-- [ ] B. 減少する
-- [ ] C. 変化しない
-- [ ] D. ゼロになる
+### 例題2：容量式の方向
 
-### Q4. 感圧ゴムに荷重を加えると電気抵抗はどうなるか？
+電極間距離 $d$ が小さくなると、
 
-- [ ] A. 増加する
-- [x] B. 減少する（炭素粒子の接触が増えるため）
-- [ ] C. 変化しない
-- [ ] D. 無限大になる
+$$
+d\downarrow \Rightarrow C\uparrow \Rightarrow f\downarrow
+$$
 
-### Q5. LC共振回路の共振周波数の式として正しいのは？
+です。
 
-- [ ] A. f = 2πLC
-- [ ] B. f = 2π√(LC)
-- [x] C. f = 1/(2π√(LC))
-- [ ] D. f = √(LC)/(2π)
+### 例題3：方式選択
+
+| 用途 | 適した方式 |
+|---|---|
+| タイヤ空気圧 | ピエゾ抵抗式、静電容量式 |
+| 機械の衝撃検出 | 圧電式 |
+| ロボットの触覚 | FSR、光学触覚 |
+
+---
+
+## 17. まとめ
+
+![まとめ](/figures/week14/slide_40.png)
+
+今回の内容は、次のように整理できます。
+
+$$
+P=\frac{F}{A}
+\rightarrow
+\text{基準を決める}
+\rightarrow
+\text{物理量が変わる}
+\rightarrow
+\text{信号として読む}
+\rightarrow
+\text{用途で選ぶ}
+$$
+
+圧力センサを理解するときは、「圧力で何が変わるか」を見ることが重要です。
+
+| 見ている変化 | 代表方式 |
+|---|---|
+| 抵抗 $R$ | ピエゾ抵抗式、FSR |
+| 容量 $C$ | 静電容量式 |
+| 電荷 $Q$ | 圧電式 |
+| 周波数 $f$ | LC共振などの容量読出し |
+| 圧力画像 | 触覚センサ、分布圧センサ |
+
+---
+
+## 18. 演習
+
+### 演習1：圧力と単位換算
+
+面積 $A=25\ \mathrm{cm^2}$ の面に、力 $F=75\ \mathrm{N}$ が垂直に加わっている。
+
+1. 面積 $A$ を $\mathrm{m^2}$ に換算せよ。
+2. 圧力 $P$ を Pa と kPa で求めよ。
+
+::: details 解答
+面積を $\mathrm{m^2}$ に直します。
+
+$$
+25\ \mathrm{cm^2}
+=25\times10^{-4}\ \mathrm{m^2}
+=2.5\times10^{-3}\ \mathrm{m^2}
+$$
+
+圧力は、
+
+$$
+P=\frac{F}{A}
+=\frac{75}{2.5\times10^{-3}}
+=3.0\times10^4\ \mathrm{Pa}
+$$
+
+したがって、
+
+$$
+P=30\ \mathrm{kPa}
+$$
+
+です。
+:::
+
+### 演習2：絶対圧とゲージ圧
+
+ある圧力計がゲージ圧として $250\ \mathrm{kPa}$ を示している。大気圧を $101\ \mathrm{kPa}$ とする。
+
+1. 絶対圧 $P_{\mathrm{abs}}$ を求めよ。
+2. ゲージ圧と絶対圧の違いを一文で説明せよ。
+
+::: details 解答
+絶対圧とゲージ圧の関係は、
+
+$$
+P_{\mathrm{abs}}=P_{\mathrm{gauge}}+P_{\mathrm{atm}}
+$$
+
+です。したがって、
+
+$$
+P_{\mathrm{abs}}=250+101=351\ \mathrm{kPa}
+$$
+
+ゲージ圧は大気圧を 0 とした圧力であり、絶対圧は真空を 0 とした圧力です。
+:::
+
+### 演習3：静電容量式圧力センサ
+
+平行板型の静電容量式圧力センサを考える。電極面積を $A=2.0\ \mathrm{mm^2}$、電極間距離を $d=100\ \mu\mathrm{m}$、誘電率を $\varepsilon_0=8.85\times10^{-12}\ \mathrm{F/m}$ とする。
+
+1. 初期容量 $C$ を求めよ。
+2. 圧力により電極間距離が $80\ \mu\mathrm{m}$ になったとき、容量は増えるか減るか。
+3. 容量が増えた場合、LC共振の周波数 $f$ は上がるか下がるか。
+
+::: details 解答
+まず単位を変換します。
+
+$$
+A=2.0\ \mathrm{mm^2}=2.0\times10^{-6}\ \mathrm{m^2}
+$$
+
+$$
+d=100\ \mu\mathrm{m}=1.0\times10^{-4}\ \mathrm{m}
+$$
+
+容量は、
+
+$$
+C=\varepsilon_0\frac{A}{d}
+=8.85\times10^{-12}\frac{2.0\times10^{-6}}{1.0\times10^{-4}}
+=1.77\times10^{-13}\ \mathrm{F}
+$$
+
+したがって、
+
+$$
+C=0.177\ \mathrm{pF}
+$$
+
+です。
+
+電極間距離が $100\ \mu\mathrm{m}$ から $80\ \mu\mathrm{m}$ に小さくなると、$C=\varepsilon A/d$ より容量は増えます。
+
+LC共振では、
+
+$$
+f=\frac{1}{2\pi\sqrt{LC}}
+$$
+
+なので、$C$ が増えると $f$ は下がります。
+:::
+
+### 演習4：FSR の分圧読み出し
+
+FSR を上側、固定抵抗 $R_{\mathrm{fixed}}=10\ \mathrm{k\Omega}$ を下側に接続した分圧回路を考える。入力電圧を $V_{\mathrm{in}}=5.0\ \mathrm{V}$ とする。
+
+1. 無荷重時に $R_{\mathrm{FSR}}=90\ \mathrm{k\Omega}$ のとき、$V_{\mathrm{out}}$ を求めよ。
+2. 荷重時に $R_{\mathrm{FSR}}=10\ \mathrm{k\Omega}$ まで下がったとき、$V_{\mathrm{out}}$ を求めよ。
+3. この接続では、押すと $V_{\mathrm{out}}$ は上がるか下がるか。
+
+::: details 解答
+FSR が上側、固定抵抗が下側なので、
+
+$$
+V_{\mathrm{out}}
+=V_{\mathrm{in}}\frac{R_{\mathrm{fixed}}}{R_{\mathrm{FSR}}+R_{\mathrm{fixed}}}
+$$
+
+です。
+
+無荷重時は、
+
+$$
+V_{\mathrm{out}}
+=5.0\frac{10}{90+10}
+=0.50\ \mathrm{V}
+$$
+
+荷重時は、
+
+$$
+V_{\mathrm{out}}
+=5.0\frac{10}{10+10}
+=2.5\ \mathrm{V}
+$$
+
+FSR は押すと抵抗が下がるため、この接続では $V_{\mathrm{out}}$ は上がります。
+:::
+
+### 演習5：圧電式と静的圧力
+
+圧電式センサが、衝撃や振動の測定に向く一方で、長時間一定の圧力測定に向かない理由を説明せよ。
+
+::: details 解答
+圧電式センサでは、力の変化によって圧電材料に電荷が発生します。
+
+しかし、発生した電荷は測定回路や材料内部を通して少しずつリークします。そのため、一定の圧力を長時間加えても、出力は時間とともに減衰してしまいます。
+
+したがって、圧電式は衝撃、振動、音波のような動的な変化には向きますが、静的な圧力の長時間測定には向きません。
+:::
+
+### 演習6：用途に合うセンサ方式
+
+次の用途に合う方式を、ピエゾ抵抗式、静電容量式、圧電式、FSR、光学触覚センサから選び、理由を簡単に説明せよ。
+
+1. 自動車のタイヤ空気圧を測る。
+2. 機械の衝撃を検出する。
+3. ロボットハンドで、物体の接触位置と滑りを知りたい。
+4. 安価なマットで、どこに人が乗ったかを大まかに知りたい。
+
+::: details 解答例
+1. タイヤ空気圧：ピエゾ抵抗式または静電容量式。静的な圧力を測る必要があるため。
+2. 機械の衝撃：圧電式。速い力の変化や衝撃に強いため。
+3. ロボットハンド：光学触覚センサ。接触位置、分布、せん断方向、滑りを画像として読めるため。
+4. 安価なマット：FSR または感圧ゴム。高精度よりも、柔軟性、安価さ、面状化のしやすさが重要なため。
+:::
 
 ---
 
 ## 📚 次週の予習
 
-- **第15週**: まとめと総合演習
-- 予習ポイント：第1週〜第14週の全体を振り返り、各センサの原理と特徴を整理しておく
+- **第15週**：総合演習
+- 予習ポイント：位置・距離・角度・速度・加速度・力・圧力センサを、入力、変換される物理量、出力信号で整理しておく

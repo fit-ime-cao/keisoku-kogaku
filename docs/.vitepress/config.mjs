@@ -58,7 +58,7 @@ export default withMermaid({
             { text: '第11週：角度・回転計測', link: '/weeks/week-11' },
             { text: '第12週：速度・加速度センサ', link: '/weeks/week-12' },
             { text: '第13週：力センサ', link: '/weeks/week-13' },
-            { text: '🔒 第14週：圧力センサ' },  // link: '/weeks/week-14'
+            { text: '第14週：圧力センサ・触覚センサ', link: '/weeks/week-14' },
           ]
         },
         {
