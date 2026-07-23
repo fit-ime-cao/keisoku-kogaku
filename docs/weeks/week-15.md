@@ -26,8 +26,10 @@
 - [ ] 方式名だけでなく、選んだ理由と注意点を書ける
 
 ::: tip 講義スライド
-- <a href="/keisoku-kogaku/slides/week15.pptx" target="_blank" rel="noopener">総復習スライド（PowerPoint）を開く</a>
-- <a href="/keisoku-kogaku/slides/week15.pdf" target="_blank" rel="noopener">総復習スライド（PDF）を開く</a>
+- <a href="/keisoku-kogaku/slides/week15.pptx" target="_blank" rel="noopener">期末試験対策スライド（PowerPoint版）を開く</a>
+- <a href="/keisoku-kogaku/slides/week15.pdf" target="_blank" rel="noopener">期末試験対策スライド（PDF版）を開く</a>
+
+記述問題で必要な「センサを選ぶ理由」と「信号への変換の流れ」を中心に整理しています。
 :::
 
 ---
