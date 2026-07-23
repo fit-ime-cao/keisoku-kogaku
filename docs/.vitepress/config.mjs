@@ -64,7 +64,7 @@ export default withMermaid({
         {
           text: 'まとめ',
           items: [
-            { text: '🔒 第15週：総合演習' },  // link: '/weeks/week-15'
+            { text: '第15週：期末試験対策・総復習', link: '/weeks/week-15' },
             { text: '🔒 第16週：期末試験' },  // link: '/weeks/week-16'
           ]
         },
